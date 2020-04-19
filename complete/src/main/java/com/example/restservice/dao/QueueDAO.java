@@ -1,4 +1,4 @@
-package dao;
+package com.example.restservice.dao;
 
 import com.example.restservice.model.User;
 import org.springframework.stereotype.Repository;
@@ -12,6 +12,7 @@ public class QueueDAO {
 
 
 
+
     public List<User> fetchQueueData(String queueId){
         List<User> userList = new ArrayList<>();
         User user = new User();
@@ -20,4 +21,6 @@ public class QueueDAO {
         userList.add(user);
         return userList;
     }
+
+
 }

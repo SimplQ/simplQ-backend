@@ -2,19 +2,24 @@ package com.example.restservice.model;
 
 public class Queue {
 
-	private final long id;
-	private final String content;
+	private String queueName;
 
-	public Queue(long id, String content) {
-		this.id = id;
-		this.content = content;
+	private String queueId;
+
+
+	public String getQueueName() {
+		return queueName;
 	}
 
-	public long getId() {
-		return id;
+	public void setQueueName(String queueName) {
+		this.queueName = queueName;
 	}
 
-	public String getContent() {
-		return content;
+	public String getQueueId() {
+		return queueId;
+	}
+
+	public void setQueueId(String queueId) {
+		this.queueId = queueId;
 	}
 }
