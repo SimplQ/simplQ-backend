@@ -1,20 +1,32 @@
 package com.example.restservice.controller;
 
-import java.util.concurrent.atomic.AtomicLong;
+import com.example.restservice.model.Queue;
+import com.example.restservice.model.User;
+import dao.QueueDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.restservice.model.Greeting;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 public class QueueController {
 
-	private static final String template = "Hello, %s!";
-	private final AtomicLong counter = new AtomicLong();
+	private Queue queue;
 
-	@GetMapping("/greeting")
-	public Greeting greeting(@RequestParam(value = "name") String name) {
-		return new Greeting(counter.incrementAndGet(), String.format(template, name));
+	private QueueDAO queueDAO;
+
+	@GetMapping(value ="/v1/queue/{queueId}", produces = "application/json")
+	public List<User> getQueueDetails(@PathVariable String queueId ) {
+		queueDAO = new QueueDAO();
+		List<User> userList = queueDAO.fetchQueueData(queueId);
+		System.out.println(queueId);
+		return userList;
+
+
 	}
+
+
+
+
+
 }
