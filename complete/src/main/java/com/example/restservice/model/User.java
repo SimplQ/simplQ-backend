@@ -6,35 +6,33 @@ import javax.persistence.Id;
 
 @Entity
 public class User {
-    @Id
-    String id;
-    String userName;
-    String contactNumber;
 
+  @Id
+  String id;
+  String userName;
+  String contactNumber;
 
+  public String getUserName() {
+    return userName;
+  }
 
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
 
-    public String getUserName() {
-        return userName;
-    }
+  public String getContactNumber() {
+    return contactNumber;
+  }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+  public void setContactNumber(String contactNumber) {
+    this.contactNumber = contactNumber;
+  }
 
-    public String getContactNumber() {
-        return contactNumber;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 }
