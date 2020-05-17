@@ -1,25 +1,59 @@
 package com.example.restservice.model;
 
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@Table(name = "Queue")
 public class Queue {
 
-	private String queueName;
+  private String queueName;
 
-	private String queueId;
+  @Id
+  @GeneratedValue(generator = "uuid2")
+  @GenericGenerator(name = "uuid2", strategy = "uuid2")
+  private String queueId;
 
+  @OneToMany(cascade = CascadeType.MERGE, mappedBy = "queue")
+  private List<User> users;
 
-	public String getQueueName() {
-		return queueName;
-	}
+  public List<User> getUsers() {
+    return users;
+  }
 
-	public void setQueueName(String queueName) {
-		this.queueName = queueName;
-	}
+  public Queue() {}
 
-	public String getQueueId() {
-		return queueId;
-	}
+  public void setUsers(List<User> users) {
+    this.users = users;
+  }
 
-	public void setQueueId(String queueId) {
-		this.queueId = queueId;
-	}
+  public String getQueueName() {
+    return queueName;
+  }
+
+  public Queue(String queueName) {
+    this.queueName = queueName;
+  }
+
+  public void setQueueName(String queueName) {
+    this.queueName = queueName;
+  }
+
+  public String getQueueId() {
+    return queueId;
+  }
+
+  public void setQueueId(String queueId) {
+    this.queueId = queueId;
+  }
+
+  public void addUser(User user) {
+    users.add(user);
+  }
 }

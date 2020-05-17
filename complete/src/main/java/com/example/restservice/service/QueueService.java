@@ -1,29 +1,30 @@
 package com.example.restservice.service;
 
-
-import com.example.restservice.dao.QueueDAO;
-import com.example.restservice.model.Queue;
-import org.apache.commons.lang3.RandomStringUtils;
+import com.example.restservice.dao.QueueDao;
+import com.example.restservice.dao.UserDao;
+import com.example.restservice.model.CreateQueueRequest;
+import com.example.restservice.model.CreateQueueResponse;
+import com.example.restservice.model.QueueDetailsResponse;
+import com.example.restservice.model.User.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QueueService {
 
-    @Autowired
-    private QueueDAO queueDAO;
+  @Autowired private QueueDao queueDAO;
+  @Autowired private UserDao userDao;
 
-    public Queue generateQueueId(String queueName){
-        Queue queue = new Queue();
-        String id = generateRandomAlphaNumericString();
-        queue.setQueueName(queueName);
-        queue.setQueueId(id);
-        //queueDAO.addQueueData(queue);
-        return queue;
-    }
+  public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
+    var queue = queueDAO.createQueue(createQueueRequest.getQueueName());
+    return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
+  }
 
-    private String generateRandomAlphaNumericString() {
-        String generatedString = RandomStringUtils.randomAlphanumeric(10);
-        return  generatedString;
-    }
+  public QueueDetailsResponse fetchQueueData(String queueId) {
+    var resp = new QueueDetailsResponse(queueId);
+    userDao.getUsersInQueue(queueId).stream()
+        .filter(user -> user.getStatus() != UserStatus.REMOVED)
+        .forEach(resp::addUser);
+    return resp;
+  }
 }
