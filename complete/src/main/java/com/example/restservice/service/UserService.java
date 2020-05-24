@@ -17,15 +17,13 @@ public class UserService {
   @Autowired private UserDao userDao;
 
   public UserStatusResponse addUserToQueue(JoinQueueRequest joinQueueRequest) {
-    var date = new Date();
-    var time = date.getTime();
-    var timestamp = new Timestamp(time);
     var newUser =
         new User(
-            joinQueueRequest.getName(), joinQueueRequest.getContactNumber(), UserStatusConstants.WAITING,timestamp);
+            joinQueueRequest.getName(), joinQueueRequest.getContactNumber(), UserStatusConstants.WAITING);
     var tokenId = userDao.addUserToQueue(joinQueueRequest.getQueueId(), newUser).getId();
     var response = new UserStatusResponse();
-    response.setAheadCount(0);
+    response.setAheadCount(userDao.getAheadCount(tokenId));
+    response.setStatus(newUser.getStatus());
     response.setTokenId(tokenId);
     return response;
   }
@@ -33,9 +31,9 @@ public class UserService {
   public UserStatusResponse getStatus(String userId) {
     var userStatusResponse = new UserStatusResponse();
     var user = userDao.getUser(userId);
-    var usersQueue = user.getQueue().getUsers();
+    var timestamp = user.getTimestamp();
     userStatusResponse.setStatus(user.getStatus());
-    userStatusResponse.setAheadCount((int)usersQueue.stream().filter(user1 -> user1.getTimestamp().compareTo(user.getTimestamp())<0).count());
+    userStatusResponse.setAheadCount(userDao.getAheadCount(userId));
     return userStatusResponse;
   }
   public void deleteUserfromQueue(DeleteUserRequest deleteUserRequest){

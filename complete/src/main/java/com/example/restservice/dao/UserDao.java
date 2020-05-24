@@ -3,9 +3,11 @@ package com.example.restservice.dao;
 import com.example.restservice.constants.UserStatusConstants;
 import com.example.restservice.model.User;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.Query;
 
 @Repository
 public class UserDao extends DaoBase {
@@ -48,4 +50,13 @@ public class UserDao extends DaoBase {
     entityManager.close();
   }
 
+  public int getAheadCount(String userId) {
+    var entityManager = entityManagerFactory.createEntityManager();
+    var user = entityManager.find(User.class,userId);
+
+    Query query = entityManager.createNativeQuery("select count(*) from User u where :timestamp > u.timestamp and u.queue = :queue");
+    query.setParameter("timestamp",user.getTimestamp());
+    query.setParameter("queue",user.getQueue());
+    return query.getFirstResult();
+  }
 }

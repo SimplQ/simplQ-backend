@@ -1,14 +1,13 @@
 package com.example.restservice.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.example.restservice.constants.UserStatusConstants;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 public class User {
@@ -25,9 +24,9 @@ public class User {
   String name;
   String contactNumber;
 
-
-
-  Timestamp timestamp;
+  @CreationTimestamp
+  @Temporal(TemporalType.TIMESTAMP)
+  Date timestamp;
 
   public Queue getQueue() {
     return queue;
@@ -39,11 +38,10 @@ public class User {
 
   @ManyToOne Queue queue;
 
-  public User(String name, String contactNumber, UserStatusConstants status, Timestamp timestamp) {
+  public User(String name, String contactNumber, UserStatusConstants status) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
-    this.timestamp = timestamp;
   }
 
   UserStatusConstants status;
@@ -80,7 +78,7 @@ public class User {
     this.id = id;
   }
 
-  public Timestamp getTimestamp() {
+  public Date getTimestamp() {
     return timestamp;
   }
 
