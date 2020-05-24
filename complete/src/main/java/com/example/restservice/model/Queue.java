@@ -20,7 +20,7 @@ public class Queue {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   private String queueId;
 
-  @OneToMany(cascade = CascadeType.MERGE, mappedBy = "queue")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
   private List<User> users;
 
   public List<User> getUsers() {

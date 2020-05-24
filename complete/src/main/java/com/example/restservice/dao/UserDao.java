@@ -18,8 +18,8 @@ public class UserDao extends DaoBase {
     var entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
     var queue = queueDao.getQueue(queueId);
+    user.setQueue(queue);
     entityManager.persist(user);
-    queue.addUser(user);
     entityManager.getTransaction().commit();
     entityManager.close();
 
