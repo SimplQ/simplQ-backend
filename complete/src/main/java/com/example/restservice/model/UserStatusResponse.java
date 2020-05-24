@@ -1,8 +1,11 @@
 package com.example.restservice.model;
 
+import com.example.restservice.constants.UserStatusConstants;
+
 public class UserStatusResponse {
   int aheadCount;
   String tokenId;
+  UserStatusConstants status;
 
   public String getTokenId() {
     return tokenId;
@@ -11,6 +14,17 @@ public class UserStatusResponse {
   public void setTokenId(String tokenId) {
     this.tokenId = tokenId;
   }
+
+  public UserStatusConstants getStatus() {
+    return status;
+  }
+
+  public void setStatus(UserStatusConstants status) {
+    this.status = status;
+  }
+
+
+
 
   public int getAheadCount() {
     return aheadCount;

@@ -4,15 +4,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
+import com.example.restservice.constants.UserStatusConstants;
 import org.hibernate.annotations.GenericGenerator;
+
+import java.sql.Timestamp;
 
 @Entity
 public class User {
-  public enum UserStatus {
-    WAITING,
-    NOTIFIED,
-    REMOVED,
+  public User() {
   }
+
+
 
   @Id
   @GeneratedValue(generator = "uuid2")
@@ -22,21 +25,34 @@ public class User {
   String name;
   String contactNumber;
 
+
+
+  Timestamp timestamp;
+
+  public Queue getQueue() {
+    return queue;
+  }
+
+  public void setQueue(Queue queue) {
+    this.queue = queue;
+  }
+
   @ManyToOne Queue queue;
 
-  public User(String name, String contactNumber, UserStatus status) {
+  public User(String name, String contactNumber, UserStatusConstants status, Timestamp timestamp) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
+    this.timestamp = timestamp;
   }
 
-  UserStatus status;
+  UserStatusConstants status;
 
-  public UserStatus getStatus() {
+  public UserStatusConstants getStatus() {
     return status;
   }
 
-  public void setStatus(UserStatus status) {
+  public void setStatus(UserStatusConstants status) {
     this.status = status;
   }
 
@@ -62,5 +78,13 @@ public class User {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public Timestamp getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(Timestamp timestamp) {
+    this.timestamp = timestamp;
   }
 }

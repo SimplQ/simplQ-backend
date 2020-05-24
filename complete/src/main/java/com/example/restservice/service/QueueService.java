@@ -1,11 +1,11 @@
 package com.example.restservice.service;
 
+import com.example.restservice.constants.UserStatusConstants;
 import com.example.restservice.dao.QueueDao;
 import com.example.restservice.dao.UserDao;
 import com.example.restservice.model.CreateQueueRequest;
 import com.example.restservice.model.CreateQueueResponse;
 import com.example.restservice.model.QueueDetailsResponse;
-import com.example.restservice.model.User.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class QueueService {
   public QueueDetailsResponse fetchQueueData(String queueId) {
     var resp = new QueueDetailsResponse(queueId);
     userDao.getUsersInQueue(queueId).stream()
-        .filter(user -> user.getStatus() != UserStatus.REMOVED)
+        .filter(user -> user.getStatus() != UserStatusConstants.REMOVED)
         .forEach(resp::addUser);
     return resp;
   }
