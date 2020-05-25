@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "Queue")
+@Table(name = "queue")
 public class Queue {
 
   private String queueName;
@@ -20,7 +20,7 @@ public class Queue {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   private String queueId;
 
-  @OneToMany(cascade = CascadeType.MERGE, mappedBy = "queue")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
   private List<User> users;
 
   public List<User> getUsers() {

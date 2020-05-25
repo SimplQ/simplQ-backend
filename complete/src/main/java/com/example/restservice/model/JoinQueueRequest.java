@@ -4,6 +4,16 @@ public class JoinQueueRequest {
   private String name;
   private String contactNumber;
 
+  public String getQueueId() {
+    return queueId;
+  }
+
+  public void setQueueId(String queueId) {
+    this.queueId = queueId;
+  }
+
+  private String queueId;
+
   public JoinQueueRequest() {}
 
   public String getName() {
