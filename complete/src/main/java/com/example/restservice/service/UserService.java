@@ -3,7 +3,11 @@ package com.example.restservice.service;
 import com.example.restservice.constants.UserStatusConstants;
 import com.example.restservice.dao.QueueDao;
 import com.example.restservice.dao.UserDao;
-import com.example.restservice.model.*;
+import com.example.restservice.model.DeleteUserRequest;
+import com.example.restservice.model.JoinQueueRequest;
+import com.example.restservice.model.User;
+import com.example.restservice.model.UserStatusRequest;
+import com.example.restservice.model.UserStatusResponse;
 import com.example.restservice.service.smsService.SmsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,17 +47,16 @@ public class UserService {
     return userStatusResponse;
   }
 
-  public void deleteUserfromQueue(DeleteUserRequest deleteUserRequest) {
+  public void deleteUserFromQueue(DeleteUserRequest deleteUserRequest) {
     userDao.UpdateUserStatus(deleteUserRequest.getTokenId(), UserStatusConstants.REMOVED);
   }
 
   /** Notify user on User page. Send SMS notification */
   public void alertUser(UserStatusRequest userStatusRequest) {
-    userDao.UpdateUserStatus(userStatusRequest.getTokenId(), UserStatusConstants.NOTIFIED);
-
     // send SMS notification
     var user = userDao.getUser(userStatusRequest.getTokenId());
-    var queue = queueDao.getQueue(userStatusRequest.getQueueId());
-    SmsManager.notify(user.getContactNumber(), queue.getQueueName());
+    SmsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
+
+    userDao.UpdateUserStatus(userStatusRequest.getTokenId(), UserStatusConstants.NOTIFIED);
   }
 }
