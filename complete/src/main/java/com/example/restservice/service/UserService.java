@@ -19,7 +19,9 @@ public class UserService {
   public UserStatusResponse addUserToQueue(JoinQueueRequest joinQueueRequest) {
     var newUser =
         new User(
-            joinQueueRequest.getName(), joinQueueRequest.getContactNumber(), UserStatusConstants.WAITING);
+            joinQueueRequest.getName(),
+            joinQueueRequest.getContactNumber(),
+            UserStatusConstants.WAITING);
     var tokenId = userDao.addUserToQueue(joinQueueRequest.getQueueId(), newUser).getId();
     var response = new UserStatusResponse();
     response.setAheadCount(userDao.getAheadCount(tokenId));
@@ -36,18 +38,16 @@ public class UserService {
     userStatusResponse.setAheadCount(userDao.getAheadCount(userId));
     return userStatusResponse;
   }
-  public void deleteUserfromQueue(DeleteUserRequest deleteUserRequest){
-    userDao.removeUser(deleteUserRequest.getQueueId(),deleteUserRequest.getTokenId());
+
+  public void deleteUserfromQueue(DeleteUserRequest deleteUserRequest) {
+    userDao.removeUser(deleteUserRequest.getQueueId(), deleteUserRequest.getTokenId());
   }
 
-  /**
-   * Notify user on User page.
-   * Send SMS notification
-   */
+  /** Notify user on User page. Send SMS notification */
   public void alertUser(UserStatusRequest userStatusRequest) {
     userDao.UpdateUserStatus(userStatusRequest.getTokenId());
 
-    //send SMS notification
+    // send SMS notification
     var user = userDao.getUser(userStatusRequest.getTokenId());
     var queue = queueDao.getQueue(userStatusRequest.getQueueId());
     SmsManager.notify(user.getContactNumber(), queue.getQueueName());
