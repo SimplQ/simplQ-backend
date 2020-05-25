@@ -1,5 +1,6 @@
 package com.example.restservice.model;
 
+import com.example.restservice.constants.UserStatus;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,16 @@ public class QueueDetailsResponse {
     String contactNo;
     String tokenId;
 
+    public UserStatus getUserStatus() {
+      return userStatus;
+    }
+
+    public void setUserStatus(UserStatus userStatus) {
+      this.userStatus = userStatus;
+    }
+
+    UserStatus userStatus;
+
     public String getTokenId() {
       return tokenId;
     }
@@ -17,10 +28,11 @@ public class QueueDetailsResponse {
       this.tokenId = tokenId;
     }
 
-    public User(String name, String contactNo, String tokenId) {
+    public User(String name, String contactNo, String tokenId, UserStatus userStatus) {
       this.name = name;
       this.contactNo = contactNo;
       this.tokenId = tokenId;
+      this.userStatus = userStatus;
     }
 
     public String getName() {
@@ -65,6 +77,6 @@ public class QueueDetailsResponse {
   }
 
   public void addUser(com.example.restservice.model.User user) {
-    this.users.add(new User(user.name, user.contactNumber, user.getTokenId()));
+    this.users.add(new User(user.name, user.contactNumber, user.getTokenId(), user.getStatus()));
   }
 }

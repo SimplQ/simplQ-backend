@@ -1,6 +1,6 @@
 package com.example.restservice.service;
 
-import com.example.restservice.constants.UserStatusConstants;
+import com.example.restservice.constants.UserStatus;
 import com.example.restservice.dao.QueueDao;
 import com.example.restservice.dao.UserDao;
 import com.example.restservice.model.DeleteUserRequest;
@@ -21,9 +21,7 @@ public class UserService {
   public UserStatusResponse addUserToQueue(JoinQueueRequest joinQueueRequest) {
     var newUser =
         new User(
-            joinQueueRequest.getName(),
-            joinQueueRequest.getContactNumber(),
-            UserStatusConstants.WAITING);
+            joinQueueRequest.getName(), joinQueueRequest.getContactNumber(), UserStatus.WAITING);
     var tokenId = userDao.addUserToQueue(joinQueueRequest.getQueueId(), newUser).getTokenId();
     var response = new UserStatusResponse();
     userDao
@@ -48,7 +46,7 @@ public class UserService {
   }
 
   public void deleteUserFromQueue(DeleteUserRequest deleteUserRequest) {
-    userDao.UpdateUserStatus(deleteUserRequest.getTokenId(), UserStatusConstants.REMOVED);
+    userDao.UpdateUserStatus(deleteUserRequest.getTokenId(), UserStatus.REMOVED);
   }
 
   /** Notify user on User page. Send SMS notification */
@@ -57,6 +55,6 @@ public class UserService {
     var user = userDao.getUser(userStatusRequest.getTokenId());
     SmsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
 
-    userDao.UpdateUserStatus(userStatusRequest.getTokenId(), UserStatusConstants.NOTIFIED);
+    userDao.UpdateUserStatus(userStatusRequest.getTokenId(), UserStatus.NOTIFIED);
   }
 }
