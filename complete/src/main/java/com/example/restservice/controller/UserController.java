@@ -28,7 +28,7 @@ public class UserController {
     userService.deleteUserfromQueue(deleteUserRequest);
   }
   @PostMapping(path = "v1/user/alert")
-  public void notifyUser(@RequestBody DeleteUserRequest alertUserRequest){
-    userService.alertUser(alertUserRequest);
+  public void notifyUser(@RequestBody UserStatusRequest userStatusRequest){
+    userService.alertUser(userStatusRequest);
   }
 }
