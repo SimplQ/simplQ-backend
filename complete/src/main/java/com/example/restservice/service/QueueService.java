@@ -1,6 +1,6 @@
 package com.example.restservice.service;
 
-import com.example.restservice.constants.UserStatusConstants;
+import com.example.restservice.constants.UserStatus;
 import com.example.restservice.dao.QueueDao;
 import com.example.restservice.dao.UserDao;
 import com.example.restservice.model.CreateQueueRequest;
@@ -23,7 +23,7 @@ public class QueueService {
   public QueueDetailsResponse fetchQueueData(String queueId) {
     var resp = new QueueDetailsResponse(queueId);
     userDao.getUsersInQueue(queueId).stream()
-        .filter(user -> user.getStatus() != UserStatusConstants.REMOVED)
+        .filter(user -> user.getStatus() != UserStatus.REMOVED)
         .forEach(resp::addUser);
     return resp;
   }

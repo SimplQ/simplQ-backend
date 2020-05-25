@@ -1,18 +1,20 @@
 package com.example.restservice.model;
 
-import javax.persistence.*;
-
-import com.example.restservice.constants.UserStatusConstants;
+import com.example.restservice.constants.UserStatus;
+import java.sql.Timestamp;
+import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 @Entity
 public class User {
-  public User() {
-  }
+  public User() {}
 
   @Id
   @GeneratedValue(generator = "uuid2")
@@ -36,19 +38,19 @@ public class User {
 
   @ManyToOne Queue queue;
 
-  public User(String name, String contactNumber, UserStatusConstants status) {
+  public User(String name, String contactNumber, UserStatus status) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
   }
 
-  UserStatusConstants status;
+  UserStatus status;
 
-  public UserStatusConstants getStatus() {
+  public UserStatus getStatus() {
     return status;
   }
 
-  public void setStatus(UserStatusConstants status) {
+  public void setStatus(UserStatus status) {
     this.status = status;
   }
 

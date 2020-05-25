@@ -1,16 +1,11 @@
 package com.example.restservice.dao;
 
-import com.example.restservice.constants.UserStatusConstants;
+import com.example.restservice.constants.UserStatus;
 import com.example.restservice.model.User;
-import java.math.BigInteger;
 import java.util.List;
-
 import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.Query;
 
 @Repository
 public class UserDao extends DaoBase {
@@ -38,13 +33,13 @@ public class UserDao extends DaoBase {
     return entityManager.find(User.class, tokenId);
   }
 
-    public void removeUser(String queueId, String tokenId) {
-    var entityManager= entityManagerFactory.createEntityManager();
-     var user = entityManager.find(User.class, tokenId);
-     entityManager.remove(user);
-    }
+  public void removeUser(String queueId, String tokenId) {
+    var entityManager = entityManagerFactory.createEntityManager();
+    var user = entityManager.find(User.class, tokenId);
+    entityManager.remove(user);
+  }
 
-  public void UpdateUserStatus(String tokenId, UserStatusConstants status) {
+  public void UpdateUserStatus(String tokenId, UserStatus status) {
     var entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
     var user = entityManager.find(User.class, tokenId);
@@ -55,15 +50,18 @@ public class UserDao extends DaoBase {
 
   public Optional<Long> getAheadCount(String tokenId) {
     var entityManager = entityManagerFactory.createEntityManager();
-    var user = entityManager.find(User.class,tokenId);
+    var user = entityManager.find(User.class, tokenId);
 
-    if (user.getStatus() == UserStatusConstants.REMOVED) {
+    if (user.getStatus() == UserStatus.REMOVED) {
       return Optional.empty();
     }
 
-    return Optional.of(user.getQueue().getUsers().stream().filter(fellowUser ->
-        fellowUser.getTimestamp().before(user.getTimestamp())
-        && !fellowUser.getStatus().equals(UserStatusConstants.REMOVED)
-    ).count());
+    return Optional.of(
+        user.getQueue().getUsers().stream()
+            .filter(
+                fellowUser ->
+                    fellowUser.getTimestamp().before(user.getTimestamp())
+                        && !fellowUser.getStatus().equals(UserStatus.REMOVED))
+            .count());
   }
 }
