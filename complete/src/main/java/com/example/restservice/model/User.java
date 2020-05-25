@@ -14,12 +14,10 @@ public class User {
   public User() {
   }
 
-
-
   @Id
   @GeneratedValue(generator = "uuid2")
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
-  String id;
+  String tokenId;
 
   String name;
   String contactNumber;
@@ -70,12 +68,12 @@ public class User {
     this.contactNumber = contactNumber;
   }
 
-  public String getId() {
-    return id;
+  public String getTokenId() {
+    return tokenId;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setTokenId(String tokenId) {
+    this.tokenId = tokenId;
   }
 
   public Date getTimestamp() {

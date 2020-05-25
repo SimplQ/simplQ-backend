@@ -8,8 +8,6 @@ import com.example.restservice.model.User;
 import com.example.restservice.model.UserStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.sql.Timestamp;
 
 @Service
 public class UserService {
@@ -19,29 +17,37 @@ public class UserService {
   public UserStatusResponse addUserToQueue(JoinQueueRequest joinQueueRequest) {
     var newUser =
         new User(
-            joinQueueRequest.getName(), joinQueueRequest.getContactNumber(), UserStatusConstants.WAITING);
-    var tokenId = userDao.addUserToQueue(joinQueueRequest.getQueueId(), newUser).getId();
+            joinQueueRequest.getName(),
+            joinQueueRequest.getContactNumber(),
+            UserStatusConstants.WAITING);
+    var tokenId = userDao.addUserToQueue(joinQueueRequest.getQueueId(), newUser).getTokenId();
     var response = new UserStatusResponse();
-    response.setAheadCount(userDao.getAheadCount(tokenId));
+    userDao
+        .getAheadCount(tokenId)
+        .ifPresentOrElse(
+            response::setAheadCount,
+            () -> {
+              throw new IllegalStateException();
+            });
     response.setStatus(newUser.getStatus());
     response.setTokenId(tokenId);
     return response;
   }
 
-  public UserStatusResponse getStatus(String userId) {
+  public UserStatusResponse getStatus(String tokenId) {
     var userStatusResponse = new UserStatusResponse();
-    var user = userDao.getUser(userId);
-    var timestamp = user.getTimestamp();
+    var user = userDao.getUser(tokenId);
     userStatusResponse.setStatus(user.getStatus());
-    userStatusResponse.setAheadCount(userDao.getAheadCount(userId));
+    userDao.getAheadCount(tokenId).ifPresent(userStatusResponse::setAheadCount);
+    userStatusResponse.setTokenId(tokenId);
     return userStatusResponse;
   }
-  public void deleteUserfromQueue(DeleteUserRequest deleteUserRequest){
-    userDao.removeUser(deleteUserRequest.getQueueId(),deleteUserRequest.getTokenId());
+
+  public void deleteUserFromQueue(DeleteUserRequest deleteUserRequest) {
+    userDao.UpdateUserStatus(deleteUserRequest.getTokenId(), UserStatusConstants.REMOVED);
   }
 
   public void alertUser(DeleteUserRequest alertUserRequest) {
-    userDao.UpdateUserStatus(alertUserRequest.getTokenId());
-
+    userDao.UpdateUserStatus(alertUserRequest.getTokenId(), UserStatusConstants.NOTIFIED);
   }
 }

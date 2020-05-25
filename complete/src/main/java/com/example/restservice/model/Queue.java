@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "Queue")
+@Table(name = "queue")
 public class Queue {
 
   private String queueName;

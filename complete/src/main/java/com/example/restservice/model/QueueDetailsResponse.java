@@ -7,10 +7,20 @@ public class QueueDetailsResponse {
   public static class User {
     String name;
     String contactNo;
+    String tokenId;
 
-    public User(String name, String contactNo) {
+    public String getTokenId() {
+      return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+      this.tokenId = tokenId;
+    }
+
+    public User(String name, String contactNo, String tokenId) {
       this.name = name;
       this.contactNo = contactNo;
+      this.tokenId = tokenId;
     }
 
     public String getName() {
@@ -55,6 +65,6 @@ public class QueueDetailsResponse {
   }
 
   public void addUser(com.example.restservice.model.User user) {
-    this.users.add(new User(user.name, user.contactNumber));
+    this.users.add(new User(user.name, user.contactNumber, user.getTokenId()));
   }
 }

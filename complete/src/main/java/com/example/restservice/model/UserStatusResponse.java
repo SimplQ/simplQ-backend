@@ -3,7 +3,7 @@ package com.example.restservice.model;
 import com.example.restservice.constants.UserStatusConstants;
 
 public class UserStatusResponse {
-  int aheadCount;
+  long aheadCount;
   String tokenId;
   UserStatusConstants status;
 
@@ -26,7 +26,7 @@ public class UserStatusResponse {
 
 
 
-  public int getAheadCount() {
+  public long getAheadCount() {
     return aheadCount;
   }
 
@@ -36,7 +36,7 @@ public class UserStatusResponse {
     this.aheadCount = aheadCount;
   }
 
-  public void setAheadCount(int aheadCount) {
+  public void setAheadCount(long aheadCount) {
     this.aheadCount = aheadCount;
   }
 }

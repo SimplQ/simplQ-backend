@@ -6,7 +6,10 @@ import com.example.restservice.model.UserStatusRequest;
 import com.example.restservice.model.UserStatusResponse;
 import com.example.restservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping
@@ -19,16 +22,17 @@ public class UserController {
   }
 
   @PostMapping(path = "v1/user/add")
-  public UserStatusResponse joinQueue(
-      @RequestBody JoinQueueRequest joinQueueRequest) {
+  public UserStatusResponse joinQueue(@RequestBody JoinQueueRequest joinQueueRequest) {
     return userService.addUserToQueue(joinQueueRequest);
   }
+
   @PostMapping(path = "v1/user/delete")
-  public void deleteUser(@RequestBody DeleteUserRequest deleteUserRequest){
-    userService.deleteUserfromQueue(deleteUserRequest);
+  public void deleteUser(@RequestBody DeleteUserRequest deleteUserRequest) {
+    userService.deleteUserFromQueue(deleteUserRequest);
   }
+
   @PostMapping(path = "v1/user/alert")
-  public void notifyUser(@RequestBody DeleteUserRequest alertUserRequest){
+  public void notifyUser(@RequestBody DeleteUserRequest alertUserRequest) {
     userService.alertUser(alertUserRequest);
   }
 }
