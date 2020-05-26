@@ -20,6 +20,8 @@ public class QueueDao extends DaoBase {
   public Queue getQueue(String queueId) {
     var entityManager = entityManagerFactory.createEntityManager();
     var queue = entityManager.find(Queue.class, queueId);
+    queue.getUsers().size(); // prefetch users
+    entityManager.close();
     if (queue == null) {
       throw new RuntimeException("Queue does not exist");
     }
