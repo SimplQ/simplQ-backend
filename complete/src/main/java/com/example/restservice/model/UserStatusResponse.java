@@ -5,7 +5,7 @@ import com.example.restservice.constants.UserStatus;
 public class UserStatusResponse {
   long aheadCount;
   String tokenId;
-  UserStatus status;
+  UserStatus userStatus;
 
   public String getTokenId() {
     return tokenId;
@@ -15,12 +15,12 @@ public class UserStatusResponse {
     this.tokenId = tokenId;
   }
 
-  public UserStatus getStatus() {
-    return status;
+  public UserStatus getUserStatus() {
+    return userStatus;
   }
 
-  public void setStatus(UserStatus status) {
-    this.status = status;
+  public void setUserStatus(UserStatus userStatus) {
+    this.userStatus = userStatus;
   }
 
   public long getAheadCount() {

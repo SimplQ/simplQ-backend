@@ -2,7 +2,6 @@ package com.example.restservice.dao;
 
 import com.example.restservice.constants.UserStatus;
 import com.example.restservice.model.User;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -24,19 +23,11 @@ public class UserDao extends DaoBase {
     return user;
   }
 
-  public List<User> getUsersInQueue(String queueId) {
-    return queueDao.getQueue(queueId).getUsers();
-  }
-
   public User getUser(String tokenId) {
     var entityManager = entityManagerFactory.createEntityManager();
-    return entityManager.find(User.class, tokenId);
-  }
-
-  public void removeUser(String queueId, String tokenId) {
-    var entityManager = entityManagerFactory.createEntityManager();
     var user = entityManager.find(User.class, tokenId);
-    entityManager.remove(user);
+    entityManager.close();
+    return user;
   }
 
   public void UpdateUserStatus(String tokenId, UserStatus status) {
@@ -56,12 +47,15 @@ public class UserDao extends DaoBase {
       return Optional.empty();
     }
 
-    return Optional.of(
-        user.getQueue().getUsers().stream()
-            .filter(
-                fellowUser ->
-                    fellowUser.getTimestamp().before(user.getTimestamp())
-                        && !fellowUser.getStatus().equals(UserStatus.REMOVED))
-            .count());
+    var aheadCount =
+        Optional.of(
+            user.getQueue().getUsers().stream()
+                .filter(
+                    fellowUser ->
+                        fellowUser.getTimestamp().before(user.getTimestamp())
+                            && !fellowUser.getStatus().equals(UserStatus.REMOVED))
+                .count());
+    entityManager.close();
+    return aheadCount;
   }
 }
