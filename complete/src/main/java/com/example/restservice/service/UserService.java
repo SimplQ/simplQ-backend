@@ -21,7 +21,10 @@ public class UserService {
   public UserStatusResponse addUserToQueue(JoinQueueRequest joinQueueRequest) {
     var newUser =
         new User(
-            joinQueueRequest.getName(), joinQueueRequest.getContactNumber(), UserStatus.WAITING);
+            joinQueueRequest.getName(),
+            joinQueueRequest.getContactNumber(),
+            UserStatus.WAITING,
+            joinQueueRequest.getNotifyable());
     var tokenId = userDao.addUserToQueue(joinQueueRequest.getQueueId(), newUser).getTokenId();
     var response = new UserStatusResponse();
     userDao
@@ -31,7 +34,7 @@ public class UserService {
             () -> {
               throw new IllegalStateException();
             });
-    response.setStatus(newUser.getStatus());
+    response.setUserStatus(newUser.getStatus());
     response.setTokenId(tokenId);
     return response;
   }
@@ -39,7 +42,7 @@ public class UserService {
   public UserStatusResponse getStatus(String tokenId) {
     var userStatusResponse = new UserStatusResponse();
     var user = userDao.getUser(tokenId);
-    userStatusResponse.setStatus(user.getStatus());
+    userStatusResponse.setUserStatus(user.getStatus());
     userDao.getAheadCount(tokenId).ifPresent(userStatusResponse::setAheadCount);
     userStatusResponse.setTokenId(tokenId);
     return userStatusResponse;

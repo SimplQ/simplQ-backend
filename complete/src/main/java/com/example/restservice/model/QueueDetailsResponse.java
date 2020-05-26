@@ -2,13 +2,33 @@ package com.example.restservice.model;
 
 import com.example.restservice.constants.UserStatus;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class QueueDetailsResponse {
   public static class User {
-    String name;
-    String contactNo;
-    String tokenId;
+    private String name;
+    private String contactNo;
+    private String tokenId;
+    private Date timestamp;
+
+    public Boolean getNotifyable() {
+      return notifyable;
+    }
+
+    public void setNotifyable(Boolean notifyable) {
+      this.notifyable = notifyable;
+    }
+
+    private Boolean notifyable;
+
+    public Date getTimestamp() {
+      return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+      this.timestamp = timestamp;
+    }
 
     public UserStatus getUserStatus() {
       return userStatus;
@@ -28,11 +48,19 @@ public class QueueDetailsResponse {
       this.tokenId = tokenId;
     }
 
-    public User(String name, String contactNo, String tokenId, UserStatus userStatus) {
+    public User(
+        String name,
+        String contactNo,
+        String tokenId,
+        UserStatus userStatus,
+        Boolean notifyable,
+        Date timestamp) {
       this.name = name;
       this.contactNo = contactNo;
       this.tokenId = tokenId;
       this.userStatus = userStatus;
+      this.notifyable = notifyable;
+      this.timestamp = timestamp;
     }
 
     public String getName() {
@@ -53,6 +81,16 @@ public class QueueDetailsResponse {
   }
 
   String queueId;
+  String queueName;
+
+  public String getQueueName() {
+    return queueName;
+  }
+
+  public void setQueueName(String queueName) {
+    this.queueName = queueName;
+  }
+
   List<User> users;
 
   public String getQueueId() {
@@ -71,12 +109,20 @@ public class QueueDetailsResponse {
     this.users = users;
   }
 
-  public QueueDetailsResponse(String queueId) {
+  public QueueDetailsResponse(String queueId, String queueName) {
     this.queueId = queueId;
+    this.queueName = queueName;
     this.users = new ArrayList<>();
   }
 
   public void addUser(com.example.restservice.model.User user) {
-    this.users.add(new User(user.name, user.contactNumber, user.getTokenId(), user.getStatus()));
+    this.users.add(
+        new User(
+            user.name,
+            user.contactNumber,
+            user.getTokenId(),
+            user.getStatus(),
+            user.getNotifyable(),
+            user.getTimestamp()));
   }
 }

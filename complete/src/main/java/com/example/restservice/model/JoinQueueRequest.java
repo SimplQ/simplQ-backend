@@ -3,6 +3,16 @@ package com.example.restservice.model;
 public class JoinQueueRequest {
   private String name;
   private String contactNumber;
+  private String queueId;
+  private Boolean notifyable; // TODO(Spelling)
+
+  public Boolean getNotifyable() {
+    return notifyable;
+  }
+
+  public void setNotifyable(Boolean notifyable) {
+    this.notifyable = notifyable;
+  }
 
   public String getQueueId() {
     return queueId;
@@ -11,8 +21,6 @@ public class JoinQueueRequest {
   public void setQueueId(String queueId) {
     this.queueId = queueId;
   }
-
-  private String queueId;
 
   public JoinQueueRequest() {}
 

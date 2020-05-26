@@ -2,7 +2,6 @@ package com.example.restservice.dao;
 
 import com.example.restservice.constants.UserStatus;
 import com.example.restservice.model.User;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,10 +21,6 @@ public class UserDao extends DaoBase {
     entityManager.close();
 
     return user;
-  }
-
-  public List<User> getUsersInQueue(String queueId) {
-    return queueDao.getQueue(queueId).getUsers();
   }
 
   public User getUser(String tokenId) {
