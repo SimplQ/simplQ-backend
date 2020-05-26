@@ -9,22 +9,28 @@ public class QueueDao extends DaoBase {
   public Queue createQueue(String queueName) {
     var newQueue = new Queue(queueName);
     var entityManager = entityManagerFactory.createEntityManager();
-    entityManager.getTransaction().begin();
-    entityManager.persist(newQueue);
-    entityManager.getTransaction().commit();
-    entityManager.close();
 
-    return newQueue;
+    try {
+      entityManager.getTransaction().begin();
+      entityManager.persist(newQueue);
+      entityManager.getTransaction().commit();
+      return newQueue;
+    } finally {
+      entityManager.close();
+    }
   }
 
   public Queue getQueue(String queueId) {
     var entityManager = entityManagerFactory.createEntityManager();
-    var queue = entityManager.find(Queue.class, queueId);
-    queue.getUsers().size(); // prefetch users
-    entityManager.close();
-    if (queue == null) {
-      throw new RuntimeException("Queue does not exist");
+    try {
+      var queue = entityManager.find(Queue.class, queueId);
+      queue.getUsers().size(); // prefetch users
+      if (queue == null) {
+        throw new RuntimeException("Queue does not exist");
+      }
+      return queue;
+    } finally {
+      entityManager.close();
     }
-    return queue;
   }
 }
