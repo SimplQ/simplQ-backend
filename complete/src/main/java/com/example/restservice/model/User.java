@@ -25,6 +25,10 @@ public class User {
 
   String name;
   String contactNumber;
+  UserStatus status;
+  Boolean notifyable;
+
+  @ManyToOne Queue queue;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
@@ -38,15 +42,24 @@ public class User {
     this.queue = queue;
   }
 
-  @ManyToOne Queue queue;
+  public Boolean getNotifyable() {
+    return notifyable;
+  }
 
-  public User(String name, String contactNumber, UserStatus status) {
+  public void setNotifyable(Boolean notifyable) {
+    this.notifyable = notifyable;
+  }
+
+  public void setTimestamp(Date timestamp) {
+    this.timestamp = timestamp;
+  }
+
+  public User(String name, String contactNumber, UserStatus status, Boolean notifyable) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
+    this.notifyable = notifyable;
   }
-
-  UserStatus status;
 
   public UserStatus getStatus() {
     return status;
