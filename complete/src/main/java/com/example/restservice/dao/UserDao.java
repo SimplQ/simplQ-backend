@@ -25,13 +25,9 @@ public class UserDao extends DaoBase {
 
   public User getUser(String tokenId) {
     var entityManager = entityManagerFactory.createEntityManager();
-    return entityManager.find(User.class, tokenId);
-  }
-
-  public void removeUser(String queueId, String tokenId) {
-    var entityManager = entityManagerFactory.createEntityManager();
     var user = entityManager.find(User.class, tokenId);
-    entityManager.remove(user);
+    entityManager.close();
+    return user;
   }
 
   public void UpdateUserStatus(String tokenId, UserStatus status) {
@@ -51,12 +47,15 @@ public class UserDao extends DaoBase {
       return Optional.empty();
     }
 
-    return Optional.of(
-        user.getQueue().getUsers().stream()
-            .filter(
-                fellowUser ->
-                    fellowUser.getTimestamp().before(user.getTimestamp())
-                        && !fellowUser.getStatus().equals(UserStatus.REMOVED))
-            .count());
+    var aheadCount =
+        Optional.of(
+            user.getQueue().getUsers().stream()
+                .filter(
+                    fellowUser ->
+                        fellowUser.getTimestamp().before(user.getTimestamp())
+                            && !fellowUser.getStatus().equals(UserStatus.REMOVED))
+                .count());
+    entityManager.close();
+    return aheadCount;
   }
 }
