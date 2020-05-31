@@ -13,49 +13,61 @@ public class UserDao extends DaoBase {
 
   public User addUserToQueue(String queueId, User user) {
     var entityManager = entityManagerFactory.createEntityManager();
-    entityManager.getTransaction().begin();
-    var queue = queueDao.getQueue(queueId);
-    user.setQueue(queue);
-    entityManager.persist(user);
-    entityManager.getTransaction().commit();
-    entityManager.close();
-
-    return user;
+    try {
+      entityManager.getTransaction().begin();
+      var queue = queueDao.getQueue(queueId);
+      user.setQueue(queue);
+      entityManager.persist(user);
+      entityManager.getTransaction().commit();
+      return user;
+    } finally {
+      entityManager.close();
+    }
   }
 
   public User getUser(String tokenId) {
     var entityManager = entityManagerFactory.createEntityManager();
-    var user = entityManager.find(User.class, tokenId);
-    entityManager.close();
-    return user;
+    try {
+      var user = entityManager.find(User.class, tokenId);
+      entityManager.close();
+      return user;
+    } finally {
+      entityManager.close();
+    }
   }
 
   public void UpdateUserStatus(String tokenId, UserStatus status) {
     var entityManager = entityManagerFactory.createEntityManager();
-    entityManager.getTransaction().begin();
-    var user = entityManager.find(User.class, tokenId);
-    user.setStatus(status);
-    entityManager.getTransaction().commit();
-    entityManager.close();
+    try {
+      entityManager.getTransaction().begin();
+      var user = entityManager.find(User.class, tokenId);
+      user.setStatus(status);
+      entityManager.getTransaction().commit();
+    } finally {
+      entityManager.close();
+    }
   }
 
   public Optional<Long> getAheadCount(String tokenId) {
     var entityManager = entityManagerFactory.createEntityManager();
-    var user = entityManager.find(User.class, tokenId);
+    try {
+      var user = entityManager.find(User.class, tokenId);
 
-    if (user.getStatus() == UserStatus.REMOVED) {
-      return Optional.empty();
+      if (user.getStatus() == UserStatus.REMOVED) {
+        return Optional.empty();
+      }
+
+      var aheadCount =
+          Optional.of(
+              user.getQueue().getUsers().stream()
+                  .filter(
+                      fellowUser ->
+                          fellowUser.getTimestamp().before(user.getTimestamp())
+                              && !fellowUser.getStatus().equals(UserStatus.REMOVED))
+                  .count());
+      return aheadCount;
+    } finally {
+      entityManager.close();
     }
-
-    var aheadCount =
-        Optional.of(
-            user.getQueue().getUsers().stream()
-                .filter(
-                    fellowUser ->
-                        fellowUser.getTimestamp().before(user.getTimestamp())
-                            && !fellowUser.getStatus().equals(UserStatus.REMOVED))
-                .count());
-    entityManager.close();
-    return aheadCount;
   }
 }
