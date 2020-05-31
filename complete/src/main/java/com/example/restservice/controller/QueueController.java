@@ -6,7 +6,6 @@ import com.example.restservice.model.QueueDetailsRequest;
 import com.example.restservice.model.QueueDetailsResponse;
 import com.example.restservice.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1")
-@CrossOrigin(origins = "*")
 public class QueueController {
 
   @Autowired private QueueService queueService;
