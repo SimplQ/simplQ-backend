@@ -1,4 +1,4 @@
-package com.example.restservice.model;
+package com.example.restservice.dao;
 
 import com.example.restservice.constants.UserStatus;
 import java.util.Date;

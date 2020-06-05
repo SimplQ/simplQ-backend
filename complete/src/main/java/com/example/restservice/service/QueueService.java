@@ -1,14 +1,14 @@
 package com.example.restservice.service;
 
 import com.example.restservice.constants.UserStatus;
+import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
+import com.example.restservice.dao.User;
 import com.example.restservice.dao.UserRepository;
 import com.example.restservice.model.CreateQueueRequest;
 import com.example.restservice.model.CreateQueueResponse;
 import com.example.restservice.model.JoinQueueRequest;
-import com.example.restservice.model.Queue;
 import com.example.restservice.model.QueueDetailsResponse;
-import com.example.restservice.model.User;
 import com.example.restservice.model.UserStatusResponse;
 import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;

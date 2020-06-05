@@ -115,11 +115,11 @@ public class QueueDetailsResponse {
     this.users = new ArrayList<>();
   }
 
-  public void addUser(com.example.restservice.model.User user) {
+  public void addUser(com.example.restservice.dao.User user) {
     this.users.add(
         new User(
-            user.name,
-            user.contactNumber,
+            user.getName(),
+            user.getContactNumber(),
             user.getTokenId(),
             user.getStatus(),
             user.getNotifyable(),

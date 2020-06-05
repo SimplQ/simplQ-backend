@@ -1,4 +1,4 @@
-package com.example.restservice.model;
+package com.example.restservice.dao;
 
 import java.util.List;
 import javax.persistence.CascadeType;

@@ -1,7 +1,6 @@
 package com.example.restservice.dao;
 
 import com.example.restservice.constants.UserStatus;
-import com.example.restservice.model.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
