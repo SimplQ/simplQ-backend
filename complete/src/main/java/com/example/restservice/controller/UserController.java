@@ -4,6 +4,7 @@ import com.example.restservice.model.DeleteUserRequest;
 import com.example.restservice.model.JoinQueueRequest;
 import com.example.restservice.model.UserStatusRequest;
 import com.example.restservice.model.UserStatusResponse;
+import com.example.restservice.service.QueueService;
 import com.example.restservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class UserController {
   @Autowired private UserService userService;
+  @Autowired private QueueService queueService; // TODO move to queue controller
 
   @PostMapping(path = "v1/user/status")
   public UserStatusResponse getUserStatus(@RequestBody UserStatusRequest userStatusRequest) {
@@ -23,7 +25,7 @@ public class UserController {
 
   @PostMapping(path = "v1/user/add")
   public UserStatusResponse joinQueue(@RequestBody JoinQueueRequest joinQueueRequest) {
-    return userService.addUserToQueue(joinQueueRequest);
+    return queueService.joinQueue(joinQueueRequest);
   }
 
   @PostMapping(path = "v1/user/delete")
