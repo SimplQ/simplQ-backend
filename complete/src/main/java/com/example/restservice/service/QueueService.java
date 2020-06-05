@@ -19,6 +19,7 @@ public class QueueService {
 
   @Autowired private QueueRepository queueRepository;
   @Autowired private UserRepository userRepository;
+  @Autowired private UserService userService; // TODO remove
 
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     var queue = queueRepository.save(new Queue(createQueueRequest.getQueueName()));
@@ -41,9 +42,11 @@ public class QueueService {
                   userRepository.save(newUser);
                   return newUser;
                 })
-            .orElseThrow(RuntimeException::new); // TODO Custom Exception
-    int aheadCount = 10; // get aheadcount // todo
-    return new UserStatusResponse(user.getTokenId(), user.getStatus(), aheadCount);
+            .orElseThrow(RuntimeException::new); // TODO Exception
+    return new UserStatusResponse(
+        user.getTokenId(),
+        user.getStatus(),
+        userService.getAheadCount(user.getTokenId()).orElseThrow(RuntimeException::new)); // TODO Ex
   }
 
   public QueueDetailsResponse fetchQueueData(String queueId) {

@@ -7,6 +7,7 @@ import com.example.restservice.model.UserStatusRequest;
 import com.example.restservice.model.UserStatusResponse;
 import com.example.restservice.service.smsService.SmsManager;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,13 @@ public class UserService {
         getAheadCount(tokenId).orElseThrow(RuntimeException::new));
   }
 
+  @Transactional
   public void deleteUserFromQueue(DeleteUserRequest deleteUserRequest) {
     userRepository.setUserStatusById(UserStatus.REMOVED, deleteUserRequest.getTokenId());
   }
 
   /** Notify user on User page. Send SMS notification */
+  @Transactional
   public void alertUser(UserStatusRequest userStatusRequest) {
     var user =
         userRepository
