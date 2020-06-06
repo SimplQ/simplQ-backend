@@ -5,6 +5,8 @@ import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
 import com.example.restservice.dao.User;
 import com.example.restservice.dao.UserRepository;
+import com.example.restservice.exceptions.SQInternalServerException;
+import com.example.restservice.exceptions.SQInvalidRequestException;
 import com.example.restservice.model.CreateQueueRequest;
 import com.example.restservice.model.CreateQueueResponse;
 import com.example.restservice.model.JoinQueueRequest;
@@ -42,11 +44,11 @@ public class QueueService {
                   userRepository.save(newUser);
                   return newUser;
                 })
-            .orElseThrow(RuntimeException::new); // TODO Exception
+            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
     return new UserStatusResponse(
         user.getTokenId(),
         user.getStatus(),
-        userService.getAheadCount(user.getTokenId()).orElseThrow(RuntimeException::new)); // TODO Ex
+        userService.getAheadCount(user.getTokenId()).orElseThrow(SQInternalServerException::new));
   }
 
   public QueueDetailsResponse fetchQueueData(String queueId) {
@@ -61,6 +63,6 @@ public class QueueService {
                   .forEach(resp::addUser);
               return resp;
             })
-        .orElseThrow(RuntimeException::new); // Todo Custom Exception
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 }
