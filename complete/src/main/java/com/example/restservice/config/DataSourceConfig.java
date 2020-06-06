@@ -15,7 +15,6 @@ import java.util.Map;
 public class DataSourceConfig {
 
 
-
     @Bean
     public DataSource dataSource() {
 
@@ -27,15 +26,11 @@ public class DataSourceConfig {
             String password = System.getenv("RDS_PASSWORD");
             String hostname = System.getenv("RDS_HOSTNAME");
             String port = System.getenv("RDS_PORT");
-
             dataSourceBuilder.driverClassName("org.postgresql.Driver");
             dataSourceBuilder.url("jdbc:postgresql://" + hostname + ":" + port + "/" + dbName);
             dataSourceBuilder.username(userName);
             dataSourceBuilder.password(password);
-
-
-        }
-        else {
+        } else {
             dataSourceBuilder.driverClassName("org.h2.Driver");
             dataSourceBuilder.url("jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;");
             dataSourceBuilder.username("sa");
