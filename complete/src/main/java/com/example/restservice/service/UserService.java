@@ -2,6 +2,7 @@ package com.example.restservice.service;
 
 import com.example.restservice.constants.UserStatus;
 import com.example.restservice.dao.UserRepository;
+import com.example.restservice.exceptions.SQInvalidRequestException;
 import com.example.restservice.model.DeleteUserRequest;
 import com.example.restservice.model.UserStatusRequest;
 import com.example.restservice.model.UserStatusResponse;
@@ -34,7 +35,7 @@ public class UserService {
     var user =
         userRepository
             .findById(userStatusRequest.getTokenId())
-            .orElseThrow(RuntimeException::new); // TODO CUSTOM EXCEPTION
+            .orElseThrow(SQInvalidRequestException::userNotFoundException);
     if (user.getStatus() == UserStatus.WAITING) {
       SmsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
     }
@@ -42,7 +43,10 @@ public class UserService {
   }
 
   public Optional<Long> getAheadCount(String tokenId) {
-    var user = userRepository.findById(tokenId).orElseThrow(RuntimeException::new); // TODO
+    var user =
+        userRepository
+            .findById(tokenId)
+            .orElseThrow(SQInvalidRequestException::userNotFoundException);
 
     if (user.getStatus() == UserStatus.REMOVED) {
       return Optional.empty();
