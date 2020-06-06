@@ -1,63 +1,61 @@
 package com.example.restservice.service;
 
 import com.example.restservice.constants.UserStatus;
-import com.example.restservice.dao.QueueDao;
-import com.example.restservice.dao.UserDao;
+import com.example.restservice.dao.UserRepository;
 import com.example.restservice.model.DeleteUserRequest;
-import com.example.restservice.model.JoinQueueRequest;
-import com.example.restservice.model.User;
 import com.example.restservice.model.UserStatusRequest;
 import com.example.restservice.model.UserStatusResponse;
 import com.example.restservice.service.smsService.SmsManager;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-  @Autowired private UserDao userDao;
-  @Autowired private QueueDao queueDao;
-
-  public UserStatusResponse addUserToQueue(JoinQueueRequest joinQueueRequest) {
-    var newUser =
-        new User(
-            joinQueueRequest.getName(),
-            joinQueueRequest.getContactNumber(),
-            UserStatus.WAITING,
-            joinQueueRequest.getNotifyable());
-    var tokenId = userDao.addUserToQueue(joinQueueRequest.getQueueId(), newUser).getTokenId();
-    var response = new UserStatusResponse();
-    userDao
-        .getAheadCount(tokenId)
-        .ifPresentOrElse(
-            response::setAheadCount,
-            () -> {
-              throw new IllegalStateException();
-            });
-    response.setUserStatus(newUser.getStatus());
-    response.setTokenId(tokenId);
-    return response;
-  }
+  @Autowired private UserRepository userRepository;
 
   public UserStatusResponse getStatus(String tokenId) {
-    var userStatusResponse = new UserStatusResponse();
-    var user = userDao.getUser(tokenId);
-    userStatusResponse.setUserStatus(user.getStatus());
-    userDao.getAheadCount(tokenId).ifPresent(userStatusResponse::setAheadCount);
-    userStatusResponse.setTokenId(tokenId);
-    return userStatusResponse;
+    return new UserStatusResponse(
+        tokenId,
+        userRepository.findById(tokenId).orElseThrow(RuntimeException::new).getStatus(),
+        getAheadCount(tokenId).orElseThrow(RuntimeException::new));
   }
 
+  @Transactional
   public void deleteUserFromQueue(DeleteUserRequest deleteUserRequest) {
-    userDao.UpdateUserStatus(deleteUserRequest.getTokenId(), UserStatus.REMOVED);
+    userRepository.setUserStatusById(UserStatus.REMOVED, deleteUserRequest.getTokenId());
   }
 
   /** Notify user on User page. Send SMS notification */
+  @Transactional
   public void alertUser(UserStatusRequest userStatusRequest) {
-    // send SMS notification
-    var user = userDao.getUser(userStatusRequest.getTokenId());
-    SmsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
+    var user =
+        userRepository
+            .findById(userStatusRequest.getTokenId())
+            .orElseThrow(RuntimeException::new); // TODO CUSTOM EXCEPTION
+    if (user.getStatus() == UserStatus.WAITING) {
+      SmsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
+    }
+    userRepository.setUserStatusById(UserStatus.NOTIFIED, userStatusRequest.getTokenId());
+  }
 
-    userDao.UpdateUserStatus(userStatusRequest.getTokenId(), UserStatus.NOTIFIED);
+  public Optional<Long> getAheadCount(String tokenId) {
+    var user = userRepository.findById(tokenId).orElseThrow(RuntimeException::new); // TODO
+
+    if (user.getStatus() == UserStatus.REMOVED) {
+      return Optional.empty();
+    }
+
+    var aheadCount =
+        Optional.of(
+            user.getQueue().getUsers().stream()
+                .filter(
+                    fellowUser ->
+                        fellowUser.getTimestamp().before(user.getTimestamp())
+                            && !fellowUser.getStatus().equals(UserStatus.REMOVED))
+                .count());
+    return aheadCount;
   }
 }

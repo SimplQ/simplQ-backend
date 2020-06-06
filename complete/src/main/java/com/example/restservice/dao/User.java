@@ -1,7 +1,6 @@
-package com.example.restservice.model;
+package com.example.restservice.dao;
 
 import com.example.restservice.constants.UserStatus;
-import java.sql.Timestamp;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "QueueUser") // As user is a reserved keyword in PostgreSQL
 public class User {
-  public User() {}
+  protected User() {}
 
   @Id
   @GeneratedValue(generator = "uuid2")
@@ -46,14 +45,6 @@ public class User {
     return notifyable;
   }
 
-  public void setNotifyable(Boolean notifyable) {
-    this.notifyable = notifyable;
-  }
-
-  public void setTimestamp(Date timestamp) {
-    this.timestamp = timestamp;
-  }
-
   public User(String name, String contactNumber, UserStatus status, Boolean notifyable) {
     this.name = name;
     this.contactNumber = contactNumber;
@@ -73,31 +64,15 @@ public class User {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public String getContactNumber() {
     return contactNumber;
-  }
-
-  public void setContactNumber(String contactNumber) {
-    this.contactNumber = contactNumber;
   }
 
   public String getTokenId() {
     return tokenId;
   }
 
-  public void setTokenId(String tokenId) {
-    this.tokenId = tokenId;
-  }
-
   public Date getTimestamp() {
     return timestamp;
-  }
-
-  public void setTimestamp(Timestamp timestamp) {
-    this.timestamp = timestamp;
   }
 }

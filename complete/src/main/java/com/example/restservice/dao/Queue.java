@@ -1,4 +1,4 @@
-package com.example.restservice.model;
+package com.example.restservice.dao;
 
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -27,11 +27,7 @@ public class Queue {
     return users;
   }
 
-  public Queue() {}
-
-  public void setUsers(List<User> users) {
-    this.users = users;
-  }
+  protected Queue() {}
 
   public String getQueueName() {
     return queueName;
@@ -41,19 +37,7 @@ public class Queue {
     this.queueName = queueName;
   }
 
-  public void setQueueName(String queueName) {
-    this.queueName = queueName;
-  }
-
   public String getQueueId() {
     return queueId;
-  }
-
-  public void setQueueId(String queueId) {
-    this.queueId = queueId;
-  }
-
-  public void addUser(User user) {
-    users.add(user);
   }
 }

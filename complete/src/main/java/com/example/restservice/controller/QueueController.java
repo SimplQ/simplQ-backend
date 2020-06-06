@@ -6,6 +6,7 @@ import com.example.restservice.model.QueueDetailsRequest;
 import com.example.restservice.model.QueueDetailsResponse;
 import com.example.restservice.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +19,14 @@ public class QueueController {
   @Autowired private QueueService queueService;
 
   @PostMapping(path = "/queue/info")
-  public QueueDetailsResponse getQueueDetails(
+  public ResponseEntity<QueueDetailsResponse> getQueueDetails(
       @RequestBody QueueDetailsRequest queueDetailsRequest) {
-    return queueService.fetchQueueData(queueDetailsRequest.getQueueId());
+    return ResponseEntity.ok(queueService.fetchQueueData(queueDetailsRequest.getQueueId()));
   }
 
   @PostMapping(path = "/queue/create")
-  public CreateQueueResponse createQueue(@RequestBody CreateQueueRequest createQueueRequest) {
-    return queueService.createQueue(createQueueRequest);
+  public ResponseEntity<CreateQueueResponse> createQueue(
+      @RequestBody CreateQueueRequest createQueueRequest) {
+    return ResponseEntity.ok(queueService.createQueue(createQueueRequest));
   }
 }
