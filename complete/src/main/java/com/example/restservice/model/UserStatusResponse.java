@@ -11,16 +11,8 @@ public class UserStatusResponse {
     return tokenId;
   }
 
-  public void setTokenId(String tokenId) {
-    this.tokenId = tokenId;
-  }
-
   public UserStatus getUserStatus() {
     return userStatus;
-  }
-
-  public void setUserStatus(UserStatus userStatus) {
-    this.userStatus = userStatus;
   }
 
   public long getAheadCount() {
@@ -29,11 +21,9 @@ public class UserStatusResponse {
 
   public UserStatusResponse() {}
 
-  public UserStatusResponse(int aheadCount) {
-    this.aheadCount = aheadCount;
-  }
-
-  public void setAheadCount(long aheadCount) {
+  public UserStatusResponse(String tokenId, UserStatus userStatus, long aheadCount) {
+    this.tokenId = tokenId;
+    this.userStatus = userStatus;
     this.aheadCount = aheadCount;
   }
 }
