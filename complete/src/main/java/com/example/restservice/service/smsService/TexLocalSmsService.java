@@ -1,20 +1,28 @@
 package com.example.restservice.service.smsService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.example.restservice.service.smsService.SmsConstants.SMS_MESSAGE;
 
+import com.example.restservice.service.SecretsManager;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import static com.example.restservice.service.smsService.SmsConstants.SMS_MESSAGE;
-
+@Component
 public class TexLocalSmsService implements SmsService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TexLocalSmsService.class);
-  private static final String API_KEY = "***REMOVED***";
-  private static final String SENDER_NAME = "TXTLCL";
-  private static final String TEXT_LOCAL_API = "https://api.textlocal.in/send/?";
+  private final Logger LOGGER = LoggerFactory.getLogger(TexLocalSmsService.class);
+  private final String API_KEY;
+  private final String SENDER_NAME = "TXTLCL";
+  private final String TEXT_LOCAL_API = "https://api.textlocal.in/send/?";
+
+  @Autowired
+  public TexLocalSmsService(SecretsManager secretsManager) {
+    API_KEY = secretsManager.getSecret("TEXT_LOCAL_API_KEY");
+  }
 
   /** uncomment postSMSRequest function on go-live. */
   @Override

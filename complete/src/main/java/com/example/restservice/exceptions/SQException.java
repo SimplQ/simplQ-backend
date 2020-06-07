@@ -1,4 +1,15 @@
 package com.example.restservice.exceptions;
 
 /** Base exception class that all our custom exceptions will extend */
-public abstract class SQException extends RuntimeException {}
+public abstract class SQException extends RuntimeException {
+
+  public SQException() {}
+
+  public SQException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public SQException(String message) {
+    super(message);
+  }
+}
