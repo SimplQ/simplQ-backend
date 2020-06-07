@@ -1,10 +1,10 @@
 # SimplQ Backend
 
-[SimplQ](https://simplq.me) is a completely web based queue management solution that anyone can use to create instant queues. Backend of the project is written in Java, and deployed on AWS. 
+[SimplQ](https://simplq.me) is a completely web based queue management solution that anyone can use to create instant queues. 
 
 ### Development Envirmonment Setup Instructions
 
-These steps are to be followed when you are running the project for the first time.
+The project is written in Java, and deployed on AWS. These steps are to be followed when you are running the project for the first time.
 
 1. Install Java 11 and maven. 
 2. Clone this project
