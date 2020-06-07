@@ -68,6 +68,11 @@
       <artifactId>hibernate-core</artifactId>
       <version>5.4.15.Final</version>
     </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-secretsmanager</artifactId>
+      <version>1.11.355</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

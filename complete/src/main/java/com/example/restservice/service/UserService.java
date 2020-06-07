@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   @Autowired private UserRepository userRepository;
+  @Autowired private SmsManager smsManager;
 
   public UserStatusResponse getStatus(String tokenId) {
     return new UserStatusResponse(
@@ -41,7 +42,7 @@ public class UserService {
             .findById(userStatusRequest.getTokenId())
             .orElseThrow(SQInvalidRequestException::userNotFoundException);
     if (user.getStatus() == UserStatus.WAITING) {
-      SmsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
+      smsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
     }
     userRepository.setUserStatusById(UserStatus.NOTIFIED, userStatusRequest.getTokenId());
   }
