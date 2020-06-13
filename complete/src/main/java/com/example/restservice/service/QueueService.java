@@ -14,6 +14,7 @@ import com.example.restservice.model.QueueDetailsResponse;
 import com.example.restservice.model.UserStatusResponse;
 import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,8 +25,14 @@ public class QueueService {
   @Autowired private UserService userService; // TODO remove
 
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
-    var queue = queueRepository.save(new Queue(createQueueRequest.getQueueName()));
-    return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
+    try {
+      var queue = queueRepository.save(new Queue(createQueueRequest.getQueueName()));
+      return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
+    } catch (DataIntegrityViolationException de) {
+      throw SQInvalidRequestException.queueNameNotUniqueException();
+    } catch (Exception e) {
+      throw new SQInternalServerException("Unable to create queue: ", e);
+    }
   }
 
   public UserStatusResponse joinQueue(JoinQueueRequest joinQueueRequest) {
