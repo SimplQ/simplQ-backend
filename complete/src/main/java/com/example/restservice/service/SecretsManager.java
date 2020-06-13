@@ -24,6 +24,12 @@ public class SecretsManager {
   public SecretsManager(
       @Value("${aws.secretsmanager.secretName}") String secretName,
       @Value("${aws.secretsmanager.region}") String region) {
+    if (System.getenv().get("SQ_ENV") == null) {
+      // The secrets need to be loaded only on AWS. Skipping on local setup.
+      secrets = null;
+      return;
+    }
+
     AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard().withRegion(region).build();
 
     GetSecretValueRequest getSecretValueRequest =
@@ -52,6 +58,10 @@ public class SecretsManager {
   }
 
   public String getSecret(String key) {
+    if (secrets == null) {
+      // Secrets are read only if SQ_ENV env variable is set
+      return "NOT_SET";
+    }
     return secrets.get(key).asText();
   }
 }
