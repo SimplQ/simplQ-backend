@@ -2,6 +2,7 @@ package com.example.restservice.dao;
 
 import java.util.List;
 import javax.persistence.*;
+
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
