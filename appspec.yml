@@ -63,3 +63,8 @@ files:
 #   revision's file bundle.
 # During the AfterInstall deployment lifecycle event, run the commands 
 #   in the script specified in "location".
+hooks:
+  AfterInstall:
+    - location: Scripts/runJar.sh
+      timeout: 360
+
