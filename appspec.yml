@@ -67,3 +67,4 @@ hooks:
   AfterInstall:
     - location: Scripts/runJar.sh
       timeout: 360
+
