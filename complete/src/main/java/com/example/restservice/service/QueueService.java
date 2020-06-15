@@ -53,9 +53,9 @@ public class QueueService {
                 })
             .orElseThrow(SQInvalidRequestException::queueNotFoundException);
     return new UserStatusResponse(
-        userService.getAheadCount(user.getTokenId()).orElseThrow(SQInternalServerException::new),
         user.getTokenId(),
-        user.getStatus());
+        user.getStatus(),
+        userService.getAheadCount(user.getTokenId()).orElseThrow(SQInternalServerException::new));
   }
 
   public QueueDetailsResponse fetchQueueData(String queueId) {

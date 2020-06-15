@@ -14,7 +14,10 @@ import lombok.Setter;
 @Setter
 public class QueueDetailsResponse {
 
-  @Getter@Setter@AllArgsConstructor
+
+  @AllArgsConstructor
+  @Getter
+  @Setter
   public static class User {
     private String name;
     private String contactNo;

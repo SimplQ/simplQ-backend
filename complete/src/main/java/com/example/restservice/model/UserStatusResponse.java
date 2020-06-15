@@ -10,8 +10,11 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserStatusResponse {
-  long aheadCount;
+
   String tokenId;
   UserStatus userStatus;
+  long aheadCount;
+
+  ;
 
 }

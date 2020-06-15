@@ -21,12 +21,12 @@ public class UserService {
 
   public UserStatusResponse getStatus(String tokenId) {
     return new UserStatusResponse(
-        getAheadCount(tokenId).orElseThrow(SQInternalServerException::new),
         tokenId,
         userRepository
-                .findById(tokenId)
-                .orElseThrow(SQInvalidRequestException::userNotFoundException)
-                .getStatus());
+            .findById(tokenId)
+            .orElseThrow(SQInvalidRequestException::userNotFoundException)
+            .getStatus(),
+        getAheadCount(tokenId).orElseThrow(SQInternalServerException::new));
   }
 
   @Transactional
