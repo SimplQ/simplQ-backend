@@ -1,29 +1,20 @@
 package com.example.restservice.model;
 
 import com.example.restservice.constants.UserStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserStatusResponse {
-  long aheadCount;
+
   String tokenId;
   UserStatus userStatus;
+  long aheadCount;
 
-  public String getTokenId() {
-    return tokenId;
-  }
+  ;
 
-  public UserStatus getUserStatus() {
-    return userStatus;
-  }
-
-  public long getAheadCount() {
-    return aheadCount;
-  }
-
-  public UserStatusResponse() {}
-
-  public UserStatusResponse(String tokenId, UserStatus userStatus, long aheadCount) {
-    this.tokenId = tokenId;
-    this.userStatus = userStatus;
-    this.aheadCount = aheadCount;
-  }
 }
