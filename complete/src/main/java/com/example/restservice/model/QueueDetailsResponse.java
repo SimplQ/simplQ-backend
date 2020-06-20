@@ -37,6 +37,8 @@ public class QueueDetailsResponse {
   String queueName;
   List<User> users;
 
+  boolean isPasswordProtected;
+
 
   public QueueDetailsResponse(String queueId, String queueName) {
     this.queueId = queueId;

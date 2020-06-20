@@ -6,14 +6,16 @@ public class SQInvalidRequestException extends SQException {
   private enum ReasonCode {
     QUEUE_NOT_FOUND,
     USER_NOT_FOUND,
-    QUEUE_NAME_ALREADY_EXISTS
+    QUEUE_NAME_ALREADY_EXISTS,
+    QUEUE_PASSWORD_INCORRECT
   }
 
   private final ImmutableMap<ReasonCode, String> message =
       ImmutableMap.of(
           ReasonCode.QUEUE_NOT_FOUND, "The queue does not exist",
           ReasonCode.USER_NOT_FOUND, "The user does not exist",
-          ReasonCode.QUEUE_NAME_ALREADY_EXISTS, "The queue name already exists"
+          ReasonCode.QUEUE_NAME_ALREADY_EXISTS, "The queue name already exists",
+          ReasonCode.QUEUE_PASSWORD_INCORRECT, "Incorrect password for protected queue"
       );
 
   private final ReasonCode reasonCode;
@@ -34,6 +36,9 @@ public class SQInvalidRequestException extends SQException {
     return new SQInvalidRequestException(ReasonCode.QUEUE_NAME_ALREADY_EXISTS);
   }
 
+  public  static SQInvalidRequestException queuePasswordIncorrectException(){
+    return  new SQInvalidRequestException(ReasonCode.QUEUE_PASSWORD_INCORRECT);
+  }
   public ReasonCode getReasonCode() {
     return reasonCode;
   }
