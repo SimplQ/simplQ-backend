@@ -13,6 +13,7 @@ import com.example.restservice.model.JoinQueueRequest;
 import com.example.restservice.model.QueueDetailsResponse;
 import com.example.restservice.model.UserStatusResponse;
 import java.util.Comparator;
+import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,30 @@ public class QueueService {
   @Autowired private UserRepository userRepository;
   @Autowired private UserService userService; // TODO remove
 
+  private Random randomNumber = new Random();
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
-      var queue = queueRepository.save(new Queue(createQueueRequest.getQueueName()));
-      return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
+
+
+
+      Queue queueDao;
+      // if isPasswordProtected is true, generate a 4 digit pin.
+
+      if(createQueueRequest.getIsPasswordProtected()) {
+        int queuePin=randomNumber.nextInt(10000);
+        queueDao=new Queue(createQueueRequest.getQueueName(),createQueueRequest.getIsPasswordProtected(),queuePin);
+        var queue = queueRepository.save(queueDao);
+
+        return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId(),queue.getQueuePassword());
+      }
+      else{
+        queueDao =new Queue(createQueueRequest.getQueueName());
+        var queue = queueRepository.save(queueDao);
+        return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
+      }
+
+
+
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
     } catch (Exception e) {
@@ -36,11 +57,18 @@ public class QueueService {
   }
 
   public UserStatusResponse joinQueue(JoinQueueRequest joinQueueRequest) {
+
     var user =
         queueRepository
             .findById(joinQueueRequest.getQueueId())
             .map(
                 queue -> {
+                  // if Pin is incorrect no access to queue.
+                  if (queue.isPasswordProtected()
+                      && queue.getQueuePassword() != joinQueueRequest.getQueuePassword()) {
+                    throw SQInvalidRequestException.queuePasswordIncorrectException();
+                  }
+
                   var newUser =
                       new User(
                           joinQueueRequest.getName(),
@@ -68,8 +96,12 @@ public class QueueService {
                   .filter(user -> user.getStatus() != UserStatus.REMOVED)
                   .sorted(Comparator.comparing(User::getTimestamp))
                   .forEach(resp::addUser);
+              resp.setPasswordProtected(queue.isPasswordProtected());
               return resp;
             })
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
+
+
+
 }
