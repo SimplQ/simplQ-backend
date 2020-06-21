@@ -1,19 +1,11 @@
 package com.example.restservice.model;
 
+import lombok.Data;
+
+@Data
 public class CreateQueueRequest {
   String queueName;
 
-  public CreateQueueRequest(String queueName) {
-    this.queueName = queueName;
-  }
 
-  public CreateQueueRequest() {}
 
-  public String getQueueName() {
-    return queueName;
-  }
-
-  public void setQueueName(String queueName) {
-    this.queueName = queueName;
-  }
 }
