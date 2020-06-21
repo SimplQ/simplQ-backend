@@ -1,0 +1,41 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+    commands:
+      - echo Entered the install phase...
+      - apt-get update -y
+      - apt-get install -y maven
+    finally:
+      - echo This always runs even if the update or install command fails 
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+    finally:
+      - echo This always runs even if the login command fails 
+  build:
+    commands:
+      - echo Entered the build phase...
+      - echo Build started on `date`
+      - cd complete/
+      - echo $HOME
+      - ls $HOME
+      - echo $CODEBUILD_SRC_DIR
+      - mvn package
+      - ls -la target/
+    finally:
+      - echo This always runs even if the install command fails
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      - echo Build completed on `date`
+ 
+artifacts:
+  files:
+    - '**/*'
+
+cache:
+  paths:
+    - '/root/.m2/**/*'
