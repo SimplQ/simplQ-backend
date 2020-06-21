@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -22,8 +23,11 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 public class SecurityAdvice extends RequestBodyAdviceAdapter {
 
   private final JwkProvider provider;
+  private final LoggedInUserInfo loggedInUserInfo;
 
-  SecurityAdvice() throws MalformedURLException {
+  @Autowired
+  SecurityAdvice(LoggedInUserInfo loggedInUserInfo) throws MalformedURLException {
+    this.loggedInUserInfo = loggedInUserInfo;
     String keyUrl = "https://cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_iQdl5AVrA/.well-known/jwks.json";
     provider = new UrlJwkProvider(new URL(keyUrl));
   }
@@ -50,7 +54,8 @@ public class SecurityAdvice extends RequestBodyAdviceAdapter {
     if (!isValid(jwt)) {
       throw new RuntimeException("User not verified"); // 401 Unauthorized
     }
-    
+    loggedInUserInfo.setUserId(jwt.getClaim("username").asString());
+    return inputMessage;
   }
 
   @Override
