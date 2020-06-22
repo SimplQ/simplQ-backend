@@ -26,19 +26,12 @@ public class QueueDetailsResponse {
     UserStatus userStatus;
     private Boolean notifyable;
 
-
-
-
-
-
   }
 
   String queueId;
   String queueName;
   List<User> users;
-
   boolean isPasswordProtected;
-
 
   public QueueDetailsResponse(String queueId, String queueName) {
     this.queueId = queueId;
@@ -49,11 +42,11 @@ public class QueueDetailsResponse {
   public void addUser(com.example.restservice.dao.User user) {
     this.users.add(
         new User(
-                    user.getName(),
-                    user.getContactNumber(),
-                    user.getTokenId(),
-                    user.getTimestamp(),
-                    user.getStatus(),
-                    user.getNotifyable()));
+            user.getName(),
+            user.getContactNumber(),
+            user.getTokenId(),
+            user.getTimestamp(),
+            user.getStatus(),
+            user.getNotifyable()));
   }
 }
