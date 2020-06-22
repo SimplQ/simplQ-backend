@@ -13,8 +13,7 @@ public class SQInvalidRequestException extends SQException {
       ImmutableMap.of(
           ReasonCode.QUEUE_NOT_FOUND, "The queue does not exist",
           ReasonCode.USER_NOT_FOUND, "The user does not exist",
-          ReasonCode.QUEUE_NAME_ALREADY_EXISTS, "The queue name already exists"
-      );
+          ReasonCode.QUEUE_NAME_ALREADY_EXISTS, "The queue name already exists");
 
   private final ReasonCode reasonCode;
 

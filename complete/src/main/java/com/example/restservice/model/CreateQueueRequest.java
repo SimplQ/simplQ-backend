@@ -5,7 +5,4 @@ import lombok.Data;
 @Data
 public class CreateQueueRequest {
   String queueName;
-
-
-
 }

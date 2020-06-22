@@ -4,7 +4,6 @@ import com.example.restservice.constants.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -16,5 +15,4 @@ public class UserStatusResponse {
   long aheadCount;
 
   ;
-
 }

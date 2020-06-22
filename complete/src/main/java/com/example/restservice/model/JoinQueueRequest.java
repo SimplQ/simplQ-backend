@@ -8,6 +8,4 @@ public class JoinQueueRequest {
   private String contactNumber;
   private String queueId;
   private Boolean notifyable; // TODO(Spelling)
-
-
 }

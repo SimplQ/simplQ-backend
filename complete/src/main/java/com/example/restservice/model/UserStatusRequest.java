@@ -6,8 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserStatusRequest {
-    String tokenId;
-    String queueId;
-
-
+  String tokenId;
+  String queueId;
 }
