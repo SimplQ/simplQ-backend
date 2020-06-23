@@ -30,15 +30,12 @@ public class QueueService {
     try {
 
 
-
       Queue queueDao;
       // if isPasswordProtected is true, generate a 4 digit pin.
-
-      if(createQueueRequest.getIsPasswordProtected()) {
-        int queuePin=randomNumber.nextInt(10000);
+      if(Boolean.TRUE.equals(createQueueRequest.getIsPasswordProtected())) {
+        String queuePin=String.format("%04d", randomNumber.nextInt(10000));
         queueDao=new Queue(createQueueRequest.getQueueName(),createQueueRequest.getIsPasswordProtected(),queuePin);
         var queue = queueRepository.save(queueDao);
-
         return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId(),queue.getQueuePassword());
       }
       else{
@@ -63,9 +60,9 @@ public class QueueService {
             .findById(joinQueueRequest.getQueueId())
             .map(
                 queue -> {
-                  // if Pin is incorrect no access to queue.
+                  // if Pin is incorrect,no access to queue.
                   if (queue.isPasswordProtected()
-                      && queue.getQueuePassword() != joinQueueRequest.getQueuePassword()) {
+                      && (!queue.getQueuePassword().equals(joinQueueRequest.getQueuePassword()))) {
                     throw SQInvalidRequestException.queuePasswordIncorrectException();
                   }
 
@@ -96,7 +93,7 @@ public class QueueService {
                   .filter(user -> user.getStatus() != UserStatus.REMOVED)
                   .sorted(Comparator.comparing(User::getTimestamp))
                   .forEach(resp::addUser);
-              resp.setPasswordProtected(queue.isPasswordProtected());
+              resp.setIsPasswordProtected(queue.isPasswordProtected());
               return resp;
             })
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);

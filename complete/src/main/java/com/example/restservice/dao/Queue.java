@@ -25,7 +25,7 @@ public class Queue {
   private String queueId;
 
   private boolean isPasswordProtected;
-  private int queuePassword;
+  private String queuePassword;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
   private List<User> users;
 
@@ -36,7 +36,7 @@ public class Queue {
     this.queueName=queueName;
   }
 
-  public Queue(String queueName, boolean isPasswordProtected, int queuePassword) {
+  public Queue(String queueName, boolean isPasswordProtected, String queuePassword) {
     this.queueName = queueName;
     this.isPasswordProtected = isPasswordProtected;
     this.queuePassword = queuePassword;

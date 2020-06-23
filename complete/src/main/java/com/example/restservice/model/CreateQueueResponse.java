@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 public class CreateQueueResponse {
   public final String queueName;
   public final String queueId;
-  @JsonInclude(Include.NON_DEFAULT) //no default values required
-  public  int queuePassword;
+  @JsonInclude(Include.NON_NULL)
+  public String queuePassword;
 
 
 

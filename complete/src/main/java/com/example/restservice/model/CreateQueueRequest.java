@@ -6,8 +6,6 @@ import lombok.Data;
 @Data
 public class CreateQueueRequest {
   String queueName;
-
-  @JsonProperty("isPasswordProtected")
   Boolean isPasswordProtected;
 
 

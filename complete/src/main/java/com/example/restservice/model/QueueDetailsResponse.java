@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +30,7 @@ public class QueueDetailsResponse {
   String queueId;
   String queueName;
   List<User> users;
-  boolean isPasswordProtected;
+  Boolean isPasswordProtected;
 
   public QueueDetailsResponse(String queueId, String queueName) {
     this.queueId = queueId;
