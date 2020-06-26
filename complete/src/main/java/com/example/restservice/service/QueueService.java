@@ -1,6 +1,7 @@
 package com.example.restservice.service;
 
 import com.example.restservice.constants.UserStatus;
+import com.example.restservice.controller.advices.LoggedInUserInfo;
 import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
 import com.example.restservice.dao.User;
@@ -20,13 +21,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class QueueService {
 
-  @Autowired private QueueRepository queueRepository;
-  @Autowired private UserRepository userRepository;
-  @Autowired private UserService userService; // TODO remove
+  @Autowired
+  private QueueRepository queueRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private UserService userService; // TODO remove
+
+  @Autowired
+  private LoggedInUserInfo loggedInUserInfo;
 
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
-      var queue = queueRepository.save(new Queue(createQueueRequest.getQueueName()));
+      var queue = queueRepository
+          .save(new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
@@ -46,7 +54,8 @@ public class QueueService {
                           joinQueueRequest.getName(),
                           joinQueueRequest.getContactNumber(),
                           UserStatus.WAITING,
-                          joinQueueRequest.getNotifyable());
+                          joinQueueRequest.getNotifyable(),
+                          loggedInUserInfo.getUserId());
                   newUser.setQueue(queue);
                   userRepository.save(newUser);
                   return newUser;
