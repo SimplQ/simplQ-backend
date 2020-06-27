@@ -1,7 +1,6 @@
 package com.example.restservice.dao;
 
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -30,13 +28,13 @@ public class Queue {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   private String queueId;
 
-  private String userId;
+  private String ownerId;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
   private List<User> users;
 
-  public Queue(String queueName, String userId) {
+  public Queue(String queueName, String ownerId) {
     this.queueName = queueName;
-    this.userId = userId;
+    this.ownerId = ownerId;
   }
 }
