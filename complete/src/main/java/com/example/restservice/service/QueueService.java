@@ -18,6 +18,7 @@ import com.example.restservice.model.QueueStatusResponse;
 import com.example.restservice.model.UserStatusResponse;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,7 @@ public class QueueService {
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
+  @Transactional
   public MyQueuesResponse getMyQueues() {
     return new MyQueuesResponse(queueRepository.findByOwnerId(loggedInUserInfo.getUserId())
         .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName())).collect(
