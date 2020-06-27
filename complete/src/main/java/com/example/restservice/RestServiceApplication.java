@@ -20,7 +20,7 @@ public class RestServiceApplication {
   public FilterRegistrationBean<CorsFilter> simpleCorsFilter() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowCredentials(true);
+    config.setAllowCredentials(true);  
     config.setAllowedOrigins(
         List.of(
             "https://simplq.me",
@@ -35,7 +35,7 @@ public class RestServiceApplication {
     return bean;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args)   {
     
     SpringApplication.run(RestServiceApplication.class, args);
   }
