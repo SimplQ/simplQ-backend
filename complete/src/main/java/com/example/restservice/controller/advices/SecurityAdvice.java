@@ -5,8 +5,10 @@ import com.auth0.jwk.JwkProvider;
 import com.auth0.jwk.UrlJwkProvider;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.restservice.exceptions.SQAccessDeniedException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
@@ -32,28 +34,27 @@ public class SecurityAdvice extends RequestBodyAdviceAdapter {
     provider = new UrlJwkProvider(new URL(keyUrl));
   }
 
-  boolean isValid(DecodedJWT jwt) {
+  void validate(DecodedJWT jwt) {
     try {
       var jwk = provider.get(jwt.getKeyId());
       var algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
       algorithm.verify(jwt);
-    } catch (SignatureVerificationException e) {
-      return false;
-    } catch (JwkException e) {
-      throw new RuntimeException(e);
+    } catch (SignatureVerificationException | JwkException e) {
+      throw new SQAccessDeniedException("Invalid authorization token");
     }
-    return true;
   }
 
   @Override
   public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter,
       Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
-    var jwtToken = inputMessage.getHeaders().get("Authorization").get(0)
-        .replaceFirst("^Bearer ", "");
-    var jwt = JWT.decode(jwtToken);
-    if (!isValid(jwt)) {
-      throw new RuntimeException("User not verified"); // 401 Unauthorized
+    DecodedJWT jwt;
+    try {
+      jwt = JWT.decode(inputMessage.getHeaders().get("Authorization").get(0)
+          .replaceFirst("^Bearer ", ""));
+    } catch (NullPointerException | JWTDecodeException e) {
+      throw new SQAccessDeniedException("Invalid authorization header");
     }
+    validate(jwt);
     loggedInUserInfo.setUserId(jwt.getClaim("username").asString());
     return inputMessage;
   }
