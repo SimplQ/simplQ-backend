@@ -3,8 +3,8 @@ name: Format
 
 on:
   pull_request:
-    branches:
-      - master
+    branches: [master]
+    types: [edited, opened, reopened]
 
 jobs:
 
