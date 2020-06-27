@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DeleteUserRequest {
-    String tokenId;
-    String queueId;
-
+  String tokenId;
+  String queueId;
 }

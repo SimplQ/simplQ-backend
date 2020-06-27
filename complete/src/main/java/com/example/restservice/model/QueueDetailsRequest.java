@@ -6,7 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QueueDetailsRequest {
-    String queueId;
-
-
+  String queueId;
 }
