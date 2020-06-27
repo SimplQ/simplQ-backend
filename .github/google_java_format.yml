@@ -18,4 +18,4 @@ jobs:
           java-version: "11"
       - uses: axel-op/googlejavaformat-action@v3
         with:
-          args: "--skip-sorting-imports --replace"
+          args: "--replace"
