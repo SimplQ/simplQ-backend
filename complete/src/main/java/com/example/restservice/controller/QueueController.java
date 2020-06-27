@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1")
 public class QueueController {
 
-  @Autowired private QueueService queueService;
+  @Autowired
+  private QueueService queueService;
 
   @PostMapping(path = "/queue/info")
   public ResponseEntity<QueueDetailsResponse> getQueueDetails(

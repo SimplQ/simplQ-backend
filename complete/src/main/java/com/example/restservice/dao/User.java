@@ -9,13 +9,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "QueueUser") // As user is a reserved keyword in PostgreSQL
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
-  protected User() {}
 
   @Id
   @GeneratedValue(generator = "uuid2")
@@ -26,53 +31,22 @@ public class User {
   String contactNumber;
   UserStatus status;
   Boolean notifyable;
+  String userId;
 
-  @ManyToOne Queue queue;
+  @ManyToOne
+  Queue queue;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   Date timestamp;
 
-  public Queue getQueue() {
-    return queue;
-  }
-
-  public void setQueue(Queue queue) {
-    this.queue = queue;
-  }
-
-  public Boolean getNotifyable() {
-    return notifyable;
-  }
-
-  public User(String name, String contactNumber, UserStatus status, Boolean notifyable) {
+  public User(String name, String contactNumber, UserStatus status, Boolean notifyable,
+      String userId) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
     this.notifyable = notifyable;
+    this.userId = userId;
   }
 
-  public UserStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(UserStatus status) {
-    this.status = status;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getContactNumber() {
-    return contactNumber;
-  }
-
-  public String getTokenId() {
-    return tokenId;
-  }
-
-  public Date getTimestamp() {
-    return timestamp;
-  }
 }
