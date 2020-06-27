@@ -7,6 +7,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.restservice.exceptions.SQAccessDeniedException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
@@ -48,7 +49,11 @@ public class SecurityAdvice extends RequestBodyAdviceAdapter {
   @Override
   public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter,
       Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
-    var jwtToken = inputMessage.getHeaders().get("Authorization").get(0)
+    var authHeaderVal = inputMessage.getHeaders().get("Authorization");
+    if (authHeaderVal == null) {
+      throw new SQAccessDeniedException("Authorization header not present in request");
+    }
+    var jwtToken = authHeaderVal.get(0)
         .replaceFirst("^Bearer ", "");
     var jwt = JWT.decode(jwtToken);
     if (!isValid(jwt)) {
