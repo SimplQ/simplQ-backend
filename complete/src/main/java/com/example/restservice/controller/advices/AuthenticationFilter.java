@@ -10,31 +10,37 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.restservice.exceptions.SQAccessDeniedException;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.MethodParameter;
-import org.springframework.http.HttpInputMessage;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAdapter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
-@ControllerAdvice
-public class SecurityAdvice extends RequestBodyAdviceAdapter {
+
+@Component
+@Order(1)
+public class AuthenticationFilter implements Filter {
 
   private final JwkProvider provider;
   private final LoggedInUserInfo loggedInUserInfo;
 
   @Autowired
-  SecurityAdvice(LoggedInUserInfo loggedInUserInfo) throws MalformedURLException {
+  AuthenticationFilter(LoggedInUserInfo loggedInUserInfo,
+      @Value("${cognito.jkws.url}") String keyUrl)
+      throws MalformedURLException {
     this.loggedInUserInfo = loggedInUserInfo;
-    String keyUrl = "https://cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_iQdl5AVrA/.well-known/jwks.json";
     provider = new UrlJwkProvider(new URL(keyUrl));
   }
 
-  void validate(DecodedJWT jwt) {
+  private void validate(DecodedJWT jwt) {
     try {
       var jwk = provider.get(jwt.getKeyId());
       var algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
@@ -44,24 +50,21 @@ public class SecurityAdvice extends RequestBodyAdviceAdapter {
     }
   }
 
-  @Override
-  public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter,
-      Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
+  private void authenticate(String authHeaderVal) {
     DecodedJWT jwt;
     try {
-      jwt = JWT.decode(inputMessage.getHeaders().get("Authorization").get(0)
-          .replaceFirst("^Bearer ", ""));
-    } catch (NullPointerException | JWTDecodeException e) {
+      jwt = JWT.decode(authHeaderVal.replaceFirst("^Bearer ", ""));
+    } catch (IllegalArgumentException | NullPointerException | JWTDecodeException e) {
       throw new SQAccessDeniedException("Invalid authorization header");
     }
     validate(jwt);
     loggedInUserInfo.setUserId(jwt.getClaim("username").asString());
-    return inputMessage;
   }
 
   @Override
-  public boolean supports(MethodParameter methodParameter, Type type,
-      Class<? extends HttpMessageConverter<?>> aClass) {
-    return true;
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+    authenticate(((HttpServletRequest) request).getHeader("Authorization"));
+    chain.doFilter(request, response);
   }
 }
