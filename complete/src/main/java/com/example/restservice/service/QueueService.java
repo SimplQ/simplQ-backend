@@ -28,8 +28,6 @@ public class QueueService {
   private QueueRepository queueRepository;
   @Autowired
   private TokenRepository tokenRepository;
-  @Autowired
-  private TokenService tokenService; // TODO remove
 
   @Autowired
   private LoggedInUserInfo loggedInUserInfo;

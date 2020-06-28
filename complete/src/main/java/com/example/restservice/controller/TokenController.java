@@ -5,7 +5,6 @@ import com.example.restservice.model.MyTokensResponse;
 import com.example.restservice.model.TokenDeleteResponse;
 import com.example.restservice.model.TokenDetailResponse;
 import com.example.restservice.model.TokenNotifyResponse;
-import com.example.restservice.service.QueueService;
 import com.example.restservice.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,6 @@ public class TokenController {
 
   @Autowired
   private TokenService tokenService;
-  @Autowired
-  private QueueService queueService; // TODO move to queue controller
 
   @GetMapping(path = "v1/token/{tokenId}")
   public ResponseEntity<TokenDetailResponse> getToken(
