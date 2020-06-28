@@ -1,10 +1,10 @@
 package com.example.restservice.controller;
 
-import com.example.restservice.model.CreateTokenRequest;
-import com.example.restservice.model.MyTokensResponse;
-import com.example.restservice.model.TokenDeleteResponse;
-import com.example.restservice.model.TokenDetailResponse;
-import com.example.restservice.model.TokenNotifyResponse;
+import com.example.restservice.controller.model.token.CreateTokenRequest;
+import com.example.restservice.controller.model.token.MyTokensResponse;
+import com.example.restservice.controller.model.token.TokenDeleteResponse;
+import com.example.restservice.controller.model.token.TokenDetailResponse;
+import com.example.restservice.controller.model.token.TokenNotifyResponse;
 import com.example.restservice.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

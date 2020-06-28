@@ -1,4 +1,4 @@
-package com.example.restservice.model;
+package com.example.restservice.controller.model.queue;
 
 import com.example.restservice.constants.TokenStatus;
 import com.example.restservice.dao.Token;
