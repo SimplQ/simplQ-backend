@@ -88,17 +88,26 @@ public class QueueService {
   }
 
   public QueueStatusResponse getQueueStatus(String queueId) {
-    return queueRepository.findById(queueId)
-        .map(queue -> new QueueStatusResponse(queueId, queue.getQueueName(),
-            queue.getUsers().stream().filter(user -> user.getStatus().equals(UserStatus.WAITING))
-                .count(), Long.valueOf(queue.getUsers().size())))
+    return queueRepository
+        .findById(queueId)
+        .map(
+            queue ->
+                new QueueStatusResponse(
+                    queueId,
+                    queue.getQueueName(),
+                    queue.getUsers().stream()
+                        .filter(user -> user.getStatus().equals(UserStatus.WAITING))
+                        .count(),
+                    Long.valueOf(queue.getUsers().size())))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
   @Transactional
   public MyQueuesResponse getMyQueues() {
-    return new MyQueuesResponse(queueRepository.findByOwnerId(loggedInUserInfo.getUserId())
-        .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName())).collect(
-            Collectors.toList()));
+    return new MyQueuesResponse(
+        queueRepository
+            .findByOwnerId(loggedInUserInfo.getUserId())
+            .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName()))
+            .collect(Collectors.toList()));
   }
 }

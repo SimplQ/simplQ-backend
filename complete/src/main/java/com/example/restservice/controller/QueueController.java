@@ -21,7 +21,6 @@ public class QueueController {
 
   @Autowired private QueueService queueService;
 
-
   @PostMapping(path = "/queue")
   public ResponseEntity<CreateQueueResponse> createQueue(
       @RequestBody CreateQueueRequest createQueueRequest) {
