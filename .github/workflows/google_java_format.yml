@@ -1,11 +1,8 @@
 # Example workflow
 name: Format
 
-on:
-  pull_request:
-    branches: [master]
-    types: [edited, opened, reopened]
-
+# Trigger on all pushes
+on: push
 jobs:
 
   formatting:
