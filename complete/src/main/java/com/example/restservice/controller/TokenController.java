@@ -24,7 +24,7 @@ public class TokenController {
   @Autowired
   private TokenService tokenService;
 
-  @GetMapping(path = "v1/token/{tokenId}")
+  @GetMapping(path = "/token/{tokenId}")
   public ResponseEntity<TokenDetailResponse> getToken(
       @PathVariable("tokenId") String tokenId) {
     return ResponseEntity.ok(tokenService.getToken(tokenId));
@@ -41,12 +41,12 @@ public class TokenController {
     return ResponseEntity.ok(tokenService.getMyTokens());
   }
 
-  @DeleteMapping(path = "token/{tokenId}")
+  @DeleteMapping(path = "/token/{tokenId}")
   public ResponseEntity<TokenDeleteResponse> deleteToken(@PathVariable("tokenId") String tokenId) {
     return ResponseEntity.ok(tokenService.deleteToken(tokenId));
   }
 
-  @PutMapping(path = "/token/notify/{tokenId")
+  @PutMapping(path = "/token/notify/{tokenId}")
   public ResponseEntity<TokenNotifyResponse> notifyToken(@PathVariable("tokenId") String tokenId) {
     return ResponseEntity.ok(tokenService.notifyToken(tokenId));
   }

@@ -12,5 +12,6 @@ public class TokenDetailResponse {
 
   String tokenId;
   TokenStatus tokenStatus;
+  String queueName;
   long aheadCount;
 }

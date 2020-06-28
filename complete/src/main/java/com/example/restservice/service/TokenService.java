@@ -16,6 +16,7 @@ import com.example.restservice.service.smsService.SmsManager;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +33,13 @@ public class TokenService {
   private LoggedInUserInfo loggedInUserInfo;
 
   public TokenDetailResponse getToken(String tokenId) {
+    var token = tokenRepository
+        .findById(tokenId)
+        .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     return new TokenDetailResponse(
         tokenId,
-        tokenRepository
-            .findById(tokenId)
-            .orElseThrow(SQInvalidRequestException::tokenNotFoundException)
-            .getStatus(),
+        token.getStatus(),
+        token.getQueue().getQueueName(),
         getAheadCount(tokenId).orElseThrow(SQInternalServerException::new));
   }
 
@@ -99,7 +101,7 @@ public class TokenService {
                           createTokenRequest.getName(),
                           createTokenRequest.getContactNumber(),
                           TokenStatus.WAITING,
-                          createTokenRequest.getNotifyable(),
+                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifyable(), false),
                           loggedInUserInfo.getUserId());
                   newUser.setQueue(queue);
                   tokenRepository.save(newUser);
@@ -109,6 +111,7 @@ public class TokenService {
     return new TokenDetailResponse(
         user.getTokenId(),
         user.getStatus(),
+        user.getQueue().getQueueName(),
         getAheadCount(user.getTokenId()).orElseThrow(SQInternalServerException::new));
   }
 
