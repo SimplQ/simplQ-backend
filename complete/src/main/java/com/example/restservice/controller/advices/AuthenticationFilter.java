@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Order(1)
 public class AuthenticationFilter implements Filter {
@@ -33,8 +32,8 @@ public class AuthenticationFilter implements Filter {
   private final LoggedInUserInfo loggedInUserInfo;
 
   @Autowired
-  AuthenticationFilter(LoggedInUserInfo loggedInUserInfo,
-      @Value("${cognito.jkws.url}") String keyUrl)
+  AuthenticationFilter(
+      LoggedInUserInfo loggedInUserInfo, @Value("${cognito.jkws.url}") String keyUrl)
       throws MalformedURLException {
     this.loggedInUserInfo = loggedInUserInfo;
     provider = new UrlJwkProvider(new URL(keyUrl));

@@ -31,8 +31,7 @@ public class Token {
   Boolean notifyable;
   String ownerId;
 
-  @ManyToOne
-  Queue queue;
+  @ManyToOne Queue queue;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
@@ -46,5 +45,4 @@ public class Token {
     this.notifyable = notifyable;
     this.ownerId = ownerId;
   }
-
 }

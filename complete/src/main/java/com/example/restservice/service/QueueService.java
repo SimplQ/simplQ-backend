@@ -29,14 +29,14 @@ public class QueueService {
   @Autowired
   private TokenRepository tokenRepository;
 
-  @Autowired
-  private LoggedInUserInfo loggedInUserInfo;
+  @Autowired private LoggedInUserInfo loggedInUserInfo;
 
   @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
-      var queue = queueRepository
-          .save(new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
+      var queue =
+          queueRepository.save(
+              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
@@ -75,8 +75,10 @@ public class QueueService {
 
   @Transactional
   public MyQueuesResponse getMyQueues() {
-    return new MyQueuesResponse(queueRepository.findByOwnerId(loggedInUserInfo.getUserId())
-        .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName())).collect(
-            Collectors.toList()));
+    return new MyQueuesResponse(
+        queueRepository
+            .findByOwnerId(loggedInUserInfo.getUserId())
+            .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName()))
+            .collect(Collectors.toList()));
   }
 }
