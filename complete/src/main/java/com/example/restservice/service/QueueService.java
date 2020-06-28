@@ -1,21 +1,19 @@
 package com.example.restservice.service;
 
-import com.example.restservice.constants.UserStatus;
+import com.example.restservice.constants.TokenStatus;
 import com.example.restservice.controller.advices.LoggedInUserInfo;
+import com.example.restservice.controller.model.queue.CreateQueueRequest;
+import com.example.restservice.controller.model.queue.CreateQueueResponse;
+import com.example.restservice.controller.model.queue.MyQueuesResponse;
+import com.example.restservice.controller.model.queue.QueueDetailsResponse;
+import com.example.restservice.controller.model.queue.QueueStatusResponse;
 import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
-import com.example.restservice.dao.User;
-import com.example.restservice.dao.UserRepository;
+import com.example.restservice.dao.Token;
+import com.example.restservice.dao.TokenRepository;
 import com.example.restservice.exceptions.SQAccessDeniedException;
 import com.example.restservice.exceptions.SQInternalServerException;
 import com.example.restservice.exceptions.SQInvalidRequestException;
-import com.example.restservice.model.CreateQueueRequest;
-import com.example.restservice.model.CreateQueueResponse;
-import com.example.restservice.model.JoinQueueRequest;
-import com.example.restservice.model.MyQueuesResponse;
-import com.example.restservice.model.QueueDetailsResponse;
-import com.example.restservice.model.QueueStatusResponse;
-import com.example.restservice.model.UserStatusResponse;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -27,11 +25,11 @@ import org.springframework.stereotype.Service;
 public class QueueService {
 
   @Autowired private QueueRepository queueRepository;
-  @Autowired private UserRepository userRepository;
-  @Autowired private UserService userService; // TODO remove
+  @Autowired private TokenRepository tokenRepository;
 
   @Autowired private LoggedInUserInfo loggedInUserInfo;
 
+  @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
       var queue =
@@ -45,30 +43,7 @@ public class QueueService {
     }
   }
 
-  public UserStatusResponse joinQueue(JoinQueueRequest joinQueueRequest) {
-    var user =
-        queueRepository
-            .findById(joinQueueRequest.getQueueId())
-            .map(
-                queue -> {
-                  var newUser =
-                      new User(
-                          joinQueueRequest.getName(),
-                          joinQueueRequest.getContactNumber(),
-                          UserStatus.WAITING,
-                          joinQueueRequest.getNotifyable(),
-                          loggedInUserInfo.getUserId());
-                  newUser.setQueue(queue);
-                  userRepository.save(newUser);
-                  return newUser;
-                })
-            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    return new UserStatusResponse(
-        user.getTokenId(),
-        user.getStatus(),
-        userService.getAheadCount(user.getTokenId()).orElseThrow(SQInternalServerException::new));
-  }
-
+  @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {
     return queueRepository
         .findById(queueId)
@@ -78,15 +53,16 @@ public class QueueService {
                 throw new SQAccessDeniedException("You do not have access to this queue");
               }
               var resp = new QueueDetailsResponse(queueId, queue.getQueueName());
-              queue.getUsers().stream()
-                  .filter(user -> user.getStatus() != UserStatus.REMOVED)
-                  .sorted(Comparator.comparing(User::getTimestamp))
+              queue.getTokens().stream()
+                  .filter(user -> user.getStatus() != TokenStatus.REMOVED)
+                  .sorted(Comparator.comparing(Token::getTimestamp))
                   .forEach(resp::addUser);
               return resp;
             })
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
+  @Transactional
   public QueueStatusResponse getQueueStatus(String queueId) {
     return queueRepository
         .findById(queueId)
@@ -95,10 +71,10 @@ public class QueueService {
                 new QueueStatusResponse(
                     queueId,
                     queue.getQueueName(),
-                    queue.getUsers().stream()
-                        .filter(user -> user.getStatus().equals(UserStatus.WAITING))
+                    queue.getTokens().stream()
+                        .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
-                    Long.valueOf(queue.getUsers().size())))
+                    Long.valueOf(queue.getTokens().size())))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 

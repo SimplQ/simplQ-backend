@@ -31,7 +31,7 @@ public class Queue {
   private String ownerId;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
-  private List<User> users;
+  private List<Token> tokens;
 
   public Queue(String queueName, String ownerId) {
     this.queueName = queueName;

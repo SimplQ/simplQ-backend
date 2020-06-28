@@ -1,9 +1,10 @@
-package com.example.restservice.model;
+package com.example.restservice.controller.model.token;
 
 import lombok.Data;
 
 @Data
-public class JoinQueueRequest {
+public class CreateTokenRequest {
+
   private String name;
   private String contactNumber;
   private String queueId;

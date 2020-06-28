@@ -1,6 +1,7 @@
 package com.example.restservice.dao;
 
-import com.example.restservice.constants.UserStatus;
+import com.example.restservice.constants.TokenStatus;
+import java.util.stream.Stream;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @EnableJpaRepositories
-public interface UserRepository extends CrudRepository<User, String> {
+public interface TokenRepository extends CrudRepository<Token, String> {
 
   @Modifying
-  @Query("update User u set u.status = :status where u.tokenId = :tokenId")
-  void setUserStatusById(@Param("status") UserStatus status, @Param("tokenId") String tokenId);
+  @Query("update Token t set t.status = :status where t.tokenId = :tokenId")
+  void setUserStatusById(@Param("status") TokenStatus status, @Param("tokenId") String tokenId);
+
+  Stream<Token> findByOwnerId(String ownerId);
 }

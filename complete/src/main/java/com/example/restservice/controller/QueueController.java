@@ -1,10 +1,10 @@
 package com.example.restservice.controller;
 
-import com.example.restservice.model.CreateQueueRequest;
-import com.example.restservice.model.CreateQueueResponse;
-import com.example.restservice.model.MyQueuesResponse;
-import com.example.restservice.model.QueueDetailsResponse;
-import com.example.restservice.model.QueueStatusResponse;
+import com.example.restservice.controller.model.queue.CreateQueueRequest;
+import com.example.restservice.controller.model.queue.CreateQueueResponse;
+import com.example.restservice.controller.model.queue.MyQueuesResponse;
+import com.example.restservice.controller.model.queue.QueueDetailsResponse;
+import com.example.restservice.controller.model.queue.QueueStatusResponse;
 import com.example.restservice.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
