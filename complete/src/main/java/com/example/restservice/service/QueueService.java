@@ -32,6 +32,7 @@ public class QueueService {
   @Autowired
   private LoggedInUserInfo loggedInUserInfo;
 
+  @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
       var queue = queueRepository
@@ -44,6 +45,7 @@ public class QueueService {
     }
   }
 
+  @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {
     return queueRepository
         .findById(queueId)
@@ -62,6 +64,7 @@ public class QueueService {
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
+  @Transactional
   public QueueStatusResponse getQueueStatus(String queueId) {
     return queueRepository.findById(queueId)
         .map(queue -> new QueueStatusResponse(queueId, queue.getQueueName(),

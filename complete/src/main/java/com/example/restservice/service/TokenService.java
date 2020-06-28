@@ -32,6 +32,7 @@ public class TokenService {
   @Autowired
   private LoggedInUserInfo loggedInUserInfo;
 
+  @Transactional
   public TokenDetailResponse getToken(String tokenId) {
     var token = tokenRepository
         .findById(tokenId)
@@ -69,27 +70,7 @@ public class TokenService {
     return new TokenNotifyResponse(tokenId, TokenStatus.NOTIFIED);
   }
 
-  public Optional<Long> getAheadCount(String tokenId) {
-    var user =
-        tokenRepository
-            .findById(tokenId)
-            .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
-
-    if (user.getStatus() == TokenStatus.REMOVED) {
-      return Optional.empty();
-    }
-
-    var aheadCount =
-        Optional.of(
-            user.getQueue().getTokens().stream()
-                .filter(
-                    fellowUser ->
-                        fellowUser.getTimestamp().before(user.getTimestamp())
-                            && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
-                .count());
-    return aheadCount;
-  }
-
+  @Transactional
   public TokenDetailResponse createToken(CreateTokenRequest createTokenRequest) {
     var user =
         queueRepository
@@ -121,5 +102,26 @@ public class TokenService {
         token -> new MyTokensResponse.Token(token.getQueue().getQueueName(), token.getTokenId()))
         .collect(
             Collectors.toList()));
+  }
+
+  private Optional<Long> getAheadCount(String tokenId) {
+    var user =
+        tokenRepository
+            .findById(tokenId)
+            .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
+
+    if (user.getStatus() == TokenStatus.REMOVED) {
+      return Optional.empty();
+    }
+
+    var aheadCount =
+        Optional.of(
+            user.getQueue().getTokens().stream()
+                .filter(
+                    fellowUser ->
+                        fellowUser.getTimestamp().before(user.getTimestamp())
+                            && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
+                .count());
+    return aheadCount;
   }
 }
