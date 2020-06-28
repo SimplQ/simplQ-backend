@@ -25,7 +25,7 @@ public class QueueController {
   }
 
   @PostMapping(path = "/queue/create")
-  public ResponseEntity<CreateQueueResponse>   createQueue(
+  public ResponseEntity<CreateQueueResponse> createQueue(
       @RequestBody CreateQueueRequest createQueueRequest) {
     return ResponseEntity.ok(queueService.createQueue(createQueueRequest));
   }
