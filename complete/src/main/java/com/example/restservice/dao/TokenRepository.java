@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface TokenRepository extends CrudRepository<Token, String> {
 
   @Modifying
-  @Query("update User u set u.status = :status where u.tokenId = :tokenId")
+  @Query("update Token t set t.status = :status where t.tokenId = :tokenId")
   void setUserStatusById(@Param("status") TokenStatus status, @Param("tokenId") String tokenId);
 
   Stream<Token> findByOwnerId(String ownerId);
