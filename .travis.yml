@@ -5,7 +5,7 @@ jdk:
 script:
   - cd complete
   - mvn package
-  - zip -r latest *
+  - zip -r latest * ../appspec.yml
   - mkdir -p dpl_cd_upload
   - mv latest.zip dpl_cd_upload/latest.zip
   - echo completed packaging maven jar
