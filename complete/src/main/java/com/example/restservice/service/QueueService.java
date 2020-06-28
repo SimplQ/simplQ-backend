@@ -21,20 +21,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class QueueService {
 
-  @Autowired
-  private QueueRepository queueRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private UserService userService; // TODO remove
+  @Autowired private QueueRepository queueRepository;
+  @Autowired private UserRepository userRepository;
+  @Autowired private UserService userService; // TODO remove
 
-  @Autowired
-  private LoggedInUserInfo loggedInUserInfo;
+  @Autowired private LoggedInUserInfo loggedInUserInfo;
 
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
-      var queue = queueRepository
-          .save(new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
+      var queue =
+          queueRepository.save(
+              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();

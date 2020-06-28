@@ -30,7 +30,8 @@ public class SecurityAdvice extends RequestBodyAdviceAdapter {
   @Autowired
   SecurityAdvice(LoggedInUserInfo loggedInUserInfo) throws MalformedURLException {
     this.loggedInUserInfo = loggedInUserInfo;
-    String keyUrl = "https://cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_iQdl5AVrA/.well-known/jwks.json";
+    String keyUrl =
+        "https://cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_iQdl5AVrA/.well-known/jwks.json";
     provider = new UrlJwkProvider(new URL(keyUrl));
   }
 
@@ -45,12 +46,17 @@ public class SecurityAdvice extends RequestBodyAdviceAdapter {
   }
 
   @Override
-  public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter,
-      Type targetType, Class<? extends HttpMessageConverter<?>> converterType) throws IOException {
+  public HttpInputMessage beforeBodyRead(
+      HttpInputMessage inputMessage,
+      MethodParameter parameter,
+      Type targetType,
+      Class<? extends HttpMessageConverter<?>> converterType)
+      throws IOException {
     DecodedJWT jwt;
     try {
-      jwt = JWT.decode(inputMessage.getHeaders().get("Authorization").get(0)
-          .replaceFirst("^Bearer ", ""));
+      jwt =
+          JWT.decode(
+              inputMessage.getHeaders().get("Authorization").get(0).replaceFirst("^Bearer ", ""));
     } catch (NullPointerException | JWTDecodeException e) {
       throw new SQAccessDeniedException("Invalid authorization header");
     }
@@ -60,8 +66,8 @@ public class SecurityAdvice extends RequestBodyAdviceAdapter {
   }
 
   @Override
-  public boolean supports(MethodParameter methodParameter, Type type,
-      Class<? extends HttpMessageConverter<?>> aClass) {
+  public boolean supports(
+      MethodParameter methodParameter, Type type, Class<? extends HttpMessageConverter<?>> aClass) {
     return true;
   }
 }
