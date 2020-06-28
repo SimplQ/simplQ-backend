@@ -1,6 +1,6 @@
 package com.example.restservice.model;
 
-import com.example.restservice.constants.UserStatus;
+import com.example.restservice.constants.TokenStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,11 +8,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatusResponse {
+public class TokenDetailResponse {
 
   String tokenId;
-  UserStatus userStatus;
+  TokenStatus tokenStatus;
   long aheadCount;
-
-  ;
 }
