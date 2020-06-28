@@ -33,20 +33,18 @@ public class User {
   Boolean notifyable;
   String userId;
 
-  @ManyToOne
-  Queue queue;
+  @ManyToOne Queue queue;
 
   @CreationTimestamp
   @Temporal(TemporalType.TIMESTAMP)
   Date timestamp;
 
-  public User(String name, String contactNumber, UserStatus status, Boolean notifyable,
-      String userId) {
+  public User(
+      String name, String contactNumber, UserStatus status, Boolean notifyable, String userId) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
     this.notifyable = notifyable;
     this.userId = userId;
   }
-
 }

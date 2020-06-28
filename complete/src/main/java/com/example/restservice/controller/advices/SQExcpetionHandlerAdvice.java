@@ -18,9 +18,7 @@ public class SQExcpetionHandlerAdvice extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handlerInvalidReq(
       SQInvalidRequestException ex, WebRequest request) {
     var response =
-        new DefaultErrorAttributes()
-            .getErrorAttributes(
-                request, false /* includeStackTrace */);
+        new DefaultErrorAttributes().getErrorAttributes(request, false /* includeStackTrace */);
     var httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
     response.put("reasonCode", ex.getReasonCode());
     response.put("status", httpStatus.value());
@@ -33,9 +31,7 @@ public class SQExcpetionHandlerAdvice extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handlerIAccessDenied(
       SQAccessDeniedException ex, WebRequest request) {
     var response =
-        new DefaultErrorAttributes()
-            .getErrorAttributes(
-                request, false /* includeStackTrace */);
+        new DefaultErrorAttributes().getErrorAttributes(request, false /* includeStackTrace */);
     var httpStatus = HttpStatus.UNAUTHORIZED;
     response.put("status", httpStatus.value());
     response.put("error", httpStatus.getReasonPhrase());

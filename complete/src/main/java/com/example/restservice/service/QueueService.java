@@ -26,20 +26,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class QueueService {
 
-  @Autowired
-  private QueueRepository queueRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private UserService userService; // TODO remove
+  @Autowired private QueueRepository queueRepository;
+  @Autowired private UserRepository userRepository;
+  @Autowired private UserService userService; // TODO remove
 
-  @Autowired
-  private LoggedInUserInfo loggedInUserInfo;
+  @Autowired private LoggedInUserInfo loggedInUserInfo;
 
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
-      var queue = queueRepository
-          .save(new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
+      var queue =
+          queueRepository.save(
+              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
@@ -91,17 +88,26 @@ public class QueueService {
   }
 
   public QueueStatusResponse getQueueStatus(String queueId) {
-    return queueRepository.findById(queueId)
-        .map(queue -> new QueueStatusResponse(queueId, queue.getQueueName(),
-            queue.getUsers().stream().filter(user -> user.getStatus().equals(UserStatus.WAITING))
-                .count(), Long.valueOf(queue.getUsers().size())))
+    return queueRepository
+        .findById(queueId)
+        .map(
+            queue ->
+                new QueueStatusResponse(
+                    queueId,
+                    queue.getQueueName(),
+                    queue.getUsers().stream()
+                        .filter(user -> user.getStatus().equals(UserStatus.WAITING))
+                        .count(),
+                    Long.valueOf(queue.getUsers().size())))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
   @Transactional
   public MyQueuesResponse getMyQueues() {
-    return new MyQueuesResponse(queueRepository.findByOwnerId(loggedInUserInfo.getUserId())
-        .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName())).collect(
-            Collectors.toList()));
+    return new MyQueuesResponse(
+        queueRepository
+            .findByOwnerId(loggedInUserInfo.getUserId())
+            .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName()))
+            .collect(Collectors.toList()));
   }
 }
