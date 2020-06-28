@@ -22,12 +22,12 @@ deploy:
   skip_cleanup: true
   on: &2
     repo: SimplQ/simplQ-backend
-  bucket: arn:aws:s3:::codepipeline-ap-southeast-1-475863761977
+  bucket: travis-ci-simplq
   region: ap-southeast-1
 - provider: codedeploy
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
-  bucket: arn:aws:s3:::codepipeline-ap-southeast-1-475863761977
+  bucket: travis-ci-simplq
   key: latest.zip
   bundle_type: zip
   application: Travis-SimplQ-CodeDeploy
