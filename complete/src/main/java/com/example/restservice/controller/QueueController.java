@@ -34,7 +34,7 @@ public class QueueController {
     return ResponseEntity.ok(queueService.getMyQueues());
   }
 
-  @PostMapping(path = "/queue/{queueId}")
+  @GetMapping(path = "/queue/{queueId}")
   public ResponseEntity<QueueDetailsResponse> getQueueDetails(
       @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.getQueueDetails(queueId));
