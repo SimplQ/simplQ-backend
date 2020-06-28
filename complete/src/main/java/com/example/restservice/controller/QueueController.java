@@ -2,11 +2,14 @@ package com.example.restservice.controller;
 
 import com.example.restservice.model.CreateQueueRequest;
 import com.example.restservice.model.CreateQueueResponse;
-import com.example.restservice.model.QueueDetailsRequest;
+import com.example.restservice.model.MyQueuesResponse;
 import com.example.restservice.model.QueueDetailsResponse;
+import com.example.restservice.model.QueueStatusResponse;
 import com.example.restservice.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,15 +22,27 @@ public class QueueController {
   @Autowired
   private QueueService queueService;
 
-  @PostMapping(path = "/queue/info")
-  public ResponseEntity<QueueDetailsResponse> getQueueDetails(
-      @RequestBody QueueDetailsRequest queueDetailsRequest) {
-    return ResponseEntity.ok(queueService.fetchQueueData(queueDetailsRequest.getQueueId()));
-  }
 
-  @PostMapping(path = "/queue/create")
+  @PostMapping(path = "/queue")
   public ResponseEntity<CreateQueueResponse> createQueue(
       @RequestBody CreateQueueRequest createQueueRequest) {
     return ResponseEntity.ok(queueService.createQueue(createQueueRequest));
+  }
+
+  @GetMapping(path = "/queues")
+  public ResponseEntity<MyQueuesResponse> getMyQueues() {
+    return ResponseEntity.ok(queueService.getMyQueues());
+  }
+
+  @GetMapping(path = "/queue/{queueId}")
+  public ResponseEntity<QueueDetailsResponse> getQueueDetails(
+      @PathVariable("queueId") String queueId) {
+    return ResponseEntity.ok(queueService.getQueueDetails(queueId));
+  }
+
+  @GetMapping(path = "/queue/status/{queueId}")
+  public ResponseEntity<QueueStatusResponse> getQueueStatus(
+      @PathVariable("queueId") String queueId) {
+    return ResponseEntity.ok(queueService.getQueueStatus(queueId));
   }
 }
