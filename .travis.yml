@@ -8,10 +8,11 @@ script:
   - zip -r latest *
   - mkdir -p dpl_cd_upload
   - mv latest.zip dpl_cd_upload/latest.zip
+  - echo completed packaging maven jar
 
 cache:
   directories:
-    - '/root/.m2/**/*'
+  - $HOME/.m2
 
 deploy:
 - provider: s3
@@ -21,12 +22,12 @@ deploy:
   skip_cleanup: true
   on: &2
     repo: SimplQ/simplQ-backend
-  bucket: codepipeline-ap-southeast-1-475863761977
+  bucket: arn:aws:s3:::codepipeline-ap-southeast-1-475863761977
   region: ap-southeast-1
 - provider: codedeploy
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
-  bucket: codepipeline-ap-southeast-1-475863761977
+  bucket: arn:aws:s3:::codepipeline-ap-southeast-1-475863761977
   key: latest.zip
   bundle_type: zip
   application: Travis-SimplQ-CodeDeploy
