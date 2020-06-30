@@ -21,12 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1")
 public class TokenController {
 
-  @Autowired
-  private TokenService tokenService;
+  @Autowired private TokenService tokenService;
 
   @GetMapping(path = "/token/{tokenId}")
-  public ResponseEntity<TokenDetailResponse> getToken(
-      @PathVariable("tokenId") String tokenId) {
+  public ResponseEntity<TokenDetailResponse> getToken(@PathVariable("tokenId") String tokenId) {
     return ResponseEntity.ok(tokenService.getToken(tokenId));
   }
 

@@ -23,20 +23,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenService {
 
-  @Autowired
-  private TokenRepository tokenRepository;
-  @Autowired
-  private QueueRepository queueRepository;
-  @Autowired
-  private SmsManager smsManager;
-  @Autowired
-  private LoggedInUserInfo loggedInUserInfo;
+  @Autowired private TokenRepository tokenRepository;
+  @Autowired private QueueRepository queueRepository;
+  @Autowired private SmsManager smsManager;
+  @Autowired private LoggedInUserInfo loggedInUserInfo;
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
-    var token = tokenRepository
-        .findById(tokenId)
-        .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
+    var token =
+        tokenRepository
+            .findById(tokenId)
+            .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     return new TokenDetailResponse(
         tokenId,
         token.getStatus(),
@@ -47,14 +44,13 @@ public class TokenService {
   @Transactional
   public TokenDeleteResponse deleteToken(String tokenId) {
     tokenRepository.setUserStatusById(TokenStatus.REMOVED, tokenId);
-    return tokenRepository.findById(tokenId)
+    return tokenRepository
+        .findById(tokenId)
         .map(token -> new TokenDeleteResponse(token.getQueue().getQueueName(), token.getStatus()))
         .orElseThrow(SQInternalServerException::new);
   }
 
-  /**
-   * Notify user on User page. Send SMS notification
-   */
+  /** Notify user on User page. Send SMS notification */
   @Transactional
   public TokenNotifyResponse notifyToken(String tokenId) {
     var user =
@@ -98,10 +94,13 @@ public class TokenService {
 
   @Transactional
   public MyTokensResponse getMyTokens() {
-    return new MyTokensResponse(tokenRepository.findByOwnerId(loggedInUserInfo.getUserId()).map(
-        token -> new MyTokensResponse.Token(token.getQueue().getQueueName(), token.getTokenId()))
-        .collect(
-            Collectors.toList()));
+    return new MyTokensResponse(
+        tokenRepository
+            .findByOwnerId(loggedInUserInfo.getUserId())
+            .map(
+                token ->
+                    new MyTokensResponse.Token(token.getQueue().getQueueName(), token.getTokenId()))
+            .collect(Collectors.toList()));
   }
 
   private Optional<Long> getAheadCount(String tokenId) {
