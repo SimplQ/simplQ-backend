@@ -18,6 +18,7 @@ mvn package
 ```
 java -jar target/rest-service-0.0.1-SNAPSHOT.jar
 ```
+We follow Google's [Java Style Guidelines](https://github.com/google/styleguide). For Intellij, you can install the [google-java-format](https://plugins.jetbrains.com/plugin/8527-google-java-format) plugin and Eclipse users can set up the java style XML
 
 # Contributing
 
