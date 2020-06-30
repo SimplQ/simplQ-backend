@@ -24,10 +24,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class QueueService {
 
-  @Autowired
-  private QueueRepository queueRepository;
-  @Autowired
-  private TokenRepository tokenRepository;
+  @Autowired private QueueRepository queueRepository;
+  @Autowired private TokenRepository tokenRepository;
 
   @Autowired private LoggedInUserInfo loggedInUserInfo;
 
@@ -66,10 +64,17 @@ public class QueueService {
 
   @Transactional
   public QueueStatusResponse getQueueStatus(String queueId) {
-    return queueRepository.findById(queueId)
-        .map(queue -> new QueueStatusResponse(queueId, queue.getQueueName(),
-            queue.getTokens().stream().filter(user -> user.getStatus().equals(TokenStatus.WAITING))
-                .count(), Long.valueOf(queue.getTokens().size())))
+    return queueRepository
+        .findById(queueId)
+        .map(
+            queue ->
+                new QueueStatusResponse(
+                    queueId,
+                    queue.getQueueName(),
+                    queue.getTokens().stream()
+                        .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
+                        .count(),
+                    Long.valueOf(queue.getTokens().size())))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 

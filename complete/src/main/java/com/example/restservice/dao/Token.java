@@ -37,8 +37,8 @@ public class Token {
   @Temporal(TemporalType.TIMESTAMP)
   Date timestamp;
 
-  public Token(String name, String contactNumber, TokenStatus status, Boolean notifyable,
-      String ownerId) {
+  public Token(
+      String name, String contactNumber, TokenStatus status, Boolean notifyable, String ownerId) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
