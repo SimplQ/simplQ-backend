@@ -40,7 +40,6 @@ public class SQInvalidRequestException extends SQException {
     return new SQInvalidRequestException(ReasonCode.QUEUE_NAME_ALREADY_EXISTS);
   }
 
-
   public ReasonCode getReasonCode() {
     return reasonCode;
   }
