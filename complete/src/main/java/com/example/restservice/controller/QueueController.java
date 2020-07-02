@@ -44,8 +44,6 @@ public class QueueController {
   public ResponseEntity<QueueStatusResponse> getQueueStatus(
       @RequestParam(required = false) String queueId,
       @RequestParam(required = false) String queueName) {
-    System.out.println(queueId);
-    System.out.println(queueName);
     if (queueId != null) {
       return ResponseEntity.ok(queueService.getQueueStatus(queueId));
     } else if (queueName != null) {
