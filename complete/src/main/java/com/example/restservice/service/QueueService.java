@@ -54,9 +54,9 @@ public class QueueService {
               }
               var resp = new QueueDetailsResponse(queueId, queue.getQueueName());
               queue.getTokens().stream()
-                  .filter(user -> user.getStatus() != TokenStatus.REMOVED)
+                  .filter(token -> token.getStatus() != TokenStatus.REMOVED)
                   .sorted(Comparator.comparing(Token::getTimestamp))
-                  .forEach(resp::addUser);
+                  .forEach(resp::addToken);
               return resp;
             })
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
