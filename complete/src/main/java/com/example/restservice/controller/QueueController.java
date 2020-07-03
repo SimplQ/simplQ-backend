@@ -7,12 +7,14 @@ import com.example.restservice.controller.model.queue.QueueDetailsResponse;
 import com.example.restservice.controller.model.queue.QueueStatusResponse;
 import com.example.restservice.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,9 +40,16 @@ public class QueueController {
     return ResponseEntity.ok(queueService.getQueueDetails(queueId));
   }
 
-  @GetMapping(path = "/queue/status/{queueId}")
+  @GetMapping(path = "/queue/status")
   public ResponseEntity<QueueStatusResponse> getQueueStatus(
-      @PathVariable("queueId") String queueId) {
-    return ResponseEntity.ok(queueService.getQueueStatus(queueId));
+      @RequestParam(required = false) String queueId,
+      @RequestParam(required = false) String queueName) {
+    if (queueId != null) {
+      return ResponseEntity.ok(queueService.getQueueStatus(queueId));
+    } else if (queueName != null) {
+      return ResponseEntity.ok(queueService.getQueueStatusByName(queueName));
+    } else {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST); // Todo Give reason
+    }
   }
 }
