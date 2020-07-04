@@ -1,7 +1,6 @@
 package com.example.restservice.controller.model.queue;
 
 import com.example.restservice.constants.TokenStatus;
-import com.example.restservice.dao.Token;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +16,7 @@ public class QueueDetailsResponse {
   @AllArgsConstructor
   @Getter
   @Setter
-  public static class User {
+  public static class Token {
 
     private String name;
     private String contactNo;
@@ -29,17 +28,17 @@ public class QueueDetailsResponse {
 
   String queueId;
   String queueName;
-  List<User> users;
+  List<Token> tokens;
 
   public QueueDetailsResponse(String queueId, String queueName) {
     this.queueId = queueId;
     this.queueName = queueName;
-    this.users = new ArrayList<>();
+    this.tokens = new ArrayList<>();
   }
 
-  public void addUser(Token token) {
-    this.users.add(
-        new User(
+  public void addToken(com.example.restservice.dao.Token token) {
+    this.tokens.add(
+        new Token(
             token.getName(),
             token.getContactNumber(),
             token.getTokenId(),

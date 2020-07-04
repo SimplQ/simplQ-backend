@@ -35,3 +35,14 @@ deploy:
   deployment_group: Travis-SimplQ-CodeDeploy-Deployment-Group
   region: ap-southeast-1
   on: *2
+
+addons:
+  sonarcloud:
+    organization: "simplq"
+    token:
+      secure: "BGWBr+ilSphwkx95mrG1GKXUtwg5q6ZYbYREQDEd3RtQsd+xH7EDblE8iuwJll8n7sWA7d8hV/nZoq28iM8mHna2Zn51iBQfKaK+vMmvAqYiPCls7H90uFCVZe2A3T4uo5vtJgpCSunSqigKql7Zs7TTeHDq9GI8QFS2Y46t7bnQMCymh6dVqqkc2KXO+AWaKcR0oxxO3rhCCtBb9FXSFZRgZF647HHm4tU1Uh2YIubkl2HOGdbKU3KjDy+PRF9QfpbnSifRjftjoDQQtDJRi+8Fd2qRq2Yf1qHcvo+Z04eyBlIs61xjNpeZvcJxFdVcH/aTHquJ0Bv6igQqbS51H4hwiG7CmMmmo3hc6ZRrvM4NcHYMmaVh0a7E+dtum63MnB5b1Qj3J/puNw+Cp8Lga02BR7qKyOq7FgB/c/qtCrtiFiQ8JLGQOZgLxJjgUiYtBzIDapYgng2mmIBE6sI4M29D0ROMVdrWeDQoC6yj7Yp0wvLhawtEh78XxZjBQ+yPzXSqVwQ+RfhSHF7KzOvrfoH/ISpR1aSQMgm4hRWByXsLuOi3nTe/CD0tI4BR7vE9Te9uYL8xZiAPau8q6cra5kJsdh2cweBSx/tDXHxQeQMWXWG5tYXPg9CSIpRBPG6bMaTPmfEKN1JN/ghzUuAioHHwKJeOu34hYsMg+b+SUSc="
+
+script:
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - cd complete
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=SimplQ_simplQ-backend
