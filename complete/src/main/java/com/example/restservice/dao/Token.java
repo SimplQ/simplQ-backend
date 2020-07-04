@@ -28,7 +28,7 @@ public class Token {
   String name;
   String contactNumber;
   TokenStatus status;
-  Boolean notifyable;
+  Boolean notifiable;
   String ownerId;
 
   @ManyToOne Queue queue;
@@ -38,11 +38,11 @@ public class Token {
   Date timestamp;
 
   public Token(
-      String name, String contactNumber, TokenStatus status, Boolean notifyable, String ownerId) {
+      String name, String contactNumber, TokenStatus status, Boolean notifiable, String ownerId) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
-    this.notifyable = notifyable;
+    this.notifiable = notifiable;
     this.ownerId = ownerId;
     this.timestamp = new Date();
   }

@@ -21,7 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1")
 public class TokenController {
 
-  @Autowired private TokenService tokenService;
+  private final TokenService tokenService;
+
+  @Autowired
+  public TokenController(TokenService tokenService) {
+    this.tokenService = tokenService;
+  }
 
   @GetMapping(path = "/token/{tokenId}")
   public ResponseEntity<TokenDetailResponse> getToken(@PathVariable("tokenId") String tokenId) {

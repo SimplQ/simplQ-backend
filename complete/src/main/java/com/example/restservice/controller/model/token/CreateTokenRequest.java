@@ -8,5 +8,5 @@ public class CreateTokenRequest {
   private String name;
   private String contactNumber;
   private String queueId;
-  private Boolean notifyable; // TODO(Spelling)
+  private Boolean notifiable;
 }

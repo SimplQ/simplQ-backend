@@ -1,8 +1,8 @@
 package com.example.restservice.controller.model.queue;
 
-import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@AllArgsConstructor
+@Data
 public class CreateQueueResponse {
 
   public final String queueName;

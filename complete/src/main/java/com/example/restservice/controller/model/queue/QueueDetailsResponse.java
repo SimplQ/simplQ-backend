@@ -4,26 +4,20 @@ import com.example.restservice.constants.TokenStatus;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class QueueDetailsResponse {
 
-  @AllArgsConstructor
-  @Getter
-  @Setter
+  @Data
   public static class Token {
 
-    private String name;
-    private String contactNo;
-    private String tokenId;
-    private Date timestamp;
-    TokenStatus tokenStatus;
-    private Boolean notifyable;
+    private final String name;
+    private final String contactNo;
+    private final String tokenId;
+    private final Date timestamp;
+    private final TokenStatus tokenStatus;
+    private final Boolean notifyable;
   }
 
   String queueId;
@@ -44,6 +38,6 @@ public class QueueDetailsResponse {
             token.getTokenId(),
             token.getTimestamp(),
             token.getStatus(),
-            token.getNotifyable()));
+            token.getNotifiable()));
   }
 }

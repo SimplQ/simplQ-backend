@@ -24,10 +24,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class QueueService {
 
-  @Autowired private QueueRepository queueRepository;
-  @Autowired private TokenRepository tokenRepository;
+  private final QueueRepository queueRepository;
+  private final TokenRepository tokenRepository;
+  private final LoggedInUserInfo loggedInUserInfo;
 
-  @Autowired private LoggedInUserInfo loggedInUserInfo;
+  @Autowired
+  public QueueService(
+      QueueRepository queueRepository,
+      TokenRepository tokenRepository,
+      LoggedInUserInfo loggedInUserInfo) {
+    this.queueRepository = queueRepository;
+    this.tokenRepository = tokenRepository;
+    this.loggedInUserInfo = loggedInUserInfo;
+  }
 
   @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
