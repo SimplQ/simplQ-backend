@@ -13,7 +13,6 @@ import com.example.restservice.dao.TokenRepository;
 import com.example.restservice.exceptions.SQInternalServerException;
 import com.example.restservice.exceptions.SQInvalidRequestException;
 import com.example.restservice.service.smsService.SmsManager;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.apache.commons.lang3.ObjectUtils;
@@ -35,10 +34,7 @@ public class TokenService {
             .findById(tokenId)
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     return new TokenDetailResponse(
-        tokenId,
-        token.getStatus(),
-        token.getQueue().getQueueName(),
-        getAheadCount(tokenId).orElseThrow(SQInternalServerException::new));
+        tokenId, token.getStatus(), token.getQueue().getQueueName(), getAheadCount(token));
   }
 
   @Transactional
@@ -68,28 +64,28 @@ public class TokenService {
 
   @Transactional
   public TokenDetailResponse createToken(CreateTokenRequest createTokenRequest) {
-    var user =
+    var token =
         queueRepository
             .findById(createTokenRequest.getQueueId())
             .map(
                 queue -> {
-                  var newUser =
+                  var newToken =
                       new Token(
                           createTokenRequest.getName(),
                           createTokenRequest.getContactNumber(),
                           TokenStatus.WAITING,
                           ObjectUtils.defaultIfNull(createTokenRequest.getNotifyable(), false),
                           loggedInUserInfo.getUserId());
-                  newUser.setQueue(queue);
-                  tokenRepository.save(newUser);
-                  return newUser;
+                  newToken.setQueue(queue);
+                  tokenRepository.save(newToken);
+                  return newToken;
                 })
             .orElseThrow(SQInvalidRequestException::queueNotFoundException);
     return new TokenDetailResponse(
-        user.getTokenId(),
-        user.getStatus(),
-        user.getQueue().getQueueName(),
-        getAheadCount(user.getTokenId()).orElseThrow(SQInternalServerException::new));
+        token.getTokenId(),
+        token.getStatus(),
+        token.getQueue().getQueueName(),
+        getAheadCount(token));
   }
 
   @Transactional
@@ -103,24 +99,15 @@ public class TokenService {
             .collect(Collectors.toList()));
   }
 
-  private Optional<Long> getAheadCount(String tokenId) {
-    var user =
-        tokenRepository
-            .findById(tokenId)
-            .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
-
-    if (user.getStatus() == TokenStatus.REMOVED) {
-      return Optional.empty();
+  private Long getAheadCount(Token token) {
+    if (token.getStatus() == TokenStatus.REMOVED) {
+      throw SQInvalidRequestException.tokenDeletedException();
     }
-
-    var aheadCount =
-        Optional.of(
-            user.getQueue().getTokens().stream()
-                .filter(
-                    fellowUser ->
-                        fellowUser.getTimestamp().before(user.getTimestamp())
-                            && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
-                .count());
-    return aheadCount;
+    return token.getQueue().getTokens().stream()
+        .filter(
+            fellowUser ->
+                fellowUser.getTimestamp().before(token.getTimestamp())
+                    && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
+        .count();
   }
 }
