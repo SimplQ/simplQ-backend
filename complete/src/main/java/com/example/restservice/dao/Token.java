@@ -2,6 +2,7 @@ package com.example.restservice.dao;
 
 import com.example.restservice.constants.TokenStatus;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,7 +12,6 @@ import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -33,7 +33,7 @@ public class Token {
 
   @ManyToOne Queue queue;
 
-  @CreationTimestamp
+  @Column(updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   Date timestamp;
 
@@ -44,5 +44,6 @@ public class Token {
     this.status = status;
     this.notifyable = notifyable;
     this.ownerId = ownerId;
+    this.timestamp = new Date();
   }
 }
