@@ -1,4 +1,4 @@
-package com.example.restservice.model;
+package com.example.restservice.controller.model.queue;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

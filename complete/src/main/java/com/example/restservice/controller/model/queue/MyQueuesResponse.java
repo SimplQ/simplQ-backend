@@ -1,4 +1,4 @@
-package com.example.restservice.model;
+package com.example.restservice.controller.model.queue;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

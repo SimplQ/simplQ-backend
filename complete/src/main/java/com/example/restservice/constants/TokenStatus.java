@@ -1,6 +1,6 @@
 package com.example.restservice.constants;
 
-public enum UserStatus {
+public enum TokenStatus {
   WAITING,
   NOTIFIED,
   REMOVED,
