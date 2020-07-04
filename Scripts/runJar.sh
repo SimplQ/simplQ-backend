@@ -1,1 +1,1 @@
-systemctl restart sqbackend
+systemctl restart sqbackenddev
