@@ -19,6 +19,7 @@ cache:
 
 deploy:
 - provider: s3
+  edge: true
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
   local_dir: dpl_cd_upload
@@ -27,6 +28,7 @@ deploy:
   bucket: travis-ci-simplq
   region: ap-southeast-1
 - provider: codedeploy
+  edge: true
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
   bucket: travis-ci-simplq
