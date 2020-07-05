@@ -1,8 +1,7 @@
 package com.example.restservice.controller.model.queue;
 
-import lombok.Data;
-
 import javax.validation.constraints.Pattern;
+import lombok.Data;
 
 @Data
 public class CreateQueueRequest {
