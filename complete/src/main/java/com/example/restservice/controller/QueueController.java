@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1")
 public class QueueController {
@@ -25,7 +27,7 @@ public class QueueController {
 
   @PostMapping(path = "/queue")
   public ResponseEntity<CreateQueueResponse> createQueue(
-      @RequestBody CreateQueueRequest createQueueRequest) {
+      @Valid @RequestBody CreateQueueRequest createQueueRequest) {
     return ResponseEntity.ok(queueService.createQueue(createQueueRequest));
   }
 
