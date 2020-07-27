@@ -21,6 +21,7 @@ public class QueueDetailsResponse {
     private String name;
     private String contactNo;
     private String tokenId;
+    private String tokenNumber;
     private Date timestamp;
     TokenStatus tokenStatus;
     private Boolean notifyable;
@@ -42,6 +43,7 @@ public class QueueDetailsResponse {
             token.getName(),
             token.getContactNumber(),
             token.getTokenId(),
+            token.getTokenNumber(),
             token.getTimestamp(),
             token.getStatus(),
             token.getNotifyable()));

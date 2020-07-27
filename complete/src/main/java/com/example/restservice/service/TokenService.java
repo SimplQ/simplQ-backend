@@ -34,7 +34,7 @@ public class TokenService {
             .findById(tokenId)
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     return new TokenDetailResponse(
-        tokenId, token.getStatus(), token.getQueue().getQueueName(), getAheadCount(token));
+        tokenId, token.getTokenNumber(), token.getStatus(), token.getQueue().getQueueName(), getAheadCount(token));
   }
 
   @Transactional
@@ -83,6 +83,7 @@ public class TokenService {
             .orElseThrow(SQInvalidRequestException::queueNotFoundException);
     return new TokenDetailResponse(
         token.getTokenId(),
+        token.getTokenNumber(),
         token.getStatus(),
         token.getQueue().getQueueName(),
         getAheadCount(token));
