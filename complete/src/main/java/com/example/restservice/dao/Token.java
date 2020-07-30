@@ -32,8 +32,7 @@ public class Token {
   Boolean notifyable;
   String ownerId;
 
-  @ManyToOne
-  Queue queue;
+  @ManyToOne Queue queue;
 
   @Column(updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
