@@ -15,17 +15,18 @@ import com.example.restservice.exceptions.SQInvalidRequestException;
 import com.example.restservice.service.smsService.SmsManager;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TokenService {
 
-  @Autowired private TokenRepository tokenRepository;
-  @Autowired private QueueRepository queueRepository;
-  @Autowired private SmsManager smsManager;
-  @Autowired private LoggedInUserInfo loggedInUserInfo;
+  private final TokenRepository tokenRepository;
+  private final QueueRepository queueRepository;
+  private final SmsManager smsManager;
+  private final LoggedInUserInfo loggedInUserInfo;
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
@@ -34,7 +35,11 @@ public class TokenService {
             .findById(tokenId)
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     return new TokenDetailResponse(
-        tokenId, token.getStatus(), token.getQueue().getQueueName(), getAheadCount(token));
+        tokenId,
+        token.getStatus(),
+        token.getQueue().getQueueName(),
+        getAheadCount(token),
+        token.getNotifiable());
   }
 
   @Transactional
@@ -74,7 +79,7 @@ public class TokenService {
                           createTokenRequest.getName(),
                           createTokenRequest.getContactNumber(),
                           TokenStatus.WAITING,
-                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifyable(), false),
+                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false),
                           loggedInUserInfo.getUserId());
                   newToken.setQueue(queue);
                   tokenRepository.save(newToken);
@@ -85,7 +90,8 @@ public class TokenService {
         token.getTokenId(),
         token.getStatus(),
         token.getQueue().getQueueName(),
-        getAheadCount(token));
+        getAheadCount(token),
+        token.getNotifiable());
   }
 
   @Transactional

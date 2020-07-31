@@ -1,17 +1,13 @@
 package com.example.restservice.controller.model.queue;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
+@Data
 public class MyQueuesResponse {
 
-  @Getter
-  @AllArgsConstructor
+  @Data
   public static class Queue {
-
     private final String queueId;
     private final String queueName;
   }

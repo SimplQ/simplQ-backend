@@ -1,20 +1,16 @@
 package com.example.restservice.controller.model.token;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
+@Data
 public class MyTokensResponse {
 
-  @Getter
-  @AllArgsConstructor
+  @Data
   public static class Token {
-
     private final String queueName;
     private final String tokenId;
   }
 
-  List<Token> tokens;
+  final List<Token> tokens;
 }

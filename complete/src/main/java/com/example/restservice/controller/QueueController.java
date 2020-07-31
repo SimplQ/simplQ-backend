@@ -6,8 +6,8 @@ import com.example.restservice.controller.model.queue.MyQueuesResponse;
 import com.example.restservice.controller.model.queue.QueueDetailsResponse;
 import com.example.restservice.controller.model.queue.QueueStatusResponse;
 import com.example.restservice.service.QueueService;
+import lombok.RequiredArgsConstructor;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1")
+@RequiredArgsConstructor
 public class QueueController {
 
-  @Autowired private QueueService queueService;
+  private final QueueService queueService;
 
   @PostMapping(path = "/queue")
   public ResponseEntity<CreateQueueResponse> createQueue(
