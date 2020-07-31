@@ -15,29 +15,18 @@ import com.example.restservice.exceptions.SQInvalidRequestException;
 import com.example.restservice.service.smsService.SmsManager;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TokenService {
 
   private final TokenRepository tokenRepository;
   private final QueueRepository queueRepository;
   private final SmsManager smsManager;
   private final LoggedInUserInfo loggedInUserInfo;
-
-  @Autowired
-  public TokenService(
-      TokenRepository tokenRepository,
-      QueueRepository queueRepository,
-      SmsManager smsManager,
-      LoggedInUserInfo loggedInUserInfo) {
-    this.tokenRepository = tokenRepository;
-    this.queueRepository = queueRepository;
-    this.smsManager = smsManager;
-    this.loggedInUserInfo = loggedInUserInfo;
-  }
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
