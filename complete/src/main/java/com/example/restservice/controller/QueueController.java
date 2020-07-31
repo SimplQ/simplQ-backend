@@ -7,6 +7,7 @@ import com.example.restservice.controller.model.queue.QueueDetailsResponse;
 import com.example.restservice.controller.model.queue.QueueStatusResponse;
 import com.example.restservice.service.QueueService;
 import lombok.RequiredArgsConstructor;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public class QueueController {
 
   @PostMapping(path = "/queue")
   public ResponseEntity<CreateQueueResponse> createQueue(
-      @RequestBody CreateQueueRequest createQueueRequest) {
+      @Valid @RequestBody CreateQueueRequest createQueueRequest) {
     return ResponseEntity.ok(queueService.createQueue(createQueueRequest));
   }
 

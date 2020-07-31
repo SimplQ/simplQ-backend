@@ -26,6 +26,7 @@ public class RestServiceApplication {
             "https://simplq.me",
             "https://www.simplq.me",
             "https://dev.simplq.me",
+            "https://new.simplq.me",
             "http://localhost:3000"));
     config.setAllowedMethods(Collections.singletonList("*"));
     config.setAllowedHeaders(Collections.singletonList("*"));
