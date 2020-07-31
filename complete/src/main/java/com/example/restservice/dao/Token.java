@@ -25,7 +25,7 @@ public class Token {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   String tokenId;
 
-  String tokenNumber;
+  int tokenNumber;
   String name;
   String contactNumber;
   TokenStatus status;

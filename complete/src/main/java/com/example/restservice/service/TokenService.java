@@ -81,9 +81,9 @@ public class TokenService {
                   return newToken;
                 })
             .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    Integer currentMaxTokenNumber = tokenRepository.getLastTokenNumberForQueue(token.getQueue().getQueueName());
+    Integer currentMaxTokenNumber = tokenRepository.getLastTokenNumberForQueue(token.getQueue().getQueueId());
     int nextTokenNumber = currentMaxTokenNumber != null ? currentMaxTokenNumber + 1 : 1;
-    token.setTokenNumber(Integer.toString(nextTokenNumber));
+    token.setTokenNumber(nextTokenNumber);
     return new TokenDetailResponse(
         token.getTokenId(),
         token.getTokenNumber(),

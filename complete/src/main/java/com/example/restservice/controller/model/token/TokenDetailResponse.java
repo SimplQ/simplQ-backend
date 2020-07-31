@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class TokenDetailResponse {
 
   String tokenId;
-  String tokenNumber;
+  int tokenNumber;
   TokenStatus tokenStatus;
   String queueName;
   long aheadCount;
