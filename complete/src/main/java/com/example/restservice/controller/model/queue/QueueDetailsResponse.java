@@ -21,7 +21,7 @@ public class QueueDetailsResponse {
     private String name;
     private String contactNo;
     private String tokenId;
-    private int tokenNumber;
+    private Integer tokenNumber;
     private Date timestamp;
     TokenStatus tokenStatus;
     private Boolean notifyable;
