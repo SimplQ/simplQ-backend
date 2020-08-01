@@ -36,7 +36,7 @@ public class TokenService {
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     return new TokenDetailResponse(
         tokenId,
-        token.getTokenNumber()
+        token.getTokenNumber(),
         token.getStatus(),
         token.getQueue().getQueueName(),
         getAheadCount(token),
