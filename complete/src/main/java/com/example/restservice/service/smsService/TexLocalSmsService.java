@@ -10,9 +10,11 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("prod")
 public class TexLocalSmsService implements SmsService {
   private final Logger LOGGER = LoggerFactory.getLogger(TexLocalSmsService.class);
   private final String API_KEY;
@@ -24,13 +26,10 @@ public class TexLocalSmsService implements SmsService {
     API_KEY = secretsManager.getSecret("TEXT_LOCAL_API_KEY");
   }
 
-  /** uncomment postSMSRequest function on go-live. */
   @Override
   public String sendSMS(String contactNumber, String queueName) {
     String data = constructData(contactNumber, queueName);
-    //        String response = postSmsRequest(data);
-    String response = "SUCCESS";
-    return response;
+    return postSmsRequest(data);
   }
 
   private String postSmsRequest(String data) {

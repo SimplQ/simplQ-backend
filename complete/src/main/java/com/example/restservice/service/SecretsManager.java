@@ -14,9 +14,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("prod")
 public class SecretsManager {
 
   private final JsonNode secrets;
@@ -24,11 +26,6 @@ public class SecretsManager {
   public SecretsManager(
       @Value("${aws.secretsmanager.secretName}") String secretName,
       @Value("${aws.secretsmanager.region}") String region) {
-    if (System.getenv().get("SQ_ENV") == null) {
-      // The secrets need to be loaded only on AWS. Skipping on local setup.
-      secrets = null;
-      return;
-    }
 
     AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard().withRegion(region).build();
 
@@ -58,10 +55,6 @@ public class SecretsManager {
   }
 
   public String getSecret(String key) {
-    if (secrets == null) {
-      // Secrets are read only if SQ_ENV env variable is set
-      return "NOT_SET";
-    }
     return secrets.get(key).asText();
   }
 }
