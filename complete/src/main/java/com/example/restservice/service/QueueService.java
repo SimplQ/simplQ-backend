@@ -10,24 +10,22 @@ import com.example.restservice.controller.model.queue.QueueStatusResponse;
 import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
 import com.example.restservice.dao.Token;
-import com.example.restservice.dao.TokenRepository;
 import com.example.restservice.exceptions.SQAccessDeniedException;
 import com.example.restservice.exceptions.SQInternalServerException;
 import com.example.restservice.exceptions.SQInvalidRequestException;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class QueueService {
 
-  @Autowired private QueueRepository queueRepository;
-  @Autowired private TokenRepository tokenRepository;
-
-  @Autowired private LoggedInUserInfo loggedInUserInfo;
+  private final QueueRepository queueRepository;
+  private final LoggedInUserInfo loggedInUserInfo;
 
   @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {

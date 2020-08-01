@@ -6,7 +6,7 @@ import com.example.restservice.controller.model.token.TokenDeleteResponse;
 import com.example.restservice.controller.model.token.TokenDetailResponse;
 import com.example.restservice.controller.model.token.TokenNotifyResponse;
 import com.example.restservice.service.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1")
+@RequiredArgsConstructor
 public class TokenController {
 
-  @Autowired private TokenService tokenService;
+  private final TokenService tokenService;
 
   @GetMapping(path = "/token/{tokenId}")
   public ResponseEntity<TokenDetailResponse> getToken(@PathVariable("tokenId") String tokenId) {

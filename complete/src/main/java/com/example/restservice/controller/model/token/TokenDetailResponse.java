@@ -1,18 +1,15 @@
 package com.example.restservice.controller.model.token;
 
 import com.example.restservice.constants.TokenStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class TokenDetailResponse {
 
-  String tokenId;
-  Integer tokenNumber;
-  TokenStatus tokenStatus;
-  String queueName;
-  long aheadCount;
+  final String tokenId;
+  final Integer tokenNumber;
+  final TokenStatus tokenStatus;
+  final String queueName;
+  final Long aheadCount;
+  final Boolean notifiable;
 }

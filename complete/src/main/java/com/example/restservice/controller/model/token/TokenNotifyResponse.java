@@ -1,11 +1,9 @@
 package com.example.restservice.controller.model.token;
 
 import com.example.restservice.constants.TokenStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
+@Data
 public class TokenNotifyResponse {
 
   private final String tokenId;
