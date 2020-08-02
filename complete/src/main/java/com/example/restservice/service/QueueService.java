@@ -89,6 +89,7 @@ public class QueueService {
                 new QueueStatusResponse(
                     queueId,
                     queue.getQueueName(),
+                    queue.getStatus(),
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
@@ -114,6 +115,7 @@ public class QueueService {
                 new QueueStatusResponse(
                     queue.getQueueId(),
                     queue.getQueueName(),
+                    queue.getStatus(),
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),

@@ -1,5 +1,6 @@
 package com.example.restservice.service;
 
+import com.example.restservice.constants.QueueStatus;
 import com.example.restservice.constants.TokenStatus;
 import com.example.restservice.controller.advices.LoggedInUserInfo;
 import com.example.restservice.controller.model.token.CreateTokenRequest;
@@ -75,6 +76,9 @@ public class TokenService {
             .findById(createTokenRequest.getQueueId())
             .map(
                 queue -> {
+                  if(queue.getStatus().equals(QueueStatus.PAUSED)) {
+                    throw SQInvalidRequestException.queuePausedException();
+                  }
                   var newToken =
                       new Token(
                           createTokenRequest.getName(),
