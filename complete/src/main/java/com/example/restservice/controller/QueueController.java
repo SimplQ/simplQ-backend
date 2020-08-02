@@ -1,22 +1,12 @@
 package com.example.restservice.controller;
 
-import com.example.restservice.controller.model.queue.CreateQueueRequest;
-import com.example.restservice.controller.model.queue.CreateQueueResponse;
-import com.example.restservice.controller.model.queue.MyQueuesResponse;
-import com.example.restservice.controller.model.queue.QueueDetailsResponse;
-import com.example.restservice.controller.model.queue.QueueStatusResponse;
+import com.example.restservice.controller.model.queue.*;
 import com.example.restservice.service.QueueService;
 import lombok.RequiredArgsConstructor;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1")
@@ -40,6 +30,13 @@ public class QueueController {
   public ResponseEntity<QueueDetailsResponse> getQueueDetails(
       @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.getQueueDetails(queueId));
+  }
+
+  @PostMapping(path = "/queue/{queueId}")
+  public ResponseEntity<PauseQueueResponse> pauseQueueRequest(
+          @Valid @RequestBody PauseQueueRequest pauseQueueRequest,
+          @PathVariable("queueId") String queueId) {
+    return ResponseEntity.ok(queueService.pauseQueue(pauseQueueRequest, queueId));
   }
 
   @GetMapping(path = "/queue/status")

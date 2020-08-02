@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.example.restservice.constants.QueueStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,13 +30,15 @@ public class Queue {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   private String queueId;
 
+  private QueueStatus status;
   private String ownerId;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
   private List<Token> tokens;
 
-  public Queue(String queueName, String ownerId) {
+  public Queue(String queueName, String ownerId, QueueStatus status) {
     this.queueName = queueName;
     this.ownerId = ownerId;
+    this.status = status;
   }
 }

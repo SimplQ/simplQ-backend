@@ -1,12 +1,9 @@
 package com.example.restservice.service;
 
+import com.example.restservice.constants.QueueStatus;
 import com.example.restservice.constants.TokenStatus;
 import com.example.restservice.controller.advices.LoggedInUserInfo;
-import com.example.restservice.controller.model.queue.CreateQueueRequest;
-import com.example.restservice.controller.model.queue.CreateQueueResponse;
-import com.example.restservice.controller.model.queue.MyQueuesResponse;
-import com.example.restservice.controller.model.queue.QueueDetailsResponse;
-import com.example.restservice.controller.model.queue.QueueStatusResponse;
+import com.example.restservice.controller.model.queue.*;
 import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
 import com.example.restservice.dao.Token;
@@ -32,12 +29,35 @@ public class QueueService {
     try {
       var queue =
           queueRepository.save(
-              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
+              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId(), QueueStatus.ACTIVE));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
     } catch (Exception e) {
       throw new SQInternalServerException("Unable to create queue: ", e);
+    }
+  }
+
+  @Transactional
+  public PauseQueueResponse pauseQueue(PauseQueueRequest pauseQueueRequest, String queueId) {
+    try {
+      var queue =
+          queueRepository
+          .findById(queueId)
+          .map(
+              queue1 -> {
+                if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
+                  throw new SQAccessDeniedException("You do not have access to this queue");
+                }
+                queue1.setStatus(pauseQueueRequest.getStatus());
+                return queueRepository.save(queue1);
+              }
+          ).get();
+      return new PauseQueueResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+    } catch (DataIntegrityViolationException de) {
+      throw SQInvalidRequestException.queueNameNotUniqueException();
+    } catch (Exception e) {
+      throw new SQInternalServerException("Unable to update queue: ", e);
     }
   }
 
