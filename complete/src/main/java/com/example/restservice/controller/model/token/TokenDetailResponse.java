@@ -7,6 +7,7 @@ import lombok.Data;
 public class TokenDetailResponse {
 
   final String tokenId;
+  final Integer tokenNumber;
   final TokenStatus tokenStatus;
   final String queueName;
   final Long aheadCount;

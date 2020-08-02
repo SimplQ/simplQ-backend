@@ -11,10 +11,10 @@ public class QueueDetailsResponse {
 
   @Data
   public static class Token {
-
     private final String name;
     private final String contactNo;
     private final String tokenId;
+    private final Integer tokenNumber;
     private final Date timestamp;
     private final TokenStatus tokenStatus;
     private final Boolean notifyable;
@@ -36,6 +36,7 @@ public class QueueDetailsResponse {
             token.getName(),
             token.getContactNumber(),
             token.getTokenId(),
+            token.getTokenNumber(),
             token.getTimestamp(),
             token.getStatus(),
             token.getNotifiable()));
