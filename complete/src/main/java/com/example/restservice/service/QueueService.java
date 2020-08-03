@@ -39,7 +39,7 @@ public class QueueService {
   }
 
   @Transactional
-  public PauseQueueResponse pauseQueue(PauseQueueRequest pauseQueueRequest, String queueId) {
+  public UpdateQueueStatusResponse pauseQueue(PauseQueueRequest pauseQueueRequest, String queueId) {
     try {
       var queue =
           queueRepository
@@ -53,13 +53,36 @@ public class QueueService {
                 return queueRepository.save(queue1);
               }
           ).get();
-      return new PauseQueueResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+      return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
     } catch (Exception e) {
       throw new SQInternalServerException("Unable to update queue: ", e);
     }
   }
+
+    @Transactional
+    public UpdateQueueStatusResponse deleteQueue(String queueId) {
+        try {
+            var queue =
+                queueRepository
+                .findById(queueId)
+                .map(
+                    queue1 -> {
+                        if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
+                            throw new SQAccessDeniedException("You do not have access to this queue");
+                        }
+                        queue1.setStatus(QueueStatus.DELETED);
+                        return queueRepository.save(queue1);
+                    }
+                ).get();
+            return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+        } catch (DataIntegrityViolationException de) {
+            throw SQInvalidRequestException.queueNameNotUniqueException();
+        } catch (Exception e) {
+            throw new SQInternalServerException("Unable to update queue: ", e);
+        }
+    }
 
   @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {

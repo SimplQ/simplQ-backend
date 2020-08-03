@@ -78,6 +78,8 @@ public class TokenService {
                 queue -> {
                   if(queue.getStatus().equals(QueueStatus.PAUSED)) {
                     throw SQInvalidRequestException.queuePausedException();
+                  } else if (queue.getStatus().equals(QueueStatus.DELETED)) {
+                    throw SQInvalidRequestException.queueDeletedException();
                   }
                   var newToken =
                       new Token(
