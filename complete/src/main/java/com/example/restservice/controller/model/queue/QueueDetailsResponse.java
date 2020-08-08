@@ -12,7 +12,7 @@ public class QueueDetailsResponse {
   @Data
   public static class Token {
     private final String name;
-    private final String contactNo;
+    private final String contactNumber;
     private final String tokenId;
     private final Integer tokenNumber;
     private final Date timestamp;
