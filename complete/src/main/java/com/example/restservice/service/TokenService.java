@@ -40,7 +40,8 @@ public class TokenService {
         token.getStatus(),
         token.getQueue().getQueueName(),
         getAheadCount(token),
-        token.getNotifiable());
+        token.getNotifiable(),
+        token.getTokenCreationTimestamp());
   }
 
   @Transactional
@@ -97,7 +98,8 @@ public class TokenService {
         token.getStatus(),
         token.getQueue().getQueueName(),
         getAheadCount(token),
-        token.getNotifiable());
+        token.getNotifiable(),
+        token.getTokenCreationTimestamp());
   }
 
   @Transactional
@@ -107,7 +109,10 @@ public class TokenService {
             .findByOwnerId(loggedInUserInfo.getUserId())
             .map(
                 token ->
-                    new MyTokensResponse.Token(token.getQueue().getQueueName(), token.getTokenId()))
+                    new MyTokensResponse.Token(
+                        token.getQueue().getQueueName(),
+                        token.getTokenId(),
+                        token.getTokenCreationTimestamp()))
             .collect(Collectors.toList()));
   }
 
@@ -118,7 +123,7 @@ public class TokenService {
     return token.getQueue().getTokens().stream()
         .filter(
             fellowUser ->
-                fellowUser.getTimestamp().before(token.getTimestamp())
+                fellowUser.getTokenCreationTimestamp().before(token.getTokenCreationTimestamp())
                     && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
         .count();
   }

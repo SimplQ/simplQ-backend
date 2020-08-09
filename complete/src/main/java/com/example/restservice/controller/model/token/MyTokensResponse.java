@@ -1,5 +1,6 @@
 package com.example.restservice.controller.model.token;
 
+import java.util.Date;
 import java.util.List;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ public class MyTokensResponse {
   public static class Token {
     private final String queueName;
     private final String tokenId;
+    private final Date tokenCreationTimestamp;
   }
 
   final List<Token> tokens;
