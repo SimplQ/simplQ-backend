@@ -15,20 +15,15 @@ public class QueueDetailsResponse {
     private final String contactNumber;
     private final String tokenId;
     private final Integer tokenNumber;
-    private final Date timestamp;
+    private final Date tokenCreationTimestamp;
     private final TokenStatus tokenStatus;
     private final Boolean notifiable;
   }
 
-  String queueId;
-  String queueName;
-  List<Token> tokens;
-
-  public QueueDetailsResponse(String queueId, String queueName) {
-    this.queueId = queueId;
-    this.queueName = queueName;
-    this.tokens = new ArrayList<>();
-  }
+  private final String queueId;
+  private final String queueName;
+  final Date queueCreationTimestamp;
+  private final List<Token> tokens = new ArrayList<>();
 
   public void addToken(com.example.restservice.dao.Token token) {
     this.tokens.add(
@@ -37,7 +32,7 @@ public class QueueDetailsResponse {
             token.getContactNumber(),
             token.getTokenId(),
             token.getTokenNumber(),
-            token.getTimestamp(),
+            token.getTokenCreationTimestamp(),
             token.getStatus(),
             token.getNotifiable()));
   }
