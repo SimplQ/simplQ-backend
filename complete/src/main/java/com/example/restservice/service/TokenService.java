@@ -113,7 +113,7 @@ public class TokenService {
 
   private Long getAheadCount(Token token) {
     if (token.getStatus() == TokenStatus.REMOVED) {
-      throw SQInvalidRequestException.tokenDeletedException();
+      return null;
     }
     return token.getQueue().getTokens().stream()
         .filter(
