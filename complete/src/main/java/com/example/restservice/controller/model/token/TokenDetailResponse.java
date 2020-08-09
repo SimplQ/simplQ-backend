@@ -11,6 +11,7 @@ public class TokenDetailResponse {
   final Integer tokenNumber;
   final TokenStatus tokenStatus;
   final String queueName;
+  final String queueId;
   final Long aheadCount;
   final Boolean notifiable;
   final Date tokenCreationTimestamp;
