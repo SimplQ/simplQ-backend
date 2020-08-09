@@ -39,6 +39,7 @@ public class TokenService {
         token.getTokenNumber(),
         token.getStatus(),
         token.getQueue().getQueueName(),
+        token.getQueue().getQueueId(),
         getAheadCount(token),
         token.getNotifiable(),
         token.getTokenCreationTimestamp());
@@ -97,6 +98,7 @@ public class TokenService {
         token.getTokenNumber(),
         token.getStatus(),
         token.getQueue().getQueueName(),
+        token.getQueue().getQueueId(),
         getAheadCount(token),
         token.getNotifiable(),
         token.getTokenCreationTimestamp());
