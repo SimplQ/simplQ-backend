@@ -49,13 +49,17 @@ public class QueueService {
                 if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
                   throw new SQAccessDeniedException("You do not have access to this queue");
                 }
+                if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                  throw SQInvalidRequestException.queueDeletedException();
+                }
+                if (pauseQueueRequest.getStatus().equals(QueueStatus.DELETED)) {
+                    throw SQInvalidRequestException.queueDeletedNotAllowedException();
+                }
                 queue1.setStatus(pauseQueueRequest.getStatus());
                 return queueRepository.save(queue1);
               }
           ).get();
       return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
-    } catch (DataIntegrityViolationException de) {
-      throw SQInvalidRequestException.queueNameNotUniqueException();
     } catch (Exception e) {
       throw new SQInternalServerException("Unable to update queue: ", e);
     }
@@ -72,15 +76,16 @@ public class QueueService {
                         if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
                             throw new SQAccessDeniedException("You do not have access to this queue");
                         }
+                        if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                            throw SQInvalidRequestException.queueDeletedException();
+                        }
                         queue1.setStatus(QueueStatus.DELETED);
                         return queueRepository.save(queue1);
                     }
                 ).get();
             return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
-        } catch (DataIntegrityViolationException de) {
-            throw SQInvalidRequestException.queueNameNotUniqueException();
         } catch (Exception e) {
-            throw new SQInternalServerException("Unable to update queue: ", e);
+            throw new SQInternalServerException("Unable to delete queue: ", e);
         }
     }
 

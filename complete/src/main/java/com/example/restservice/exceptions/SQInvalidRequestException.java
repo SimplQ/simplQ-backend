@@ -13,7 +13,8 @@ public class SQInvalidRequestException extends SQException {
     TOKEN_NOT_NOTIFIABLE,
     TOKEN_DELETED,
     QUEUE_PAUSED,
-    QUEUE_DELETED
+    QUEUE_DELETED,
+    QUEUE_DELETE_NOT_ALLOWED
   }
 
   private final Map<ReasonCode, String> message =
@@ -24,7 +25,8 @@ public class SQInvalidRequestException extends SQException {
           ReasonCode.TOKEN_NOT_NOTIFIABLE, "Only tokens with WAITING status can be notified",
           ReasonCode.TOKEN_DELETED, "The token has been deleted from the queue",
           ReasonCode.QUEUE_PAUSED, "The queue has been paused",
-          ReasonCode.QUEUE_DELETED, "The queue has been deleted");
+          ReasonCode.QUEUE_DELETED, "The queue has been deleted",
+          ReasonCode.QUEUE_DELETE_NOT_ALLOWED, "Delete not allowed in pause request");
 
   private final ReasonCode reasonCode;
 
@@ -58,6 +60,10 @@ public class SQInvalidRequestException extends SQException {
 
   public static SQInvalidRequestException queueDeletedException() {
     return new SQInvalidRequestException(ReasonCode.QUEUE_DELETED);
+  }
+
+  public static SQInvalidRequestException queueDeletedNotAllowedException() {
+    return new SQInvalidRequestException(ReasonCode.QUEUE_DELETE_NOT_ALLOWED);
   }
 
   public ReasonCode getReasonCode() {
