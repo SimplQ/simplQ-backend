@@ -1,5 +1,6 @@
 package com.example.restservice.dao;
 
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,8 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import com.example.restservice.constants.QueueStatus;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,9 +38,14 @@ public class Queue {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
   private List<Token> tokens;
 
+  @Column(updatable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  Date queueCreationTimestamp;
+
   public Queue(String queueName, String ownerId, QueueStatus status) {
     this.queueName = queueName;
     this.ownerId = ownerId;
+    this.queueCreationTimestamp = new Date();
     this.status = status;
   }
 }

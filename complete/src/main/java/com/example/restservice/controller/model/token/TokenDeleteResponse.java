@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class TokenDeleteResponse {
-
   private final String queueName;
   private final TokenStatus tokenStatus;
 }

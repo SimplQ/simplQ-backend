@@ -40,8 +40,10 @@ public class TokenService {
         token.getTokenNumber(),
         token.getStatus(),
         token.getQueue().getQueueName(),
+        token.getQueue().getQueueId(),
         getAheadCount(token),
-        token.getNotifiable());
+        token.getNotifiable(),
+        token.getTokenCreationTimestamp());
   }
 
   @Transactional
@@ -93,7 +95,8 @@ public class TokenService {
                   return newToken;
                 })
             .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    var currentMaxTokenNumber = tokenRepository.getLastTokenNumberForQueue(token.getQueue().getQueueId());
+    var currentMaxTokenNumber =
+        tokenRepository.getLastTokenNumberForQueue(token.getQueue().getQueueId());
     var nextTokenNumber = currentMaxTokenNumber != null ? currentMaxTokenNumber + 1 : 1;
     token.setTokenNumber(nextTokenNumber);
     return new TokenDetailResponse(
@@ -101,8 +104,10 @@ public class TokenService {
         token.getTokenNumber(),
         token.getStatus(),
         token.getQueue().getQueueName(),
+        token.getQueue().getQueueId(),
         getAheadCount(token),
-        token.getNotifiable());
+        token.getNotifiable(),
+        token.getTokenCreationTimestamp());
   }
 
   @Transactional
@@ -112,18 +117,21 @@ public class TokenService {
             .findByOwnerId(loggedInUserInfo.getUserId())
             .map(
                 token ->
-                    new MyTokensResponse.Token(token.getQueue().getQueueName(), token.getTokenId()))
+                    new MyTokensResponse.Token(
+                        token.getQueue().getQueueName(),
+                        token.getTokenId(),
+                        token.getTokenCreationTimestamp()))
             .collect(Collectors.toList()));
   }
 
   private Long getAheadCount(Token token) {
     if (token.getStatus() == TokenStatus.REMOVED) {
-      throw SQInvalidRequestException.tokenDeletedException();
+      return null;
     }
     return token.getQueue().getTokens().stream()
         .filter(
             fellowUser ->
-                fellowUser.getTimestamp().before(token.getTimestamp())
+                fellowUser.getTokenCreationTimestamp().before(token.getTokenCreationTimestamp())
                     && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
         .count();
   }

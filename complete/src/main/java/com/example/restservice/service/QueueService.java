@@ -98,10 +98,12 @@ public class QueueService {
               if (!queue.getOwnerId().equals(loggedInUserInfo.getUserId())) {
                 throw new SQAccessDeniedException("You do not have access to this queue");
               }
-              var resp = new QueueDetailsResponse(queueId, queue.getQueueName());
+              var resp =
+                  new QueueDetailsResponse(
+                      queueId, queue.getQueueName(), queue.getQueueCreationTimestamp());
               queue.getTokens().stream()
                   .filter(token -> token.getStatus() != TokenStatus.REMOVED)
-                  .sorted(Comparator.comparing(Token::getTimestamp))
+                  .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
                   .forEach(resp::addToken);
               return resp;
             })
@@ -121,7 +123,8 @@ public class QueueService {
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
-                    Long.valueOf(queue.getTokens().size())))
+                    Long.valueOf(queue.getTokens().size()),
+                    queue.getQueueCreationTimestamp()))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
@@ -130,7 +133,12 @@ public class QueueService {
     return new MyQueuesResponse(
         queueRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
-            .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName()))
+            .map(
+                queue ->
+                    new MyQueuesResponse.Queue(
+                        queue.getQueueId(),
+                        queue.getQueueName(),
+                        queue.getQueueCreationTimestamp()))
             .collect(Collectors.toList()));
   }
 
@@ -147,7 +155,8 @@ public class QueueService {
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
-                    Long.valueOf(queue.getTokens().size())))
+                    Long.valueOf(queue.getTokens().size()),
+                    queue.getQueueCreationTimestamp()))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 }

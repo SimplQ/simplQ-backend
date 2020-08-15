@@ -36,7 +36,7 @@ public class Token {
 
   @Column(updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
-  Date timestamp;
+  Date tokenCreationTimestamp;
 
   public Token(
       String name, String contactNumber, TokenStatus status, Boolean notifiable, String ownerId) {
@@ -45,6 +45,6 @@ public class Token {
     this.status = status;
     this.notifiable = notifiable;
     this.ownerId = ownerId;
-    this.timestamp = new Date();
+    this.tokenCreationTimestamp = new Date();
   }
 }

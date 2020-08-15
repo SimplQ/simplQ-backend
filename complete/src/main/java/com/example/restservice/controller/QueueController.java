@@ -2,8 +2,8 @@ package com.example.restservice.controller;
 
 import com.example.restservice.controller.model.queue.*;
 import com.example.restservice.service.QueueService;
-import lombok.RequiredArgsConstructor;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
