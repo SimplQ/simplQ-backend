@@ -3,7 +3,6 @@ package com.example.restservice;
 import java.util.Collections;
 import java.util.List;
 
-import com.example.restservice.config.PropertiesConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,8 +15,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @SpringBootApplication
-@EnableAutoConfiguration
-@EnableConfigurationProperties(PropertiesConfig.class)
 public class RestServiceApplication {
 
   @Bean
