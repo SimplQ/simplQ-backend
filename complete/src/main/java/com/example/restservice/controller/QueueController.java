@@ -1,22 +1,15 @@
 package com.example.restservice.controller;
 
-import com.example.restservice.controller.model.queue.CreateQueueRequest;
-import com.example.restservice.controller.model.queue.CreateQueueResponse;
-import com.example.restservice.controller.model.queue.MyQueuesResponse;
-import com.example.restservice.controller.model.queue.QueueDetailsResponse;
-import com.example.restservice.controller.model.queue.QueueStatusResponse;
+import com.example.restservice.controller.model.queue.*;
+import com.example.restservice.dao.CustomQuestions;
 import com.example.restservice.service.QueueService;
-import javax.validation.Valid;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/v1")
@@ -53,5 +46,12 @@ public class QueueController {
     } else {
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // Todo Give reason
     }
+  }
+
+  @PostMapping(path = "/queue/{queueId}/custom-questions")
+  public ResponseEntity<CustomQuestions> createCustomQuestions(
+          @PathVariable("queueId") String queueId,
+          @RequestBody String customQuestions) throws JsonProcessingException {
+    return ResponseEntity.ok(queueService.createCustomQuestions(queueId ,customQuestions));
   }
 }

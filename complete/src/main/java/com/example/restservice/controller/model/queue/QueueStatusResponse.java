@@ -1,7 +1,9 @@
 package com.example.restservice.controller.model.queue;
 
-import java.util.Date;
+import com.example.restservice.dao.CustomQuestions;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class QueueStatusResponse {
@@ -12,4 +14,5 @@ public class QueueStatusResponse {
   final Long numberOfActiveTokens;
   final Long totalNumberOfTokens;
   final Date queueCreationTimestamp;
+  final CustomQuestions customQuestions;
 }
