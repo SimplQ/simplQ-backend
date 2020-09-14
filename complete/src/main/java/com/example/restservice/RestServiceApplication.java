@@ -21,13 +21,7 @@ public class RestServiceApplication {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
-    config.setAllowedOrigins(
-        List.of(
-            "https://simplq.me",
-            "https://www.simplq.me",
-            "https://dev.simplq.me",
-            "https://new.simplq.me",
-            "http://localhost:3000"));
+    config.setAllowedOrigins(Collections.singletonList("*"));
     config.setAllowedMethods(Collections.singletonList("*"));
     config.setAllowedHeaders(Collections.singletonList("*"));
     source.registerCorsConfiguration("/**", config);
