@@ -11,7 +11,6 @@ import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
 import com.example.restservice.dao.Token;
 import com.example.restservice.exceptions.SQAccessDeniedException;
-import com.example.restservice.exceptions.SQInternalServerException;
 import com.example.restservice.exceptions.SQInvalidRequestException;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -31,13 +30,11 @@ public class QueueService {
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
       var queue =
-          queueRepository.save(
+          queueRepository.saveAndFlush(
               new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
-    } catch (Exception e) {
-      throw new SQInternalServerException("Unable to create queue: ", e);
     }
   }
 
