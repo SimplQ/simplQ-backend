@@ -1,5 +1,7 @@
 # SimplQ Backend
 
+[![Build Status](https://travis-ci.org/SimplQ/simplQ-backend.svg?branch=master)](https://travis-ci.org/SimplQ/simplQ-backend)
+
 [SimplQ](https://simplq.me) is a completely web based queue management solution that anyone can use to create instant queues. 
 
 ### Development Envirmonment Setup Instructions
