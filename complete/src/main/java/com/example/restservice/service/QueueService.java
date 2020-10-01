@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -78,9 +79,18 @@ public class QueueService {
 
   @Transactional
   public MyQueuesResponse getMyQueues() {
-    return new MyQueuesResponse(
+    Stream<Queue> myQueueStream =
         queueRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
+            .sorted(
+                new Comparator<Queue>() {
+                  public int compare(Queue a, Queue b) {
+                    return a.getQueueCreationTimestamp().compareTo(b.getQueueCreationTimestamp());
+                  }
+                });
+
+    return new MyQueuesResponse(
+        myQueueStream
             .map(
                 queue ->
                     new MyQueuesResponse.Queue(

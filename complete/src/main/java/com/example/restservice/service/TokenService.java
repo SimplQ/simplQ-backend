@@ -18,6 +18,8 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -106,9 +108,18 @@ public class TokenService {
 
   @Transactional
   public MyTokensResponse getMyTokens() {
-    return new MyTokensResponse(
+    Stream<Token> myTokenStream =
         tokenRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
+            .sorted(
+                new Comparator<Token>() {
+                  public int compare(Token a, Token b) {
+                    return a.getTokenCreationTimestamp().compareTo(b.getTokenCreationTimestamp());
+                  }
+                });
+
+    return new MyTokensResponse(
+        myTokenStream
             .map(
                 token ->
                     new MyTokensResponse.Token(
