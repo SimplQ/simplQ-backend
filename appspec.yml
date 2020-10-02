@@ -65,6 +65,6 @@ files:
 #   in the script specified in "location".
 hooks:
   AfterInstall:
-    - location: Scripts/runJar.sh
+    - location: scripts/run-jar.sh
       timeout: 360
 
