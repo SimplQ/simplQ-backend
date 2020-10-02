@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+import java.util.Comparator;
 
 @Service
 @RequiredArgsConstructor
@@ -109,6 +110,12 @@ public class TokenService {
     return new MyTokensResponse(
         tokenRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
+            .sorted(
+                new Comparator<Token>() {
+                  public int compare(Token a, Token b) {
+                    return a.getTokenCreationTimestamp().compareTo(b.getTokenCreationTimestamp());
+                  }
+                })
             .map(
                 token ->
                     new MyTokensResponse.Token(

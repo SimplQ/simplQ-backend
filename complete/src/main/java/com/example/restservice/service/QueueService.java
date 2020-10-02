@@ -81,6 +81,12 @@ public class QueueService {
     return new MyQueuesResponse(
         queueRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
+            .sorted(
+                new Comparator<Queue>() {
+                  public int compare(Queue a, Queue b) {
+                    return a.getQueueCreationTimestamp().compareTo(b.getQueueCreationTimestamp());
+                  }
+                })
             .map(
                 queue ->
                     new MyQueuesResponse.Queue(
