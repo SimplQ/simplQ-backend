@@ -79,7 +79,6 @@ public class QueueService {
 
   @Transactional
   public MyQueuesResponse getMyQueues() {
-
     return new MyQueuesResponse(
         queueRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
