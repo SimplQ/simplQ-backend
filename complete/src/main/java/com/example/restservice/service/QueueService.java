@@ -79,7 +79,8 @@ public class QueueService {
 
   @Transactional
   public MyQueuesResponse getMyQueues() {
-    Stream<Queue> myQueueStream =
+
+    return new MyQueuesResponse(
         queueRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
             .sorted(
@@ -87,10 +88,7 @@ public class QueueService {
                   public int compare(Queue a, Queue b) {
                     return a.getQueueCreationTimestamp().compareTo(b.getQueueCreationTimestamp());
                   }
-                });
-
-    return new MyQueuesResponse(
-        myQueueStream
+                })
             .map(
                 queue ->
                     new MyQueuesResponse.Queue(

@@ -108,7 +108,7 @@ public class TokenService {
 
   @Transactional
   public MyTokensResponse getMyTokens() {
-    Stream<Token> myTokenStream =
+    return new MyTokensResponse(
         tokenRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
             .sorted(
@@ -116,10 +116,7 @@ public class TokenService {
                   public int compare(Token a, Token b) {
                     return a.getTokenCreationTimestamp().compareTo(b.getTokenCreationTimestamp());
                   }
-                });
-
-    return new MyTokensResponse(
-        myTokenStream
+                })
             .map(
                 token ->
                     new MyTokensResponse.Token(
