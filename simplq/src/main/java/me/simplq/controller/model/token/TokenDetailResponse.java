@@ -1,8 +1,8 @@
 package me.simplq.controller.model.token;
 
-import me.simplq.constants.TokenStatus;
 import java.util.Date;
 import lombok.Data;
+import me.simplq.constants.TokenStatus;
 
 @Data
 public class TokenDetailResponse {
