@@ -11,7 +11,6 @@ import com.example.restservice.dao.Queue;
 import com.example.restservice.dao.QueueRepository;
 import com.example.restservice.dao.Token;
 import com.example.restservice.exceptions.SQAccessDeniedException;
-import com.example.restservice.exceptions.SQInternalServerException;
 import com.example.restservice.exceptions.SQInvalidRequestException;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -31,13 +30,11 @@ public class QueueService {
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
       var queue =
-          queueRepository.save(
+          queueRepository.saveAndFlush(
               new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
-    } catch (Exception e) {
-      throw new SQInternalServerException("Unable to create queue: ", e);
     }
   }
 
@@ -50,10 +47,12 @@ public class QueueService {
               if (!queue.getOwnerId().equals(loggedInUserInfo.getUserId())) {
                 throw new SQAccessDeniedException("You do not have access to this queue");
               }
-              var resp = new QueueDetailsResponse(queueId, queue.getQueueName());
+              var resp =
+                  new QueueDetailsResponse(
+                      queueId, queue.getQueueName(), queue.getQueueCreationTimestamp());
               queue.getTokens().stream()
                   .filter(token -> token.getStatus() != TokenStatus.REMOVED)
-                  .sorted(Comparator.comparing(Token::getTimestamp))
+                  .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
                   .forEach(resp::addToken);
               return resp;
             })
@@ -72,7 +71,8 @@ public class QueueService {
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
-                    Long.valueOf(queue.getTokens().size())))
+                    Long.valueOf(queue.getTokens().size()),
+                    queue.getQueueCreationTimestamp()))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
@@ -81,7 +81,18 @@ public class QueueService {
     return new MyQueuesResponse(
         queueRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
-            .map(queue -> new MyQueuesResponse.Queue(queue.getQueueId(), queue.getQueueName()))
+            .sorted(
+                new Comparator<Queue>() {
+                  public int compare(Queue a, Queue b) {
+                    return a.getQueueCreationTimestamp().compareTo(b.getQueueCreationTimestamp());
+                  }
+                })
+            .map(
+                queue ->
+                    new MyQueuesResponse.Queue(
+                        queue.getQueueId(),
+                        queue.getQueueName(),
+                        queue.getQueueCreationTimestamp()))
             .collect(Collectors.toList()));
   }
 
@@ -97,7 +108,8 @@ public class QueueService {
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
-                    Long.valueOf(queue.getTokens().size())))
+                    Long.valueOf(queue.getTokens().size()),
+                    queue.getQueueCreationTimestamp()))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 }
