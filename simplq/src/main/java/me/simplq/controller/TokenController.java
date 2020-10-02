@@ -1,12 +1,12 @@
 package me.simplq.controller;
 
+import lombok.RequiredArgsConstructor;
 import me.simplq.controller.model.token.CreateTokenRequest;
 import me.simplq.controller.model.token.MyTokensResponse;
 import me.simplq.controller.model.token.TokenDeleteResponse;
 import me.simplq.controller.model.token.TokenDetailResponse;
 import me.simplq.controller.model.token.TokenNotifyResponse;
 import me.simplq.service.TokenService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -19,7 +19,7 @@ public class SmsManager {
    * SMA service
    */
   public void notify(String contactNumber, String queueName) {
-    if(!smsEnabled) {
+    if (!smsEnabled) {
       log.info("Sending sms has been disabled");
       return;
     }

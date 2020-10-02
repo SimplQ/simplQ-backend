@@ -1,7 +1,7 @@
 package me.simplq.dao;
 
-import me.simplq.constants.TokenStatus;
 import java.util.stream.Stream;
+import me.simplq.constants.TokenStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

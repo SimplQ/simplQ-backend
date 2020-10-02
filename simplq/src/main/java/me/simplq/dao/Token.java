@@ -1,6 +1,5 @@
 package me.simplq.dao;
 
-import me.simplq.constants.TokenStatus;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +11,7 @@ import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.simplq.constants.TokenStatus;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity

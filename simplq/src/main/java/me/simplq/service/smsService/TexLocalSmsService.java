@@ -2,11 +2,11 @@ package me.simplq.service.smsService;
 
 import static me.simplq.service.smsService.SmsConstants.SMS_MESSAGE;
 
-import me.simplq.service.SecretsManager;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import me.simplq.service.SecretsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
