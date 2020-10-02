@@ -19,7 +19,7 @@ phases:
     commands:
       - echo Entered the build phase...
       - echo Build started on `date`
-      - cd complete/
+      - cd simplq/
       - echo $HOME
       - ls $HOME
       - echo $CODEBUILD_SRC_DIR

@@ -9,8 +9,8 @@
     <version>2.2.7.RELEASE</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
-  <groupId>me</groupId>
-  <artifactId>simplq</artifactId>
+  <groupId>me.simplq</groupId>
+  <artifactId>simplq-backend</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>simplq-backend</name>
   <description>SimplQ Backend</description>
