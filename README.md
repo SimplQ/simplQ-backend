@@ -13,12 +13,11 @@ The project is written in Java, and deployed on AWS. These steps are to be follo
 3. Build the jar:
 
 ```
-cd simplq/
 mvn package
 ```
 4. Run the jar:
 ```
-java -jar target/simplq-backend-0.0.1-SNAPSHOT.jar
+java -jar simplq/target/simplq-0.0.1-SNAPSHOT.jar 
 ```
 We follow Google's [Java Style Guidelines](https://github.com/google/styleguide). For Intellij, you can install the [google-java-format](https://plugins.jetbrains.com/plugin/8527-google-java-format) plugin, Eclipse and other IDE users can find more instructions [here](https://github.com/google/google-java-format).
 
