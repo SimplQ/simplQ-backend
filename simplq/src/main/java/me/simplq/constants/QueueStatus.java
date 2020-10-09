@@ -1,4 +1,4 @@
-package com.example.restservice.constants;
+package me.simplq.constants;
 
 public enum QueueStatus {
     ACTIVE,

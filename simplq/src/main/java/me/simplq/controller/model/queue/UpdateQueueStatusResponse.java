@@ -1,6 +1,6 @@
-package com.example.restservice.controller.model.queue;
+package me.simplq.controller.model.queue;
 
-import com.example.restservice.constants.QueueStatus;
+import me.simplq.constants.QueueStatus;
 import lombok.Data;
 
 @Data

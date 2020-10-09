@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import com.example.restservice.constants.QueueStatus;
+import me.simplq.constants.QueueStatus;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import lombok.Getter;

@@ -1,7 +1,7 @@
-package com.example.restservice.controller.model.queue;
+package me.simplq.controller.model.queue;
 
-import com.example.restservice.constants.QueueStatus;
 import lombok.Data;
+import me.simplq.constants.QueueStatus;
 
 @Data
 public class PauseQueueRequest {

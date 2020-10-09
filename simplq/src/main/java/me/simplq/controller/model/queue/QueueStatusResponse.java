@@ -1,8 +1,8 @@
 package me.simplq.controller.model.queue;
 
-import com.example.restservice.constants.QueueStatus;
 import java.util.Date;
 import lombok.Data;
+import me.simplq.constants.QueueStatus;
 
 @Data
 public class QueueStatusResponse {
