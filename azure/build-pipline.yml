@@ -27,12 +27,11 @@ steps:
 - task: Docker@2
   displayName: Build docker image
   inputs:
-    repository: $(DOCKER_REPOSITORY)
-    command: build
-    Dockerfile: simplq/Dockerfile
-    buildContext: simplq/
-    tags: |
-      latest
+    repository: '475033807538.dkr.ecr.ap-southeast-1.amazonaws.com/backend'
+    command: 'build'
+    Dockerfile: 'simplq/Dockerfile'
+    buildContext: 'simplq/'
+    tags: 'latest'
 
 - task: ECRPushImage@1
   inputs:
