@@ -38,6 +38,6 @@ steps:
     awsCredentials: 'AWS Service Connection (personal)'
     regionName: 'ap-southeast-1'
     imageSource: 'imagename'
+    sourceImageName: '475033807538.dkr.ecr.ap-southeast-1.amazonaws.com/backend'
     repositoryName: 'backend'
     forceDockerNamingConventions: true
-    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
