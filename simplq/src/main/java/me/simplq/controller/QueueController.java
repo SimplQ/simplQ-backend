@@ -5,18 +5,14 @@ import lombok.RequiredArgsConstructor;
 import me.simplq.controller.model.queue.CreateQueueRequest;
 import me.simplq.controller.model.queue.CreateQueueResponse;
 import me.simplq.controller.model.queue.MyQueuesResponse;
+import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
+import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
 import me.simplq.service.QueueService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1")
@@ -40,6 +36,19 @@ public class QueueController {
   public ResponseEntity<QueueDetailsResponse> getQueueDetails(
       @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.getQueueDetails(queueId));
+  }
+
+  @PostMapping(path = "/queue/{queueId}")
+  public ResponseEntity<UpdateQueueStatusResponse> pauseQueueRequest(
+          @Valid @RequestBody PauseQueueRequest pauseQueueRequest,
+          @PathVariable("queueId") String queueId) {
+    return ResponseEntity.ok(queueService.pauseQueue(pauseQueueRequest, queueId));
+  }
+
+  @DeleteMapping(path = "/queue/{queueId}")
+  public ResponseEntity<UpdateQueueStatusResponse> deleteQueueRequest(
+          @PathVariable("queueId") String queueId) {
+    return ResponseEntity.ok(queueService.deleteQueue(queueId));
   }
 
   @GetMapping(path = "/queue/status")

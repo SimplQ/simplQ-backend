@@ -2,6 +2,8 @@ package me.simplq.exceptions;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Map;
+
 public class SQInvalidRequestException extends SQException {
 
   private enum ReasonCode {
@@ -9,16 +11,22 @@ public class SQInvalidRequestException extends SQException {
     TOKEN_NOT_FOUND,
     QUEUE_NAME_ALREADY_EXISTS,
     TOKEN_NOT_NOTIFIABLE,
-    TOKEN_DELETED;
+    TOKEN_DELETED,
+    QUEUE_PAUSED,
+    QUEUE_DELETED,
+    QUEUE_DELETE_NOT_ALLOWED
   }
 
-  private final ImmutableMap<ReasonCode, String> message =
-      ImmutableMap.of(
+  private final Map<ReasonCode, String> message =
+      Map.of(
           ReasonCode.QUEUE_NOT_FOUND, "The queue does not exist",
           ReasonCode.TOKEN_NOT_FOUND, "The token does not exist",
           ReasonCode.QUEUE_NAME_ALREADY_EXISTS, "The queue name already exists",
           ReasonCode.TOKEN_NOT_NOTIFIABLE, "Only tokens with WAITING status can be notified",
-          ReasonCode.TOKEN_DELETED, "The token has been deleted from the queue");
+          ReasonCode.TOKEN_DELETED, "The token has been deleted from the queue",
+          ReasonCode.QUEUE_PAUSED, "The queue has been paused",
+          ReasonCode.QUEUE_DELETED, "The queue has been deleted",
+          ReasonCode.QUEUE_DELETE_NOT_ALLOWED, "Delete not allowed in pause request");
 
   private final ReasonCode reasonCode;
 
@@ -44,6 +52,18 @@ public class SQInvalidRequestException extends SQException {
 
   public static SQInvalidRequestException tokenDeletedException() {
     return new SQInvalidRequestException(ReasonCode.TOKEN_DELETED);
+  }
+
+  public static SQInvalidRequestException queuePausedException() {
+    return new SQInvalidRequestException(ReasonCode.QUEUE_PAUSED);
+  }
+
+  public static SQInvalidRequestException queueDeletedException() {
+    return new SQInvalidRequestException(ReasonCode.QUEUE_DELETED);
+  }
+
+  public static SQInvalidRequestException queueDeletedNotAllowedException() {
+    return new SQInvalidRequestException(ReasonCode.QUEUE_DELETE_NOT_ALLOWED);
   }
 
   public ReasonCode getReasonCode() {

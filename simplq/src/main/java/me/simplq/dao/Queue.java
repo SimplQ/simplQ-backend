@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import me.simplq.constants.QueueStatus;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class Queue {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   private String queueId;
 
+  private QueueStatus status;
   private String ownerId;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
@@ -40,9 +42,10 @@ public class Queue {
   @Temporal(TemporalType.TIMESTAMP)
   Date queueCreationTimestamp;
 
-  public Queue(String queueName, String ownerId) {
+  public Queue(String queueName, String ownerId, QueueStatus status) {
     this.queueName = queueName;
     this.ownerId = ownerId;
     this.queueCreationTimestamp = new Date();
+    this.status = status;
   }
 }

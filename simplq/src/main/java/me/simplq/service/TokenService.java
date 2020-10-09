@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.controller.model.token.CreateTokenRequest;
@@ -78,6 +79,11 @@ public class TokenService {
             .findById(createTokenRequest.getQueueId())
             .map(
                 queue -> {
+                  if(queue.getStatus().equals(QueueStatus.PAUSED)) {
+                    throw SQInvalidRequestException.queuePausedException();
+                  } else if (queue.getStatus().equals(QueueStatus.DELETED)) {
+                    throw SQInvalidRequestException.queueDeletedException();
+                  }
                   var newToken =
                       new Token(
                           createTokenRequest.getName(),

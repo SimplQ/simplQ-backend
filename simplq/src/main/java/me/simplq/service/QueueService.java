@@ -4,17 +4,21 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.controller.model.queue.CreateQueueRequest;
 import me.simplq.controller.model.queue.CreateQueueResponse;
 import me.simplq.controller.model.queue.MyQueuesResponse;
+import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
+import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
 import me.simplq.dao.Queue;
 import me.simplq.dao.QueueRepository;
 import me.simplq.dao.Token;
 import me.simplq.exceptions.SQAccessDeniedException;
+import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.exceptions.SQInvalidRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -30,13 +34,64 @@ public class QueueService {
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
       var queue =
-          queueRepository.saveAndFlush(
-              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId()));
+          queueRepository.save(
+              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId(), QueueStatus.ACTIVE));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
     }
   }
+
+  @Transactional
+  public UpdateQueueStatusResponse pauseQueue(PauseQueueRequest pauseQueueRequest, String queueId) {
+    try {
+      var queue =
+          queueRepository
+          .findById(queueId)
+          .map(
+              queue1 -> {
+                if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
+                  throw new SQAccessDeniedException("You do not have access to this queue");
+                }
+                if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                  throw SQInvalidRequestException.queueDeletedException();
+                }
+                if (pauseQueueRequest.getStatus().equals(QueueStatus.DELETED)) {
+                    throw SQInvalidRequestException.queueDeletedNotAllowedException();
+                }
+                queue1.setStatus(pauseQueueRequest.getStatus());
+                return queueRepository.save(queue1);
+              }
+          ).get();
+      return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+    } catch (Exception e) {
+      throw new SQInternalServerException("Unable to update queue: ", e);
+    }
+  }
+
+    @Transactional
+    public UpdateQueueStatusResponse deleteQueue(String queueId) {
+        try {
+            var queue =
+                queueRepository
+                .findById(queueId)
+                .map(
+                    queue1 -> {
+                        if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
+                            throw new SQAccessDeniedException("You do not have access to this queue");
+                        }
+                        if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                            throw SQInvalidRequestException.queueDeletedException();
+                        }
+                        queue1.setStatus(QueueStatus.DELETED);
+                        return queueRepository.save(queue1);
+                    }
+                ).get();
+            return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+        } catch (Exception e) {
+            throw new SQInternalServerException("Unable to delete queue: ", e);
+        }
+    }
 
   @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {
@@ -68,6 +123,7 @@ public class QueueService {
                 new QueueStatusResponse(
                     queueId,
                     queue.getQueueName(),
+                    queue.getStatus(),
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
@@ -105,6 +161,7 @@ public class QueueService {
                 new QueueStatusResponse(
                     queue.getQueueId(),
                     queue.getQueueName(),
+                    queue.getStatus(),
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
