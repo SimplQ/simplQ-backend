@@ -9,12 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import me.simplq.constants.QueueStatus;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.simplq.constants.QueueStatus;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
