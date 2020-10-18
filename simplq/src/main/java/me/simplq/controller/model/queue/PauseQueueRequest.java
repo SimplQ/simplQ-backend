@@ -5,5 +5,5 @@ import me.simplq.constants.QueueStatus;
 
 @Data
 public class PauseQueueRequest {
-    QueueStatus status;
+  QueueStatus status;
 }

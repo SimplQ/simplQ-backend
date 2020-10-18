@@ -1,7 +1,7 @@
 package me.simplq.constants;
 
 public enum QueueStatus {
-    ACTIVE,
-    PAUSED,
-    DELETED
+  ACTIVE,
+  PAUSED,
+  DELETED
 }
