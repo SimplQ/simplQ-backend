@@ -79,7 +79,7 @@ public class TokenService {
             .findById(createTokenRequest.getQueueId())
             .map(
                 queue -> {
-                  if(queue.getStatus().equals(QueueStatus.PAUSED)) {
+                  if (queue.getStatus().equals(QueueStatus.PAUSED)) {
                     throw SQInvalidRequestException.queuePausedException();
                   } else if (queue.getStatus().equals(QueueStatus.DELETED)) {
                     throw SQInvalidRequestException.queueDeletedException();

@@ -40,14 +40,14 @@ public class QueueController {
 
   @PostMapping(path = "/queue/{queueId}")
   public ResponseEntity<UpdateQueueStatusResponse> pauseQueueRequest(
-          @Valid @RequestBody PauseQueueRequest pauseQueueRequest,
-          @PathVariable("queueId") String queueId) {
+      @Valid @RequestBody PauseQueueRequest pauseQueueRequest,
+      @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.pauseQueue(pauseQueueRequest, queueId));
   }
 
   @DeleteMapping(path = "/queue/{queueId}")
   public ResponseEntity<UpdateQueueStatusResponse> deleteQueueRequest(
-          @PathVariable("queueId") String queueId) {
+      @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.deleteQueue(queueId));
   }
 
