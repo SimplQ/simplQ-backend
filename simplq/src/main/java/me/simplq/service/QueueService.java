@@ -35,7 +35,10 @@ public class QueueService {
     try {
       var queue =
           queueRepository.save(
-              new Queue(createQueueRequest.getQueueName(), loggedInUserInfo.getUserId(), QueueStatus.ACTIVE));
+              new Queue(
+                  createQueueRequest.getQueueName(),
+                  loggedInUserInfo.getUserId(),
+                  QueueStatus.ACTIVE));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
@@ -47,51 +50,53 @@ public class QueueService {
     try {
       var queue =
           queueRepository
-          .findById(queueId)
-          .map(
-              queue1 -> {
-                if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
-                  throw new SQAccessDeniedException("You do not have access to this queue");
-                }
-                if (queue1.getStatus().equals(QueueStatus.DELETED)) {
-                  throw SQInvalidRequestException.queueDeletedException();
-                }
-                if (pauseQueueRequest.getStatus().equals(QueueStatus.DELETED)) {
-                    throw SQInvalidRequestException.queueDeletedNotAllowedException();
-                }
-                queue1.setStatus(pauseQueueRequest.getStatus());
-                return queueRepository.save(queue1);
-              }
-          ).get();
-      return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+              .findById(queueId)
+              .map(
+                  queue1 -> {
+                    if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
+                      throw new SQAccessDeniedException("You do not have access to this queue");
+                    }
+                    if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                      throw SQInvalidRequestException.queueDeletedException();
+                    }
+                    if (pauseQueueRequest.getStatus().equals(QueueStatus.DELETED)) {
+                      throw SQInvalidRequestException.queueDeletedNotAllowedException();
+                    }
+                    queue1.setStatus(pauseQueueRequest.getStatus());
+                    return queueRepository.save(queue1);
+                  })
+              .get();
+      return new UpdateQueueStatusResponse(
+          queue.getQueueId(), queue.getQueueName(), queue.getStatus());
     } catch (Exception e) {
       throw new SQInternalServerException("Unable to update queue: ", e);
     }
   }
 
-    @Transactional
-    public UpdateQueueStatusResponse deleteQueue(String queueId) {
-        try {
-            var queue =
-                queueRepository
-                .findById(queueId)
-                .map(
-                    queue1 -> {
-                        if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
-                            throw new SQAccessDeniedException("You do not have access to this queue");
-                        }
-                        if (queue1.getStatus().equals(QueueStatus.DELETED)) {
-                            throw SQInvalidRequestException.queueDeletedException();
-                        }
-                        queue1.setStatus(QueueStatus.DELETED);
-                        return queueRepository.save(queue1);
+  @Transactional
+  public UpdateQueueStatusResponse deleteQueue(String queueId) {
+    try {
+      var queue =
+          queueRepository
+              .findById(queueId)
+              .map(
+                  queue1 -> {
+                    if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
+                      throw new SQAccessDeniedException("You do not have access to this queue");
                     }
-                ).get();
-            return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(), queue.getStatus());
-        } catch (Exception e) {
-            throw new SQInternalServerException("Unable to delete queue: ", e);
-        }
+                    if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                      throw SQInvalidRequestException.queueDeletedException();
+                    }
+                    queue1.setStatus(QueueStatus.DELETED);
+                    return queueRepository.save(queue1);
+                  })
+              .get();
+      return new UpdateQueueStatusResponse(
+          queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+    } catch (Exception e) {
+      throw new SQInternalServerException("Unable to delete queue: ", e);
     }
+  }
 
   @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {
