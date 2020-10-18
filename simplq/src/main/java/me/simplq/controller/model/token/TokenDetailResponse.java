@@ -8,6 +8,8 @@ import me.simplq.constants.TokenStatus;
 public class TokenDetailResponse {
 
   final String tokenId;
+  final String name;
+  final String contactNumber;
   final Integer tokenNumber;
   final TokenStatus tokenStatus;
   final String queueName;
