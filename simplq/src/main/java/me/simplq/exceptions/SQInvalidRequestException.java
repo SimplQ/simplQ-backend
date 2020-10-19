@@ -1,6 +1,5 @@
 package me.simplq.exceptions;
 
-
 import java.util.Map;
 
 public class SQInvalidRequestException extends SQException {
