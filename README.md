@@ -13,7 +13,7 @@ The project is written in Java, and deployed on AWS. These steps are to be follo
 3. Build the jar:
 
 ```
-mvn package -DskipTests
+mvn package
 ```
 
 4. Run the jar:
@@ -28,16 +28,10 @@ We follow Google's [Java Style Guidelines](https://github.com/google/styleguide)
 
 Test APIs through Postman - A test postman collection is available [here](https://www.getpostman.com/collections/252a096a86fc550fb5fb).
 
-Integration Tests Setup: 
+Run Integration Tests: 
 
-1. Copy the bearer token from Authorization header in Postman
-2. Add the following to application.properties file (DO NOT COMMIT THE TOKEN)  
 ```
-auth.token=Bearer <token string from step 1>
-```
-Confirm that the setup is done correctly by running 
-```
-mvn clean package
+mvn test
 ```
 
 
