@@ -142,12 +142,8 @@ public class QueueService {
     return new MyQueuesResponse(
         queueRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
-            .sorted(
-                new Comparator<Queue>() {
-                  public int compare(Queue a, Queue b) {
-                    return a.getQueueCreationTimestamp().compareTo(b.getQueueCreationTimestamp());
-                  }
-                })
+            .filter(queue -> queue.getStatus() != QueueStatus.DELETED)
+            .sorted(Comparator.comparing(Queue::getQueueCreationTimestamp))
             .map(
                 queue ->
                     new MyQueuesResponse.Queue(

@@ -1,5 +1,6 @@
 package me.simplq;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -7,8 +8,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.simplq.config.TestConfig;
+import me.simplq.constants.QueueStatus;
 import me.simplq.controller.model.queue.CreateQueueResponse;
+import me.simplq.controller.model.queue.MyQueuesResponse;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.token.TokenDetailResponse;
 import me.simplq.dao.QueueRepository;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +44,7 @@ class IntegrationTests {
   @Test
   void endToEndScenarioTest() throws Exception {
 
-    // POST queue
+    // Create queue
     String createQueueRequest = "{ \"queueName\": \"Queue2222\" }";
 
     MvcResult createQueueResult =
@@ -118,11 +122,20 @@ class IntegrationTests {
         tokenDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
 
     // GET myQueues
-    mockMvc
-        .perform(get("/v1/queues").header("Authorization", authToken))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andReturn();
+    MvcResult myQueuesResult =
+        mockMvc
+            .perform(get("/v1/queues").header("Authorization", authToken))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+
+    MyQueuesResponse myQueuesResponse =
+        objectMapper.readValue(
+            myQueuesResult.getResponse().getContentAsString(), MyQueuesResponse.class);
+    Assertions.assertEquals(myQueuesResponse.getQueues().size(), 1);
+    var queue = myQueuesResponse.getQueues().get(0);
+    Assertions.assertEquals(createQueueResponse.getQueueName(), queue.getQueueName());
+    Assertions.assertEquals(createQueueResponse.getQueueId(), queue.getQueueId());
 
     // GET myTokens
     mockMvc
@@ -130,5 +143,33 @@ class IntegrationTests {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andReturn();
+
+    MvcResult deleteQueueResult =
+        mockMvc
+            .perform(
+                delete("/v1/queue/" + createQueueResponse.getQueueId())
+                    .header("Authorization", authToken))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+    QueueStatusResponse queueStatusResponseDeleted =
+        objectMapper.readValue(
+            deleteQueueResult.getResponse().getContentAsString(), QueueStatusResponse.class);
+    Assertions.assertEquals(
+        createQueueResponse.getQueueId(), queueStatusResponseDeleted.getQueueId());
+    Assertions.assertEquals(QueueStatus.DELETED, queueStatusResponseDeleted.getStatus());
+
+    // GET myQueues
+    MvcResult myQueuesResultDeleted =
+        mockMvc
+            .perform(get("/v1/queues").header("Authorization", authToken))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+
+    MyQueuesResponse myQueuesResponseDeleted =
+        objectMapper.readValue(
+            myQueuesResultDeleted.getResponse().getContentAsString(), MyQueuesResponse.class);
+    Assertions.assertEquals(0, myQueuesResponseDeleted.getQueues().size());
   }
 }
