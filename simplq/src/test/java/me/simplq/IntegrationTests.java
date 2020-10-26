@@ -134,8 +134,8 @@ class IntegrationTests {
             myQueuesResult.getResponse().getContentAsString(), MyQueuesResponse.class);
     Assertions.assertEquals(myQueuesResponse.getQueues().size(), 1);
     var queue = myQueuesResponse.getQueues().get(0);
-    Assertions.assertEquals(queue.getQueueName(), createQueueResponse.getQueueName());
-    Assertions.assertEquals(queue.getQueueId(), createQueueResponse.getQueueId());
+    Assertions.assertEquals(createQueueResponse.getQueueName(), queue.getQueueName());
+    Assertions.assertEquals(createQueueResponse.getQueueId(), queue.getQueueId());
 
     // GET myTokens
     mockMvc
@@ -156,8 +156,8 @@ class IntegrationTests {
         objectMapper.readValue(
             deleteQueueResult.getResponse().getContentAsString(), QueueStatusResponse.class);
     Assertions.assertEquals(
-        queueStatusResponseDeleted.getQueueId(), createQueueResponse.getQueueId());
-    Assertions.assertEquals(queueStatusResponseDeleted.getStatus(), QueueStatus.DELETED);
+        createQueueResponse.getQueueId(), queueStatusResponseDeleted.getQueueId());
+    Assertions.assertEquals(QueueStatus.DELETED, queueStatusResponseDeleted.getStatus());
 
     // GET myQueues
     MvcResult myQueuesResultDeleted =
@@ -169,7 +169,7 @@ class IntegrationTests {
 
     MyQueuesResponse myQueuesResponseDeleted =
         objectMapper.readValue(
-            myQueuesResult.getResponse().getContentAsString(), MyQueuesResponse.class);
-    Assertions.assertEquals(myQueuesResponseDeleted.getQueues().size(), 0);
+            myQueuesResultDeleted.getResponse().getContentAsString(), MyQueuesResponse.class);
+    Assertions.assertEquals(0, myQueuesResponseDeleted.getQueues().size());
   }
 }
