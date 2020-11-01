@@ -34,7 +34,7 @@ public class QueueService {
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
     try {
       var queue =
-          queueRepository.save(
+          queueRepository.saveAndFlush(
               new Queue(
                   createQueueRequest.getQueueName(),
                   loggedInUserInfo.getUserId(),
