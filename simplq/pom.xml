@@ -85,6 +85,11 @@
       <artifactId>google-api-client</artifactId>
       <version>1.30.11</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>7.1.0</version>
+    </dependency>
   </dependencies>
 
 </project>

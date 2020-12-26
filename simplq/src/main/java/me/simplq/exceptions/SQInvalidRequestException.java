@@ -15,6 +15,7 @@ public class SQInvalidRequestException extends SQException {
     QUEUE_DELETE_NOT_ALLOWED
   }
 
+  // TODO Move to SQException and include internal server ones too.
   private final Map<ReasonCode, String> message =
       Map.of(
           ReasonCode.QUEUE_NOT_FOUND, "The queue does not exist",

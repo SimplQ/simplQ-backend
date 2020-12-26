@@ -1,5 +1,5 @@
 package me.simplq.service.smsService;
 
 public interface SmsService {
-  String sendSMS(String contactNumber, String queueName);
+  void sendSMS(String contactNumber, String payload);
 }

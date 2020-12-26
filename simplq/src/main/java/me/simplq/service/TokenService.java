@@ -1,17 +1,10 @@
 package me.simplq.service;
 
-import java.util.Comparator;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
-import me.simplq.controller.model.token.CreateTokenRequest;
-import me.simplq.controller.model.token.MyTokensResponse;
-import me.simplq.controller.model.token.TokenDeleteResponse;
-import me.simplq.controller.model.token.TokenDetailResponse;
-import me.simplq.controller.model.token.TokenNotifyResponse;
+import me.simplq.controller.model.token.*;
 import me.simplq.dao.QueueRepository;
 import me.simplq.dao.Token;
 import me.simplq.dao.TokenRepository;
@@ -21,6 +14,10 @@ import me.simplq.service.smsService.SmsManager;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class TokenService {
@@ -29,6 +26,7 @@ public class TokenService {
   private final QueueRepository queueRepository;
   private final SmsManager smsManager;
   private final LoggedInUserInfo loggedInUserInfo;
+  private final String TOKEN_NOTIFICATION_MESSAGE = "Hi, your wait for %s is over! You can proceed";
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
@@ -66,7 +64,9 @@ public class TokenService {
             .findById(tokenId)
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     if (user.getStatus() == TokenStatus.WAITING) {
-      smsManager.notify(user.getContactNumber(), user.getQueue().getQueueName());
+      smsManager.notify(
+          user.getContactNumber(),
+          String.format(TOKEN_NOTIFICATION_MESSAGE, user.getQueue().getQueueName()));
     } else {
       throw SQInvalidRequestException.tokenNotNotifiableException();
     }
