@@ -1,14 +1,13 @@
 package me.simplq.service.smsService;
 
-import me.simplq.exceptions.SQInternalServerException;
-import me.simplq.service.SecretsManager;
+import static me.simplq.service.smsService.SmsConstants.SMS_MESSAGE;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static me.simplq.service.smsService.SmsConstants.SMS_MESSAGE;
+import me.simplq.exceptions.SQInternalServerException;
+import me.simplq.service.SecretsManager;
 
 public class TexLocalSmsService implements SmsService {
   private final String API_KEY;
