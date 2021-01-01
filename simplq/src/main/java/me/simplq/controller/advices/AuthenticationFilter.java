@@ -14,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @Order(1)
 public class AuthenticationFilter implements Filter {
 
+  private static final String UNAUTHORIZED = "Unauthorized";
+  private static final String INVALID_TOKEN = "Invalid auth token";
   private final GoogleIdTokenVerifier verifier;
   private final LoggedInUserInfo loggedInUserInfo;
 
@@ -34,7 +37,13 @@ public class AuthenticationFilter implements Filter {
   }
 
   private void authenticate(String authHeaderVal) {
+    if (StringUtils.isEmpty(authHeaderVal)) {
+      throw new SQAccessDeniedException(UNAUTHORIZED);
+    }
     var token = authHeaderVal.replaceFirst("^Bearer ", "");
+    if (StringUtils.isEmpty(token)) {
+      throw new SQAccessDeniedException(UNAUTHORIZED);
+    }
     if (token.equals("anonymous")) {
       loggedInUserInfo.setUserId(token);
       return;
@@ -43,12 +52,12 @@ public class AuthenticationFilter implements Filter {
     try {
       idToken = verifier.verify(token);
     } catch (GeneralSecurityException e) {
-      throw new SQAccessDeniedException("Unauthorized");
+      throw new SQAccessDeniedException(UNAUTHORIZED);
     } catch (IOException e) {
-      throw new SQAccessDeniedException("Invalid auth token");
+      throw new SQAccessDeniedException(INVALID_TOKEN);
     }
     if (idToken == null) {
-      throw new SQAccessDeniedException("Invalid auth token");
+      throw new SQAccessDeniedException(INVALID_TOKEN);
     }
     loggedInUserInfo.setUserId(idToken.getPayload().getSubject());
   }
