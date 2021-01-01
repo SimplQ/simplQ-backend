@@ -6,12 +6,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import java.util.List;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import me.simplq.exceptions.SQAccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +24,12 @@ public class AuthenticationFilter implements Filter {
 
   @Autowired
   AuthenticationFilter(
-      LoggedInUserInfo loggedInUserInfo, @Value("${google.auth.clientId}") String clientId) {
+      LoggedInUserInfo loggedInUserInfo,
+      @Value("#{'${google.auth.clientIds}'.split(',')}") List<String> clientIds) {
     this.loggedInUserInfo = loggedInUserInfo;
     verifier =
         new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-            .setAudience(Collections.singletonList(clientId))
+            .setAudience(clientIds)
             .build();
   }
 

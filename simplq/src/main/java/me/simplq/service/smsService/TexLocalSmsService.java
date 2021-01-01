@@ -6,33 +6,24 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.SecretsManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 
-@Component
-@Profile("prod")
 public class TexLocalSmsService implements SmsService {
-  private final Logger LOGGER = LoggerFactory.getLogger(TexLocalSmsService.class);
   private final String API_KEY;
   private final String SENDER_NAME = "TXTLCL";
   private final String TEXT_LOCAL_API = "https://api.textlocal.in/send/?";
 
-  @Autowired
   public TexLocalSmsService(SecretsManager secretsManager) {
     API_KEY = secretsManager.getSecret("TEXT_LOCAL_API_KEY");
   }
 
   @Override
-  public String sendSMS(String contactNumber, String queueName) {
-    String data = constructData(contactNumber, queueName);
-    return postSmsRequest(data);
+  public void sendSMS(String contactNumber, String queueName) {
+    postSmsRequest(constructData(contactNumber, queueName));
   }
 
-  private String postSmsRequest(String data) {
+  private void postSmsRequest(String data) {
     try {
       HttpURLConnection conn = (HttpURLConnection) new URL(TEXT_LOCAL_API).openConnection();
       conn.setDoOutput(true);
@@ -47,10 +38,9 @@ public class TexLocalSmsService implements SmsService {
         stringBuffer.append(line);
       }
       rd.close();
-      return stringBuffer.toString();
     } catch (Exception e) {
-      LOGGER.error("Error sending SMS", e);
-      return "Error sending SMS" + e.getMessage();
+      // TODO Move to exception framework
+      throw new SQInternalServerException("Error sending SMS" + e.getMessage(), e);
     }
   }
 

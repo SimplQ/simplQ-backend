@@ -1,28 +1,29 @@
 package me.simplq.service.smsService;
 
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class SmsManager {
-  private final SmsService smsService;
+  private final List<SmsService> smsServices;
 
-  @Value("${sms.enabled}")
-  private boolean smsEnabled;
+  public SmsManager(@Value("${sms.enabled}") boolean smsEnabled) {
+    smsServices = new ArrayList<>();
+    smsServices.add(new MockSmsService());
+    if (smsEnabled) {
+      smsServices.add(new CompanionAppSmsService());
+    }
+  }
 
   /**
    * logic to implement invoke different SMS services as per need. currently fall back to Text Local
    * SMA service
    */
-  public void notify(String contactNumber, String queueName) {
-    if (!smsEnabled) {
-      log.info("Sending sms has been disabled");
-      return;
-    }
-    smsService.sendSMS(contactNumber, queueName);
+  public void notify(String contactNumber, String payload) {
+    smsServices.forEach(smsService -> smsService.sendSMS(contactNumber, payload));
   }
 }
