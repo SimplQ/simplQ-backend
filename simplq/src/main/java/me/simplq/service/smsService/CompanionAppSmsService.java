@@ -45,7 +45,6 @@ public class CompanionAppSmsService implements SmsService {
                       .putData(SMS_NUMBER_KEY, contactNumber)
                       .putData(SMS_PAYLOAD_KEY, payload)
                       .setToken(registrationToken)
-                          .
                       .build()));
     } catch (FirebaseMessagingException e) {
       throw new SQInternalServerException("Failed to send SMS", e);

@@ -4,20 +4,17 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import me.simplq.exceptions.SQAccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 @Component
 @Order(1)
@@ -28,11 +25,12 @@ public class AuthenticationFilter implements Filter {
 
   @Autowired
   AuthenticationFilter(
-      LoggedInUserInfo loggedInUserInfo, @Value("${google.auth.clientId}") String clientId) {
+      LoggedInUserInfo loggedInUserInfo,
+      @Value("#{'${google.auth.clientIds}'.split(',')}") List<String> clientIds) {
     this.loggedInUserInfo = loggedInUserInfo;
     verifier =
         new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-            .setAudience(Collections.singletonList(clientId))
+            .setAudience(clientIds)
             .build();
   }
 
