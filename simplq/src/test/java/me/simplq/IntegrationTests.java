@@ -1,8 +1,6 @@
 package me.simplq;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +30,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = {TestConfig.class})
+@ActiveProfiles({"test", "local"})
 class IntegrationTests {
 
   @Autowired private QueueRepository queueRepository;
@@ -38,8 +38,6 @@ class IntegrationTests {
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
-
-  private String authToken = "anonymous";
 
   @Test
   void endToEndScenarioTest() throws Exception {
@@ -50,10 +48,7 @@ class IntegrationTests {
     MvcResult createQueueResult =
         mockMvc
             .perform(
-                post("/v1/queue", 42L)
-                    .contentType("application/json")
-                    .header("Authorization", authToken)
-                    .content(createQueueRequest))
+                post("/v1/queue", 42L).contentType("application/json").content(createQueueRequest))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -66,9 +61,7 @@ class IntegrationTests {
     // GET queue by id
     MvcResult getQueueResult =
         mockMvc
-            .perform(
-                get("/v1/queue/" + createQueueResponse.getQueueId())
-                    .header("Authorization", authToken))
+            .perform(get("/v1/queue/" + createQueueResponse.getQueueId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -91,10 +84,7 @@ class IntegrationTests {
     MvcResult createTokenResult =
         mockMvc
             .perform(
-                post("/v1/token", 42L)
-                    .contentType("application/json")
-                    .header("Authorization", authToken)
-                    .content(createTokenRequest))
+                post("/v1/token", 42L).contentType("application/json").content(createTokenRequest))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -107,9 +97,7 @@ class IntegrationTests {
     // GET token by id
     MvcResult getTokenResult =
         mockMvc
-            .perform(
-                get("/v1/queue/" + createTokenResponse.getQueueId())
-                    .header("Authorization", authToken))
+            .perform(get("/v1/queue/" + createTokenResponse.getQueueId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -124,7 +112,7 @@ class IntegrationTests {
     // GET myQueues
     MvcResult myQueuesResult =
         mockMvc
-            .perform(get("/v1/queues").header("Authorization", authToken))
+            .perform(get("/v1/queues"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -139,16 +127,14 @@ class IntegrationTests {
 
     // GET myTokens
     mockMvc
-        .perform(get("/v1/tokens").header("Authorization", authToken))
+        .perform(get("/v1/tokens"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andReturn();
 
     MvcResult deleteQueueResult =
         mockMvc
-            .perform(
-                delete("/v1/queue/" + createQueueResponse.getQueueId())
-                    .header("Authorization", authToken))
+            .perform(delete("/v1/queue/" + createQueueResponse.getQueueId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -162,7 +148,7 @@ class IntegrationTests {
     // GET myQueues
     MvcResult myQueuesResultDeleted =
         mockMvc
-            .perform(get("/v1/queues").header("Authorization", authToken))
+            .perform(get("/v1/queues"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -171,5 +157,18 @@ class IntegrationTests {
         objectMapper.readValue(
             myQueuesResultDeleted.getResponse().getContentAsString(), MyQueuesResponse.class);
     Assertions.assertEquals(0, myQueuesResponseDeleted.getQueues().size());
+
+    // Initially device not linked
+    MvcResult deviceStatus =
+        mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
+    Assertions.assertEquals("false", deviceStatus.getResponse().getContentAsString());
+
+    // Link user to companion device
+    mockMvc.perform(put("/v1/me/link?deviceId=1234")).andExpect(status().isOk()).andReturn();
+
+    // Now device is linked
+    MvcResult deviceStatus2 =
+        mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
+    Assertions.assertEquals("true", deviceStatus2.getResponse().getContentAsString());
   }
 }

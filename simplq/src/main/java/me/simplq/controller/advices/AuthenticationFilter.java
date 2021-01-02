@@ -12,12 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import me.simplq.exceptions.SQAccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
 @Order(1)
+@Profile("!test")
 public class AuthenticationFilter implements Filter {
 
   private static final String UNAUTHORIZED = "Unauthorized";
