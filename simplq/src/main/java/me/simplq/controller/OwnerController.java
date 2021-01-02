@@ -17,7 +17,6 @@ public class OwnerController {
   }
 
   @PutMapping(path = "/me/link")
-  @ResponseBody
   public void linkDevice(@RequestParam() String deviceId) {
     ownerService.linkDevice(deviceId);
   }

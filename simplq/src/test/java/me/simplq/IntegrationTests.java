@@ -158,8 +158,17 @@ class IntegrationTests {
             myQueuesResultDeleted.getResponse().getContentAsString(), MyQueuesResponse.class);
     Assertions.assertEquals(0, myQueuesResponseDeleted.getQueues().size());
 
+    // Initially device not linked
     MvcResult deviceStatus =
         mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
     Assertions.assertEquals("false", deviceStatus.getResponse().getContentAsString());
+
+    // Link user to companion device
+    mockMvc.perform(put("/v1/me/link?deviceId=1234")).andExpect(status().isOk()).andReturn();
+
+    // Now device is linked
+    MvcResult deviceStatus2 =
+        mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
+    Assertions.assertEquals("true", deviceStatus2.getResponse().getContentAsString());
   }
 }
