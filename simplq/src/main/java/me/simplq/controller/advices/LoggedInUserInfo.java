@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class LoggedInUserInfo {
-
+  private static final String ANONYMOUS = "anonymous";
   private String userId;
+
+  public boolean isAnonymous() {
+    return ANONYMOUS.equals(userId);
+  }
 }

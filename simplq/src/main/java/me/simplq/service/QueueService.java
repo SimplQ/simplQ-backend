@@ -1,19 +1,10 @@
 package me.simplq.service;
 
-import java.util.Comparator;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
-import me.simplq.controller.model.queue.CreateQueueRequest;
-import me.simplq.controller.model.queue.CreateQueueResponse;
-import me.simplq.controller.model.queue.MyQueuesResponse;
-import me.simplq.controller.model.queue.PauseQueueRequest;
-import me.simplq.controller.model.queue.QueueDetailsResponse;
-import me.simplq.controller.model.queue.QueueStatusResponse;
-import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
+import me.simplq.controller.model.queue.*;
 import me.simplq.dao.Queue;
 import me.simplq.dao.QueueRepository;
 import me.simplq.dao.Token;
@@ -23,22 +14,26 @@ import me.simplq.exceptions.SQInvalidRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class QueueService {
 
+  private static final String ACCESS_DENIED_ERROR_TEXT = "You do not have access to this queue";
   private final QueueRepository queueRepository;
+  private final OwnerService ownerService;
   private final LoggedInUserInfo loggedInUserInfo;
 
   @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
+    var owner = ownerService.getOwnerOrElseCreate(loggedInUserInfo.getUserId());
     try {
       var queue =
           queueRepository.saveAndFlush(
-              new Queue(
-                  createQueueRequest.getQueueName(),
-                  loggedInUserInfo.getUserId(),
-                  QueueStatus.ACTIVE));
+              new Queue(createQueueRequest.getQueueName(), owner, QueueStatus.ACTIVE));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();
@@ -53,8 +48,8 @@ public class QueueService {
               .findById(queueId)
               .map(
                   queue1 -> {
-                    if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
-                      throw new SQAccessDeniedException("You do not have access to this queue");
+                    if (!queue1.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
+                      throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
                     }
                     if (queue1.getStatus().equals(QueueStatus.DELETED)) {
                       throw SQInvalidRequestException.queueDeletedException();
@@ -65,7 +60,7 @@ public class QueueService {
                     queue1.setStatus(pauseQueueRequest.getStatus());
                     return queueRepository.save(queue1);
                   })
-              .get();
+              .orElseThrow();
       return new UpdateQueueStatusResponse(
           queue.getQueueId(), queue.getQueueName(), queue.getStatus());
     } catch (Exception e) {
@@ -81,8 +76,8 @@ public class QueueService {
               .findById(queueId)
               .map(
                   queue1 -> {
-                    if (!queue1.getOwnerId().equals(loggedInUserInfo.getUserId())) {
-                      throw new SQAccessDeniedException("You do not have access to this queue");
+                    if (!queue1.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
+                      throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
                     }
                     if (queue1.getStatus().equals(QueueStatus.DELETED)) {
                       throw SQInvalidRequestException.queueDeletedException();
@@ -90,7 +85,7 @@ public class QueueService {
                     queue1.setStatus(QueueStatus.DELETED);
                     return queueRepository.save(queue1);
                   })
-              .get();
+              .orElseThrow();
       return new UpdateQueueStatusResponse(
           queue.getQueueId(), queue.getQueueName(), queue.getStatus());
     } catch (Exception e) {
@@ -104,8 +99,8 @@ public class QueueService {
         .findById(queueId)
         .map(
             queue -> {
-              if (!queue.getOwnerId().equals(loggedInUserInfo.getUserId())) {
-                throw new SQAccessDeniedException("You do not have access to this queue");
+              if (!queue.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
+                throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
               }
               var resp =
                   new QueueDetailsResponse(

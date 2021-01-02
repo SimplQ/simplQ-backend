@@ -1,21 +1,14 @@
 package me.simplq.dao;
 
-import java.util.Date;
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.simplq.constants.QueueStatus;
 import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "queue")
@@ -33,7 +26,8 @@ public class Queue {
   private String queueId;
 
   private QueueStatus status;
-  private String ownerId;
+
+  @ManyToOne private Owner owner;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "queue")
   private List<Token> tokens;
@@ -42,9 +36,9 @@ public class Queue {
   @Temporal(TemporalType.TIMESTAMP)
   Date queueCreationTimestamp;
 
-  public Queue(String queueName, String ownerId, QueueStatus status) {
+  public Queue(String queueName, Owner owner, QueueStatus status) {
     this.queueName = queueName;
-    this.ownerId = ownerId;
+    this.owner = owner;
     this.queueCreationTimestamp = new Date();
     this.status = status;
   }
