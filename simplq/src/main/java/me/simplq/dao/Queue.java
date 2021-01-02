@@ -1,14 +1,13 @@
 package me.simplq.dao;
 
+import java.util.Date;
+import java.util.List;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.simplq.constants.QueueStatus;
 import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "queue")

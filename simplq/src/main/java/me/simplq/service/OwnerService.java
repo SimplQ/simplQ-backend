@@ -1,13 +1,12 @@
 package me.simplq.service;
 
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.dao.Owner;
 import me.simplq.dao.OwnerRepository;
 import me.simplq.exceptions.SQAccessDeniedException;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
