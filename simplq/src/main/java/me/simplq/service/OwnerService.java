@@ -8,6 +8,7 @@ import me.simplq.exceptions.SQAccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +19,14 @@ public class OwnerService {
   private final LoggedInUserInfo loggedInUserInfo;
 
   @Transactional
-  public Owner getOwnerOrElseCreate(String ownerId) {
+  public Owner getOwnerOrElseCreate() {
+    var ownerId = loggedInUserInfo.getUserId();
     return ownerRepository.findById(ownerId).orElse(ownerRepository.save(new Owner(ownerId)));
+  }
+
+  @Transactional
+  public Optional<String> getDeviceToken() {
+    return ownerRepository.findById(loggedInUserInfo.getUserId()).map(Owner::getCompanionDevice);
   }
 
   @Transactional
