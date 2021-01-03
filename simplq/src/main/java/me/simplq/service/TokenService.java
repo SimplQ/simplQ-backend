@@ -1,5 +1,8 @@
 package me.simplq.service;
 
+import java.util.Comparator;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
@@ -14,16 +17,15 @@ import me.simplq.service.smsService.SmsManager;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.Comparator;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class TokenService {
 
   private static final String TOKEN_CREATION_MESSAGE =
-      "Hi %s,\nYou have been added to %s. Your token number is %d. You can know your status visiting %s\nThanks for using simplq.me";
+      "Hi %s,\n"
+          + "You have been added to %s. Your token number is %d. You can know your status visiting"
+          + " %s\n"
+          + "Thanks for using simplq.me";
   private final TokenRepository tokenRepository;
   private final QueueRepository queueRepository;
   private final SmsManager smsManager;
