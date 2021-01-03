@@ -22,4 +22,8 @@ public class Owner {
   public Owner(String id) {
     this.id = id;
   }
+
+  public static Owner empty() {
+    return new Owner(null);
+  }
 }

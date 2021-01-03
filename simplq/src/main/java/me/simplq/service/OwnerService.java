@@ -25,7 +25,10 @@ public class OwnerService {
   public Boolean isDeviceLinked(String deviceId) {
     failIfAnonymous();
     return deviceId.equals(
-        ownerRepository.findById(loggedInUserInfo.getUserId()).orElseThrow().getCompanionDevice());
+        ownerRepository
+            .findById(loggedInUserInfo.getUserId())
+            .orElse(Owner.empty())
+            .getCompanionDevice());
   }
 
   @Transactional

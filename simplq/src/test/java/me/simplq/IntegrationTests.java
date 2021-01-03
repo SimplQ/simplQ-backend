@@ -42,6 +42,11 @@ class IntegrationTests {
   @Test
   void endToEndScenarioTest() throws Exception {
 
+    // Device not linked for new user
+    MvcResult newDeviceStatus =
+        mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
+    Assertions.assertEquals("false", newDeviceStatus.getResponse().getContentAsString());
+
     // Create queue
     String createQueueRequest = "{ \"queueName\": \"Queue2222\" }";
 
