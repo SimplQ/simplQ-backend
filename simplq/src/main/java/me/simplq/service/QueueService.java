@@ -1,5 +1,8 @@
 package me.simplq.service;
 
+import java.util.Comparator;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
@@ -13,10 +16,6 @@ import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.exceptions.SQInvalidRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
