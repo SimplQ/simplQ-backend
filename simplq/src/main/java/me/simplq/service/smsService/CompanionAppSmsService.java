@@ -28,6 +28,9 @@ public class CompanionAppSmsService implements SmsService {
     } catch (IOException e) {
       // Env variable GOOGLE_APPLICATION_CREDENTIALS needs to be set. If you don't have the
       // credentials, disable this feature by setting sms.enabled=false in application.properties
+      // If this exception occured while running a test, make sure that only 'test' spring profile
+      // is active.
+      //
       // https://firebase.google.com/docs/admin/setup?authuser=0#initialize-sdk
       throw new SQInternalServerException("FCM Credentials not set");
     }

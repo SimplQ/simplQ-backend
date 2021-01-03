@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = {TestConfig.class})
-@ActiveProfiles({"test", "local"})
+@ActiveProfiles({"test"})
 class IntegrationTests {
 
   @Autowired private QueueRepository queueRepository;
