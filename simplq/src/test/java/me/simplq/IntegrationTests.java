@@ -44,7 +44,7 @@ class IntegrationTests {
 
     // Device not linked for new user
     MvcResult newDeviceStatus =
-        mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/v1/me/status?deviceId=12345")).andExpect(status().isOk()).andReturn();
     Assertions.assertEquals("false", newDeviceStatus.getResponse().getContentAsString());
 
     // Create queue

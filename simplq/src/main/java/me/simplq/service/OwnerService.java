@@ -1,5 +1,6 @@
 package me.simplq.service;
 
+import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.controller.advices.LoggedInUserInfo;
@@ -17,8 +18,14 @@ public class OwnerService {
   private final LoggedInUserInfo loggedInUserInfo;
 
   @Transactional
-  public Owner getOwnerOrElseCreate(String ownerId) {
+  public Owner getOwnerOrElseCreate() {
+    var ownerId = loggedInUserInfo.getUserId();
     return ownerRepository.findById(ownerId).orElse(ownerRepository.save(new Owner(ownerId)));
+  }
+
+  @Transactional
+  public Optional<String> getDeviceToken() {
+    return ownerRepository.findById(loggedInUserInfo.getUserId()).map(Owner::getCompanionDevice);
   }
 
   @Transactional

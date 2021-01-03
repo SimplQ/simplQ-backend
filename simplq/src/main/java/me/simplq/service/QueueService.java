@@ -28,7 +28,7 @@ public class QueueService {
 
   @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
-    var owner = ownerService.getOwnerOrElseCreate(loggedInUserInfo.getUserId());
+    var owner = ownerService.getOwnerOrElseCreate();
     try {
       var queue =
           queueRepository.saveAndFlush(

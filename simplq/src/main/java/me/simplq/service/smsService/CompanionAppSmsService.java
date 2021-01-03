@@ -9,13 +9,17 @@ import com.google.firebase.messaging.Message;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import me.simplq.exceptions.SQInternalServerException;
+import me.simplq.service.OwnerService;
 
 @Slf4j
 public class CompanionAppSmsService implements SmsService {
   private static final String SMS_NUMBER_KEY = "SMS_NUMBER_KEY";
   private static final String SMS_PAYLOAD_KEY = "SMS_PAYLOAD";
 
-  public CompanionAppSmsService() {
+  private final OwnerService ownerService;
+
+  public CompanionAppSmsService(OwnerService ownerService) {
+    this.ownerService = ownerService;
     try {
       FirebaseApp.initializeApp(
           new FirebaseOptions.Builder()
@@ -31,22 +35,23 @@ public class CompanionAppSmsService implements SmsService {
 
   @Override
   public void sendSMS(String contactNumber, String payload) {
-    // TODO Fetch from DB and send only if DB has a registered device
-    String registrationToken =
-        "dYAcu9akS0euPXAdeHSs3C:APA91bHVacmAlhAQzmJcGO7XjPlQhYlPHQj_xI-Lh9o8GKnPRMeBuMO-7OI1e6B8GG2IEqkTJqx11oI9ufalm6Sj-s9XDLCEDPaCgGCeskrVItc9pz78c4_FsBwlsxGp26kjtG3yv1ua";
-
-    try {
-      log.info(
-          "Successfully sent message: {}",
-          FirebaseMessaging.getInstance()
-              .send(
-                  Message.builder()
-                      .putData(SMS_NUMBER_KEY, contactNumber)
-                      .putData(SMS_PAYLOAD_KEY, payload)
-                      .setToken(registrationToken)
-                      .build()));
-    } catch (FirebaseMessagingException e) {
-      throw new SQInternalServerException("Failed to send SMS", e);
-    }
+    ownerService
+        .getDeviceToken()
+        .ifPresent(
+            deviceToken -> {
+              try {
+                log.info(
+                    "Successfully sent message: {}",
+                    FirebaseMessaging.getInstance()
+                        .send(
+                            Message.builder()
+                                .putData(SMS_NUMBER_KEY, contactNumber)
+                                .putData(SMS_PAYLOAD_KEY, payload)
+                                .setToken(deviceToken)
+                                .build()));
+              } catch (FirebaseMessagingException e) {
+                throw new SQInternalServerException("Failed to send SMS", e);
+              }
+            });
   }
 }
