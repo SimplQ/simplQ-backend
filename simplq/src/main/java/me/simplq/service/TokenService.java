@@ -21,11 +21,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TokenService {
 
+  private static final String TOKEN_CREATION_MESSAGE =
+      "Hi %s,\n"
+          + "You have been added to %s. Your token number is %d. You can know your status visiting"
+          + " %s\n"
+          + "Thanks for using simplq.me";
   private final TokenRepository tokenRepository;
   private final QueueRepository queueRepository;
   private final SmsManager smsManager;
   private final LoggedInUserInfo loggedInUserInfo;
-  private final String TOKEN_NOTIFICATION_MESSAGE = "Hi, your wait for %s is over! You can proceed";
+  private static final String TOKEN_NOTIFICATION_MESSAGE =
+      "Hi, your wait for %s is over! You can proceed";
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
@@ -101,6 +107,14 @@ public class TokenService {
         tokenRepository.getLastTokenNumberForQueue(token.getQueue().getQueueId());
     var nextTokenNumber = currentMaxTokenNumber != null ? currentMaxTokenNumber + 1 : 1;
     token.setTokenNumber(nextTokenNumber);
+    smsManager.notify(
+        token.getContactNumber(),
+        String.format(
+            TOKEN_CREATION_MESSAGE,
+            token.getName(),
+            token.getQueue().getQueueName(),
+            token.getTokenNumber(),
+            token.getTokenUrl()));
     return new TokenDetailResponse(
         token.getTokenId(),
         token.getName(),
