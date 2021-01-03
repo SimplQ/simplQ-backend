@@ -1,12 +1,13 @@
 package me.simplq.service;
 
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.dao.Owner;
 import me.simplq.dao.OwnerRepository;
 import me.simplq.exceptions.SQAccessDeniedException;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,10 @@ public class OwnerService {
   public Boolean isDeviceLinked(String deviceId) {
     failIfAnonymous();
     return deviceId.equals(
-        ownerRepository.findById(loggedInUserInfo.getUserId()).orElseThrow().getCompanionDevice());
+        ownerRepository
+            .findById(loggedInUserInfo.getUserId())
+            .orElse(Owner.empty())
+            .getCompanionDevice());
   }
 
   @Transactional
