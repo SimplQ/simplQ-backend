@@ -6,11 +6,10 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.OwnerService;
-
-import java.io.IOException;
 
 @Slf4j
 public class CompanionAppSmsService implements SmsService {
