@@ -6,10 +6,11 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.OwnerService;
+
+import java.io.IOException;
 
 @Slf4j
 public class CompanionAppSmsService implements SmsService {
@@ -28,6 +29,9 @@ public class CompanionAppSmsService implements SmsService {
     } catch (IOException e) {
       // Env variable GOOGLE_APPLICATION_CREDENTIALS needs to be set. If you don't have the
       // credentials, disable this feature by setting sms.enabled=false in application.properties
+      // If this exception occured while running a test, make sure that only 'test' spring profile
+      // is active.
+      //
       // https://firebase.google.com/docs/admin/setup?authuser=0#initialize-sdk
       throw new SQInternalServerException("FCM Credentials not set");
     }
