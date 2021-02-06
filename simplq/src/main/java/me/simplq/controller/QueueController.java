@@ -36,11 +36,13 @@ public class QueueController {
 
   @PatchMapping(path = "/queue/{queueId}")
   public ResponseEntity<PatchQueueResponse> patchQueue(
-      @Valid @RequestBody PatchQueueRequest patchRequest, @PathVariable("queueId") String queueId) {
-
+      @Valid @RequestBody PatchQueueRequest patchRequest,
+      @PathVariable("queueId") String queueId
+  ) {
+      
     return ResponseEntity.ok(queueService.updateMaxQueueCapacity(queueId, patchRequest));
   }
-
+  
   @GetMapping(path = "/queue/{queueId}")
   public ResponseEntity<QueueDetailsResponse> getQueueDetails(
       @PathVariable("queueId") String queueId) {
