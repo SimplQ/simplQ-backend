@@ -23,10 +23,10 @@ public class Queue {
   @GeneratedValue(generator = "uuid2")
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   private String queueId;
-  
+
   @Column(updatable = true)
   private int maxQueueCapacity;
-  
+
   private QueueStatus status;
 
   @ManyToOne private Owner owner;
