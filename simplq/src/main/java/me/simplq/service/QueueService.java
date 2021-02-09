@@ -163,28 +163,29 @@ public class QueueService {
                         .count(),
                     Long.valueOf(queue.getTokens().size()),
                     queue.getQueueCreationTimestamp()))
-            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    }
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
 
-    @Transactional
-    public PatchQueueResponse updateMaxQueueCapacity(String queueId, PatchQueueRequest patchRequest) {
-        return queueRepository
-            .findById(queueId)
-            .map(updateMaxQueueCapacity(patchRequest))
-            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    }
+  @Transactional
+  public PatchQueueResponse updateMaxQueueCapacity(String queueId, PatchQueueRequest patchRequest) {
+    return queueRepository
+        .findById(queueId)
+        .map(updateMaxQueueCapacity(patchRequest))
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
 
-    private Function<Queue, PatchQueueResponse> updateMaxQueueCapacity(PatchQueueRequest patchQueueRequest) {
+  private Function<Queue, PatchQueueResponse> updateMaxQueueCapacity(
+      PatchQueueRequest patchQueueRequest) {
 
-        return queue -> {
-            queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
-            var updatedQueue = queueRepository.save(queue);
+    return queue -> {
+      queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
+      var updatedQueue = queueRepository.save(queue);
 
-            return PatchQueueResponse.builder()
-                .queueName(updatedQueue.getQueueName())
-                .queueId(updatedQueue.getQueueId())
-                .maxQueueCapacity(updatedQueue.getMaxQueueCapacity())
-                .build();
-        };
-    }
+      return PatchQueueResponse.builder()
+          .queueName(updatedQueue.getQueueName())
+          .queueId(updatedQueue.getQueueId())
+          .maxQueueCapacity(updatedQueue.getMaxQueueCapacity())
+          .build();
+    };
+  }
 }

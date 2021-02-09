@@ -26,10 +26,7 @@ public class Queue {
   
   @Column(updatable = true)
   private int maxQueueCapacity;
-
-  @Column(updatable = true)
-  private int maxQueueCapacity;
-
+  
   private QueueStatus status;
 
   @ManyToOne private Owner owner;
