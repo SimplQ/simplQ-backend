@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet id="1" author="chalx">
+		<createTable tableName="owner">
+			<column name="id" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="companion_device" type="varchar(255)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2" author="chalx">
+		<createTable tableName="owner_queues">
+			<column name="owner_id" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="queues_queue_id" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3" author="chalx">
+		<createTable tableName="queue">
+			<column name="queue_id" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="owner_id" type="varchar(255)" />
+			<column name="queue_name" type="varchar(255)" />
+			<column name="queue_creation_timestamp"
+				type="timestamp without time zone" />
+			<column name="status" type="int" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="4" author="chalx">
+		<createTable tableName="token">
+			<column name="token_id" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="contact_number" type="varchar(255)"/>
+			<column name="name" type="varchar(255)">
+				<constraints unique="true"/>
+			</column>
+			<column name="notifiable" type="boolean" />
+			<column name="owner_id" type="varchar(255)">
+				<constraints 
+						referencedTableName="owner" 
+						referencedColumnNames="id"
+						foreignKeyName="owner_fk" />
+			</column>
+			<column name="status" type="int" />
+			<column name="token_creation_timestamp" type="timestamp without time zone" />
+			<column name="queue_queue_id" type="varchar(255)">
+				<constraints 
+						referencedTableName="queue" 
+						referencedColumnNames="queue_id"
+						foreignKeyName="queue_fk"/>
+			</column>
+			<column name="token_number" type="int" />
+		</createTable>
+	</changeSet>
+	
+	
+
+</databaseChangeLog>
+  
