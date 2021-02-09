@@ -44,6 +44,9 @@ mvn package
 By default, the jar uses a in-memory H2 database. This is for development purposes only, and so for a production setup, you need to set up a postgres DB and pass the DB connection parameters as environment variables:
 
 ```
+export DB_USERNAME=...
+export DB_PASSWORD=...
+export DB_URL=...
 java -Dspring.profiles.active=prod -jar simplq/target/simplq-0.0.1-SNAPSHOT.jar 
 ```
 
