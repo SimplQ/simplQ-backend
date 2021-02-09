@@ -22,103 +22,103 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class QueueService {
 
-    private static final String ACCESS_DENIED_ERROR_TEXT = "You do not have access to this queue";
-    private final QueueRepository queueRepository;
-    private final OwnerService ownerService;
-    private final LoggedInUserInfo loggedInUserInfo;
+  private static final String ACCESS_DENIED_ERROR_TEXT = "You do not have access to this queue";
+  private final QueueRepository queueRepository;
+  private final OwnerService ownerService;
+  private final LoggedInUserInfo loggedInUserInfo;
 
-    @Transactional
-    public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
-        var owner = ownerService.getOwnerOrElseCreate();
-        try {
+  @Transactional
+  public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
+    var owner = ownerService.getOwnerOrElseCreate();
+    try {
       var queue =
           queueRepository.saveAndFlush(
-                    new Queue(createQueueRequest.getQueueName(), owner, QueueStatus.ACTIVE));
-            return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
-        } catch (DataIntegrityViolationException de) {
-            throw SQInvalidRequestException.queueNameNotUniqueException();
-        }
+              new Queue(createQueueRequest.getQueueName(), owner, QueueStatus.ACTIVE));
+      return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
+    } catch (DataIntegrityViolationException de) {
+      throw SQInvalidRequestException.queueNameNotUniqueException();
     }
+  }
 
-    @Transactional
-    public UpdateQueueStatusResponse pauseQueue(PauseQueueRequest pauseQueueRequest, String queueId) {
-        try {
+  @Transactional
+  public UpdateQueueStatusResponse pauseQueue(PauseQueueRequest pauseQueueRequest, String queueId) {
+    try {
       var queue =
           queueRepository
-                    .findById(queueId)
-                    .map(
-                        queue1 -> {
-                            if (!queue1.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
-                                throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
-                            }
-                            if (queue1.getStatus().equals(QueueStatus.DELETED)) {
-                                throw SQInvalidRequestException.queueDeletedException();
-                            }
-                            if (pauseQueueRequest.getStatus().equals(QueueStatus.DELETED)) {
-                                throw SQInvalidRequestException.queueDeletedNotAllowedException();
-                            }
-                            queue1.setStatus(pauseQueueRequest.getStatus());
-                            return queueRepository.save(queue1);
-                        })
-                    .orElseThrow();
-            return new UpdateQueueStatusResponse(
-                queue.getQueueId(), queue.getQueueName(), queue.getStatus());
-        } catch (Exception e) {
-            throw new SQInternalServerException("Unable to update queue: ", e);
-        }
-    }
-
-    @Transactional
-    public UpdateQueueStatusResponse deleteQueue(String queueId) {
-        try {
-      var queue =
-          queueRepository
-                    .findById(queueId)
-                    .map(
-                        queue1 -> {
-                            if (!queue1.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
-                                throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
-                            }
-                            if (queue1.getStatus().equals(QueueStatus.DELETED)) {
-                                throw SQInvalidRequestException.queueDeletedException();
-                            }
-                            queue1.setStatus(QueueStatus.DELETED);
-                            return queueRepository.save(queue1);
-                        })
-                    .orElseThrow();
-            return new UpdateQueueStatusResponse(
-                queue.getQueueId(), queue.getQueueName(), queue.getStatus());
-        } catch (Exception e) {
-            throw new SQInternalServerException("Unable to delete queue: ", e);
-        }
-    }
-
-    @Transactional
-    public QueueDetailsResponse getQueueDetails(String queueId) {
-        return queueRepository
-            .findById(queueId)
-            .map(
-                queue -> {
-                    if (!queue.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
-                        throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
+              .findById(queueId)
+              .map(
+                  queue1 -> {
+                    if (!queue1.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
+                      throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
                     }
+                    if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                      throw SQInvalidRequestException.queueDeletedException();
+                    }
+                    if (pauseQueueRequest.getStatus().equals(QueueStatus.DELETED)) {
+                      throw SQInvalidRequestException.queueDeletedNotAllowedException();
+                    }
+                    queue1.setStatus(pauseQueueRequest.getStatus());
+                    return queueRepository.save(queue1);
+                  })
+              .orElseThrow();
+      return new UpdateQueueStatusResponse(
+          queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+    } catch (Exception e) {
+      throw new SQInternalServerException("Unable to update queue: ", e);
+    }
+  }
+
+  @Transactional
+  public UpdateQueueStatusResponse deleteQueue(String queueId) {
+    try {
+      var queue =
+          queueRepository
+              .findById(queueId)
+              .map(
+                  queue1 -> {
+                    if (!queue1.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
+                      throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
+                    }
+                    if (queue1.getStatus().equals(QueueStatus.DELETED)) {
+                      throw SQInvalidRequestException.queueDeletedException();
+                    }
+                    queue1.setStatus(QueueStatus.DELETED);
+                    return queueRepository.save(queue1);
+                  })
+              .orElseThrow();
+      return new UpdateQueueStatusResponse(
+          queue.getQueueId(), queue.getQueueName(), queue.getStatus());
+    } catch (Exception e) {
+      throw new SQInternalServerException("Unable to delete queue: ", e);
+    }
+  }
+
+  @Transactional
+  public QueueDetailsResponse getQueueDetails(String queueId) {
+    return queueRepository
+        .findById(queueId)
+        .map(
+            queue -> {
+              if (!queue.getOwner().getId().equals(loggedInUserInfo.getUserId())) {
+                throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
+              }
               var resp =
                   new QueueDetailsResponse(
-                        queueId, queue.getQueueName(), queue.getQueueCreationTimestamp());
-                    queue.getTokens().stream()
-                        .filter(token -> token.getStatus() != TokenStatus.REMOVED)
-                        .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
-                        .forEach(resp::addToken);
-                    return resp;
-                })
-            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    }
+                      queueId, queue.getQueueName(), queue.getQueueCreationTimestamp());
+              queue.getTokens().stream()
+                  .filter(token -> token.getStatus() != TokenStatus.REMOVED)
+                  .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
+                  .forEach(resp::addToken);
+              return resp;
+            })
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
 
-    @Transactional
-    public QueueStatusResponse getQueueStatus(String queueId) {
-        return queueRepository
-            .findById(queueId)
-            .map(
+  @Transactional
+  public QueueStatusResponse getQueueStatus(String queueId) {
+    return queueRepository
+        .findById(queueId)
+        .map(
             queue ->
                 new QueueStatusResponse(
                     queueId,
@@ -129,30 +129,30 @@ public class QueueService {
                         .count(),
                     Long.valueOf(queue.getTokens().size()),
                     queue.getQueueCreationTimestamp()))
-            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    }
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
 
-    @Transactional
-    public MyQueuesResponse getMyQueues() {
-        return new MyQueuesResponse(
-            queueRepository
-                .findByOwnerId(loggedInUserInfo.getUserId())
-                .filter(queue -> queue.getStatus() != QueueStatus.DELETED)
-                .sorted(Comparator.comparing(Queue::getQueueCreationTimestamp))
-                .map(
+  @Transactional
+  public MyQueuesResponse getMyQueues() {
+    return new MyQueuesResponse(
+        queueRepository
+            .findByOwnerId(loggedInUserInfo.getUserId())
+            .filter(queue -> queue.getStatus() != QueueStatus.DELETED)
+            .sorted(Comparator.comparing(Queue::getQueueCreationTimestamp))
+            .map(
                 queue ->
                     new MyQueuesResponse.Queue(
                         queue.getQueueId(),
                         queue.getQueueName(),
                         queue.getQueueCreationTimestamp()))
-                .collect(Collectors.toList()));
-    }
+            .collect(Collectors.toList()));
+  }
 
-    @Transactional
-    public QueueStatusResponse getQueueStatusByName(String queueName) {
-        return queueRepository
-            .findByQueueName(queueName)
-            .map(
+  @Transactional
+  public QueueStatusResponse getQueueStatusByName(String queueName) {
+    return queueRepository
+        .findByQueueName(queueName)
+        .map(
             queue ->
                 new QueueStatusResponse(
                     queue.getQueueId(),
@@ -163,28 +163,29 @@ public class QueueService {
                         .count(),
                     Long.valueOf(queue.getTokens().size()),
                     queue.getQueueCreationTimestamp()))
-            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    }
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
 
-    @Transactional
-    public PatchQueueResponse updateMaxQueueCapacity(String queueId, PatchQueueRequest patchRequest) {
-        return queueRepository
-            .findById(queueId)
-            .map(updateMaxQueueCapacity(patchRequest))
-            .orElseThrow(SQInvalidRequestException::queueNotFoundException);
-    }
+  @Transactional
+  public PatchQueueResponse updateMaxQueueCapacity(String queueId, PatchQueueRequest patchRequest) {
+    return queueRepository
+        .findById(queueId)
+        .map(updateMaxQueueCapacity(patchRequest))
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
 
-    private Function<Queue, PatchQueueResponse> updateMaxQueueCapacity(PatchQueueRequest patchQueueRequest) {
+  private Function<Queue, PatchQueueResponse> updateMaxQueueCapacity(
+      PatchQueueRequest patchQueueRequest) {
 
-        return queue -> {
-            queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
-            var updatedQueue = queueRepository.save(queue);
+    return queue -> {
+      queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
+      var updatedQueue = queueRepository.save(queue);
 
-            return PatchQueueResponse.builder()
-                .queueName(updatedQueue.getQueueName())
-                .queueId(updatedQueue.getQueueId())
-                .maxQueueCapacity(updatedQueue.getMaxQueueCapacity())
-                .build();
-        };
-    }
+      return PatchQueueResponse.builder()
+          .queueName(updatedQueue.getQueueName())
+          .queueId(updatedQueue.getQueueId())
+          .maxQueueCapacity(updatedQueue.getMaxQueueCapacity())
+          .build();
+    };
+  }
 }
