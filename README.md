@@ -50,6 +50,11 @@ export DB_URL=jdbc:postgresql://<host>:<port>/<db>
 java -Dspring.profiles.active=prod -jar simplq/target/simplq-0.0.1-SNAPSHOT.jar 
 ```
 
+We use [Liquidbase](https://www.liquibase.org/) for DB migrations. To run migrations:
+```
+mvn liquibase:update -Ddb.username=<username> -Ddb.password=<password> -Ddb.url=jdbc:postgresql://<host>:<port>/<db>
+```
+
 # Contributing
 
 Feel free to fork and improve, and do send a pull request. We will be delighed to work with you. 
