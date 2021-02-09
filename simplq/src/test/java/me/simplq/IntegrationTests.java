@@ -9,6 +9,8 @@ import me.simplq.config.TestConfig;
 import me.simplq.constants.QueueStatus;
 import me.simplq.controller.model.queue.CreateQueueResponse;
 import me.simplq.controller.model.queue.MyQueuesResponse;
+import me.simplq.controller.model.queue.PatchQueueRequest;
+import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.token.TokenDetailResponse;
@@ -175,5 +177,26 @@ class IntegrationTests {
     MvcResult deviceStatus2 =
         mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
     Assertions.assertEquals("true", deviceStatus2.getResponse().getContentAsString());
+
+    // Patch queue with MAX_QUEUE_CAPACITY
+    var patchQueueRequest = new PatchQueueRequest();
+    patchQueueRequest.setMaxQueueCapacity(10);
+
+    var patchQueueRequestJson = objectMapper.writeValueAsBytes(patchQueueRequest);
+
+    MvcResult patchResult =
+        mockMvc
+            .perform(
+                patch("/v1/queue/" + createQueueResponse.getQueueId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(patchQueueRequestJson))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+
+    var patchResponse =
+        objectMapper.readValue(
+            patchResult.getResponse().getContentAsString(), PatchQueueResponse.class);
+    Assertions.assertEquals(patchResponse.getMaxQueueCapacity(), 10);
   }
 }

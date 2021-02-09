@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import me.simplq.controller.model.queue.CreateQueueRequest;
 import me.simplq.controller.model.queue.CreateQueueResponse;
 import me.simplq.controller.model.queue.MyQueuesResponse;
+import me.simplq.controller.model.queue.PatchQueueRequest;
+import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
@@ -30,6 +32,13 @@ public class QueueController {
   @GetMapping(path = "/queues")
   public ResponseEntity<MyQueuesResponse> getMyQueues() {
     return ResponseEntity.ok(queueService.getMyQueues());
+  }
+
+  @PatchMapping(path = "/queue/{queueId}")
+  public ResponseEntity<PatchQueueResponse> patchQueue(
+      @Valid @RequestBody PatchQueueRequest patchRequest, @PathVariable("queueId") String queueId) {
+
+    return ResponseEntity.ok(queueService.updateMaxQueueCapacity(queueId, patchRequest));
   }
 
   @GetMapping(path = "/queue/{queueId}")

@@ -15,6 +15,10 @@
   <packaging>jar</packaging>
   <description>SimplQ Backend Server</description>
 
+  <properties>
+      <junitVersion>5.7.0</junitVersion>
+      <mockitoVersion>3.7.7</mockitoVersion>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -99,6 +103,32 @@
       <groupId>com.google.firebase</groupId>
       <artifactId>firebase-admin</artifactId>
       <version>7.1.0</version>
+    </dependency>
+    
+    <!-- Tests -->
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junitVersion}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${mockitoVersion}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockitoVersion}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.19.0</version>
+        <scope>test</scope>
     </dependency>
   </dependencies>
 

@@ -1,6 +1,7 @@
 package me.simplq.service;
 
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -163,5 +164,28 @@ public class QueueService {
                     Long.valueOf(queue.getTokens().size()),
                     queue.getQueueCreationTimestamp()))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
+
+  @Transactional
+  public PatchQueueResponse updateMaxQueueCapacity(String queueId, PatchQueueRequest patchRequest) {
+    return queueRepository
+        .findById(queueId)
+        .map(updateMaxQueueCapacity(patchRequest))
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
+
+  private Function<Queue, PatchQueueResponse> updateMaxQueueCapacity(
+      PatchQueueRequest patchQueueRequest) {
+
+    return queue -> {
+      queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
+      var updatedQueue = queueRepository.save(queue);
+
+      return PatchQueueResponse.builder()
+          .queueName(updatedQueue.getQueueName())
+          .queueId(updatedQueue.getQueueId())
+          .maxQueueCapacity(updatedQueue.getMaxQueueCapacity())
+          .build();
+    };
   }
 }
