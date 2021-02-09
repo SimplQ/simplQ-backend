@@ -17,14 +17,12 @@ public class DataSourceConfig {
 
     Map<String, Object> configOverrides = new HashMap<>();
     DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-    if (System.getenv("RDS_HOSTNAME") != null) {
-      String dbName = System.getenv("RDS_DB_NAME");
-      String userName = System.getenv("RDS_USERNAME");
-      String password = System.getenv("RDS_PASSWORD");
-      String hostname = System.getenv("RDS_HOSTNAME");
-      String port = System.getenv("RDS_PORT");
+    if (System.getenv("DB_USERNAME") != null) {
+      String userName = System.getenv("DB_USERNAME");
+      String password = System.getenv("DB_PASSWORD");
+      String url = System.getenv("DB_URL");
       dataSourceBuilder.driverClassName("org.postgresql.Driver");
-      dataSourceBuilder.url("jdbc:postgresql://" + hostname + ":" + port + "/" + dbName);
+      dataSourceBuilder.url(url);
       dataSourceBuilder.username(userName);
       dataSourceBuilder.password(password);
     } else {
