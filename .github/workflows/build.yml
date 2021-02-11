@@ -39,6 +39,6 @@ jobs:
         with:
           java-version: 11
       - name: Build project
-        run: mvn -pl simplq -q install
+        run: mvn -pl simplq -q install -DskipTests
       - name: Run liquibase migration
         run: mvn -pl simplq -q liquibase:update -D db.username=simplq -D db.url=jdbc:postgresql://localhost:5432/simplq
