@@ -147,7 +147,7 @@
 					<password>${db.password}</password>
 					<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
 					<url>${db.url}</url>
-					<changeLogFile>db/changeset.log.xml</changeLogFile>
+					<changeLogFile>src/main/resources/db/changeset.log.xml</changeLogFile>
 					<driver>org.postgresql.Driver</driver>
 				</configuration>
 				<dependencies>
