@@ -66,7 +66,11 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="5" author="daltonfury42">
+    		<addColumn tableName="queue">
+        		<column name="max_queue_capacity" type="int"/>
+    		</addColumn>   
+	</changeSet> 
 	
-
 </databaseChangeLog>
   
