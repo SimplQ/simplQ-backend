@@ -34,6 +34,26 @@ Run Integration Tests:
 mvn test
 ```
 
+## Running in production
+
+Generate the jar:
+```
+mvn package
+```
+
+By default, the jar uses an in-memory H2 database. This is for development purposes only, and so for a production setup, set up a postgres DB and pass the DB connection parameters as environment variables:
+
+```
+export DB_USERNAME=<user-name>
+export DB_PASSWORD=<password>
+export DB_URL=jdbc:postgresql://<host>:<port>/<db>
+java -Dspring.profiles.active=prod -jar simplq/target/simplq-0.0.1-SNAPSHOT.jar 
+```
+
+We use [Liquidbase](https://www.liquibase.org/) for DB migrations. To run migrations:
+```
+mvn liquibase:update -Ddb.username=<username> -Ddb.password=<password> -Ddb.url=jdbc:postgresql://<host>:<port>/<db>
+```
 
 # Contributing
 
