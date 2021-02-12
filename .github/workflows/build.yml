@@ -15,7 +15,7 @@ jobs:
           java-version: 11
       - name: Build with Maven
         run: mvn --no-transfer-progress package
-  liquibase:
+  db-migration:
     runs-on: ubuntu-latest
     services:
       postgres:
