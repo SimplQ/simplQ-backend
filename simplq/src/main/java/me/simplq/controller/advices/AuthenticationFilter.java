@@ -5,7 +5,7 @@ import com.auth0.jwk.JwkProvider;
 import com.auth0.jwk.UrlJwkProvider;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,8 +16,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
 import me.simplq.exceptions.SQAccessDeniedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -28,7 +29,6 @@ import org.springframework.util.StringUtils;
 @Component
 @Order(1)
 @Profile("!test")
-@Slf4j
 public class AuthenticationFilter implements Filter {
 
   private static final String UNAUTHORIZED = "Unauthorized";
@@ -36,6 +36,7 @@ public class AuthenticationFilter implements Filter {
   private static final String BEARER_HEADER_START_WITH = "Bearer ";
   private final LoggedInUserInfo loggedInUserInfo;
   private final JwkProvider provider;
+  private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
 
   @Autowired
   AuthenticationFilter(LoggedInUserInfo loggedInUserInfo, @Value("${auth0.jkws.url}") String keyUrl)
@@ -52,6 +53,17 @@ public class AuthenticationFilter implements Filter {
    * @param authHeaderVal auth header value
    */
   public void authenticate(String authHeaderVal) {
+    if (StringUtils.isEmpty(authHeaderVal)) {
+      throw new SQAccessDeniedException(UNAUTHORIZED);
+    }
+
+    // TODO: Remove after main site is updated to reflect the new auth changes for anonymous device
+    // ID.
+    if ("Bearer anonymous".equals(authHeaderVal)) {
+      loggedInUserInfo.setUserId("anonymous");
+      return;
+    }
+
     if (authHeaderVal.startsWith(BEARER_HEADER_START_WITH)) {
       bearerAuth(authHeaderVal);
       return;
@@ -65,13 +77,6 @@ public class AuthenticationFilter implements Filter {
       return;
     }
 
-    // TODO: Remove after main site is updated to reflect the new auth changes for anonymous device
-    // ID.
-    if ("Bearer anonymous".equals(authHeaderVal)) {
-      loggedInUserInfo.setUserId("anonymous");
-      return;
-    }
-
     throw new SQAccessDeniedException(UNAUTHORIZED);
   }
 
@@ -80,17 +85,14 @@ public class AuthenticationFilter implements Filter {
     if (StringUtils.isEmpty(token)) {
       throw new SQAccessDeniedException(UNAUTHORIZED);
     }
-    if (token.equals("anonymous")) {
 
-      return;
-    }
     try {
       var jwt = JWT.decode(token);
       var jwk = provider.get(jwt.getKeyId());
       var algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
       algorithm.verify(jwt);
       loggedInUserInfo.setUserId(jwt.getClaim("sub").asString());
-    } catch (SignatureVerificationException | JwkException ex) {
+    } catch (JWTVerificationException | JwkException ex) {
       log.error("Auth0 authentication failed", ex);
       throw new SQAccessDeniedException(UNAUTHORIZED);
     }
