@@ -6,22 +6,17 @@ import com.auth0.jwk.UrlJwkProvider;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.security.interfaces.RSAPublicKey;
-import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import me.simplq.exceptions.SQAccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,26 +28,19 @@ import org.springframework.util.StringUtils;
 @Component
 @Order(1)
 @Profile("!test")
+@Slf4j
 public class AuthenticationFilter implements Filter {
 
   private static final String UNAUTHORIZED = "Unauthorized";
   private static final String INVALID_TOKEN = "Invalid auth token";
-  private final GoogleIdTokenVerifier verifier;
   private final LoggedInUserInfo loggedInUserInfo;
   private final JwkProvider provider;
 
   // TODO Remove google stuff
   @Autowired
-  AuthenticationFilter(
-      LoggedInUserInfo loggedInUserInfo,
-      @Value("#{'${google.auth.clientIds}'.split(',')}") List<String> clientIds,
-      @Value("${auth0.jkws.url}") String keyUrl)
+  AuthenticationFilter(LoggedInUserInfo loggedInUserInfo, @Value("${auth0.jkws.url}") String keyUrl)
       throws MalformedURLException {
     this.loggedInUserInfo = loggedInUserInfo;
-    verifier =
-        new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-            .setAudience(clientIds)
-            .build();
     provider = new UrlJwkProvider(new URL(keyUrl));
   }
 
@@ -75,23 +63,8 @@ public class AuthenticationFilter implements Filter {
       algorithm.verify(jwt);
       loggedInUserInfo.setUserId(jwt.getClaim("sub").asString());
     } catch (SignatureVerificationException | JwkException ex) {
-      // At this point we should return unauthorized. Checking google tokens for temporary
-      // compatibility.
-      //      throw new SQAccessDeniedException("Invalid authorization token");
-
-      GoogleIdToken idToken = null;
-
-      try {
-        idToken = verifier.verify(token);
-      } catch (GeneralSecurityException e) {
-        throw new SQAccessDeniedException(UNAUTHORIZED);
-      } catch (IOException e) {
-        throw new SQAccessDeniedException(INVALID_TOKEN);
-      }
-      if (idToken == null) {
-        throw new SQAccessDeniedException(INVALID_TOKEN);
-      }
-      loggedInUserInfo.setUserId(idToken.getPayload().getSubject());
+      log.error("Auth0 authentication failed", ex);
+      throw new SQAccessDeniedException(UNAUTHORIZED);
     }
   }
 
