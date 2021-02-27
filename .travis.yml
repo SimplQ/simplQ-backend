@@ -5,8 +5,7 @@ jdk:
 script:
   - cd simplq
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=SimplQ_simplQ-backend
-  - mvn package
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.projectKey=SimplQ_simplQ-backend --no-transfer-progress
   - cd ..
   - zip -r latest *
   - mkdir -p dpl_cd_upload
