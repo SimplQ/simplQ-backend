@@ -7,26 +7,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.net.MalformedURLException;
 import me.simplq.exceptions.SQAccessDeniedException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class AuthenticationFilterTest {
   private static final String keyUrl = "https://simplq.us.auth0.com/.well-known/jwks.json";
 
+  @ParameterizedTest
+  @ValueSource(strings = {"", "invalid header", "invalid-header", "Bearer invalid-header"})
+  void denyBadHeaderValues(String testHeaderValue) throws MalformedURLException {
+    var authFilter = new AuthenticationFilter(new LoggedInUserInfo(), keyUrl);
+    // Deny bad bearer token
+    assertThrows(SQAccessDeniedException.class, () -> authFilter.authenticate(testHeaderValue));
+  }
+
   @Test
-  void denyBadHeaderValues() throws MalformedURLException {
+  void denyNullHeaderValues() throws MalformedURLException {
     var authFilter = new AuthenticationFilter(new LoggedInUserInfo(), keyUrl);
     // Deny Null
     assertThrows(SQAccessDeniedException.class, () -> authFilter.authenticate(null));
-
-    // Deny Empty String
-    assertThrows(SQAccessDeniedException.class, () -> authFilter.authenticate(""));
-
-    // Deny Malformed String
-    assertThrows(SQAccessDeniedException.class, () -> authFilter.authenticate("invalid header"));
-    assertThrows(SQAccessDeniedException.class, () -> authFilter.authenticate("invalid-header"));
-
-    // Deny bad bearer token
-    assertThrows(
-        SQAccessDeniedException.class, () -> authFilter.authenticate("Bearer invalid-header"));
   }
 
   @Test
