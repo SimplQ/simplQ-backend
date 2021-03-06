@@ -6,9 +6,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
+
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.SecretsManager;
 
+@Service
+@Profile("text-local")
 public class TexLocalSmsService implements SmsService {
   private final String API_KEY;
   private final String SENDER_NAME = "TXTLCL";

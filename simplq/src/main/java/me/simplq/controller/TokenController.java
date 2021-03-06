@@ -1,12 +1,6 @@
 package me.simplq.controller;
 
-import lombok.RequiredArgsConstructor;
-import me.simplq.controller.model.token.CreateTokenRequest;
-import me.simplq.controller.model.token.MyTokensResponse;
-import me.simplq.controller.model.token.TokenDeleteResponse;
-import me.simplq.controller.model.token.TokenDetailResponse;
-import me.simplq.controller.model.token.TokenNotifyResponse;
-import me.simplq.service.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +11,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import me.simplq.controller.model.token.CreateTokenRequest;
+import me.simplq.controller.model.token.MyTokensResponse;
+import me.simplq.controller.model.token.TokenDeleteResponse;
+import me.simplq.controller.model.token.TokenDetailResponse;
+import me.simplq.controller.model.token.TokenNotifyResponse;
+import me.simplq.service.TokenService;
+
 @RestController
 @RequestMapping("/v1")
-@RequiredArgsConstructor
 public class TokenController {
 
   private final TokenService tokenService;
+
+  @Autowired
+  public TokenController(TokenService tokenService) {
+    this.tokenService = tokenService;
+  }
 
   @GetMapping(path = "/token/{tokenId}")
   public ResponseEntity<TokenDetailResponse> getToken(@PathVariable("tokenId") String tokenId) {

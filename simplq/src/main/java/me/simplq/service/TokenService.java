@@ -2,8 +2,13 @@ package me.simplq.service;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
+
 import javax.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
@@ -18,11 +23,8 @@ import me.simplq.dao.TokenRepository;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.exceptions.SQInvalidRequestException;
 import me.simplq.service.smsService.SmsManager;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class TokenService {
 
   private static final String TOKEN_CREATION_MESSAGE =
@@ -30,12 +32,24 @@ public class TokenService {
           + "You have been added to %s. Your token number is %d. You can know your status visiting"
           + " %s\n"
           + "Thanks for using simplq.me";
+  private static final String TOKEN_NOTIFICATION_MESSAGE =
+      "Hi, your wait for %s is over! You can proceed";
+  
   private final TokenRepository tokenRepository;
   private final QueueRepository queueRepository;
   private final SmsManager smsManager;
   private final LoggedInUserInfo loggedInUserInfo;
-  private static final String TOKEN_NOTIFICATION_MESSAGE =
-      "Hi, your wait for %s is over! You can proceed";
+
+  @Autowired
+  public TokenService(TokenRepository tokenRepository, QueueRepository queueRepository,
+        SmsManager smsManager, LoggedInUserInfo loggedInUserInfo) {
+
+          this.tokenRepository = tokenRepository;
+          this.queueRepository = queueRepository;
+          this.smsManager = smsManager;
+          this.loggedInUserInfo = loggedInUserInfo;
+    
+  }
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
