@@ -15,7 +15,7 @@ public interface TokenRepository extends JpaRepository<Token, String> {
 
   @Modifying
   @Query("update Token t set t.status = :status where t.tokenId = :tokenId")
-  void setUserStatusById(@Param("status") TokenStatus status, @Param("tokenId") String tokenId);
+  void setTokenStatusById(@Param("status") TokenStatus status, @Param("tokenId") String tokenId);
 
   @Query("select max(t.tokenNumber) from Token t where t.queue.queueId = :queueId")
   Integer getLastTokenNumberForQueue(String queueId);
