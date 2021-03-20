@@ -1,18 +1,24 @@
 package me.simplq;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.simplq.config.TestConfig;
 import me.simplq.constants.QueueStatus;
+import me.simplq.constants.TokenStatus;
 import me.simplq.controller.model.queue.CreateQueueResponse;
 import me.simplq.controller.model.queue.MyQueuesResponse;
 import me.simplq.controller.model.queue.PatchQueueRequest;
 import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
+import me.simplq.controller.model.token.TokenDeleteResponse;
 import me.simplq.controller.model.token.TokenDetailResponse;
 import me.simplq.dao.QueueRepository;
 import org.junit.jupiter.api.Assertions;
@@ -104,7 +110,7 @@ class IntegrationTests {
     // GET token by id
     MvcResult getTokenResult =
         mockMvc
-            .perform(get("/v1/queue/" + createTokenResponse.getQueueId()))
+            .perform(get("/v1/token/" + createTokenResponse.getTokenId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andReturn();
@@ -115,6 +121,22 @@ class IntegrationTests {
     Assertions.assertEquals(tokenDetailsResponse.getQueueId(), createQueueResponse.getQueueId());
     Assertions.assertEquals(
         tokenDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
+
+    // DELETE Token
+    MvcResult deleteTokenResult =
+        mockMvc
+            .perform(delete("/v1/token/" + tokenDetailsResponse.getTokenId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+
+    TokenDeleteResponse tokenDeleteResponse =
+        objectMapper.readValue(
+            deleteTokenResult.getResponse().getContentAsString(), TokenDeleteResponse.class);
+    Assertions.assertEquals(tokenDetailsResponse.getTokenId(), tokenDeleteResponse.getTokenId());
+    Assertions.assertEquals(TokenStatus.REMOVED, tokenDeleteResponse.getTokenStatus());
+    Assertions.assertEquals(
+        tokenDetailsResponse.getQueueName(), tokenDeleteResponse.getQueueName());
 
     // GET myQueues
     MvcResult myQueuesResult =

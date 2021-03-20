@@ -7,7 +7,11 @@ import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
-import me.simplq.controller.model.token.*;
+import me.simplq.controller.model.token.CreateTokenRequest;
+import me.simplq.controller.model.token.MyTokensResponse;
+import me.simplq.controller.model.token.TokenDeleteResponse;
+import me.simplq.controller.model.token.TokenDetailResponse;
+import me.simplq.controller.model.token.TokenNotifyResponse;
 import me.simplq.dao.QueueRepository;
 import me.simplq.dao.Token;
 import me.simplq.dao.TokenRepository;
@@ -54,10 +58,13 @@ public class TokenService {
 
   @Transactional
   public TokenDeleteResponse deleteToken(String tokenId) {
-    tokenRepository.setUserStatusById(TokenStatus.REMOVED, tokenId);
+    tokenRepository.setTokenStatusById(TokenStatus.REMOVED, tokenId);
     return tokenRepository
         .findById(tokenId)
-        .map(token -> new TokenDeleteResponse(token.getQueue().getQueueName(), token.getStatus()))
+        .map(
+            token ->
+                new TokenDeleteResponse(
+                    tokenId, token.getQueue().getQueueName(), token.getStatus()))
         .orElseThrow(SQInternalServerException::new);
   }
 
@@ -75,7 +82,7 @@ public class TokenService {
     } else {
       throw SQInvalidRequestException.tokenNotNotifiableException();
     }
-    tokenRepository.setUserStatusById(TokenStatus.NOTIFIED, tokenId);
+    tokenRepository.setTokenStatusById(TokenStatus.NOTIFIED, tokenId);
     return new TokenNotifyResponse(tokenId, TokenStatus.NOTIFIED);
   }
 
