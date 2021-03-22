@@ -8,7 +8,15 @@ import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
-import me.simplq.controller.model.queue.*;
+import me.simplq.controller.model.queue.CreateQueueRequest;
+import me.simplq.controller.model.queue.CreateQueueResponse;
+import me.simplq.controller.model.queue.MyQueuesResponse;
+import me.simplq.controller.model.queue.PatchQueueRequest;
+import me.simplq.controller.model.queue.PatchQueueResponse;
+import me.simplq.controller.model.queue.PauseQueueRequest;
+import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueStatusResponse;
+import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
 import me.simplq.dao.Queue;
 import me.simplq.dao.QueueRepository;
 import me.simplq.dao.Token;
@@ -104,7 +112,10 @@ public class QueueService {
               }
               var resp =
                   new QueueDetailsResponse(
-                      queueId, queue.getQueueName(), queue.getQueueCreationTimestamp());
+                      queueId,
+                      queue.getQueueName(),
+                      queue.getQueueCreationTimestamp(),
+                      queue.getStatus());
               queue.getTokens().stream()
                   .filter(token -> token.getStatus() != TokenStatus.REMOVED)
                   .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
