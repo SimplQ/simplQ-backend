@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import lombok.Data;
+import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
 
 @Data
@@ -23,6 +24,7 @@ public class QueueDetailsResponse {
   private final String queueId;
   private final String queueName;
   final Date queueCreationTimestamp;
+  private final QueueStatus status;
   private final List<Token> tokens = new ArrayList<>();
 
   public void addToken(me.simplq.dao.Token token) {
