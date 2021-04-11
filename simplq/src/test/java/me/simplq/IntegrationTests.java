@@ -63,16 +63,7 @@ class IntegrationTests {
     Assertions.assertEquals("FirstQueue", createQueueResponse.getQueueName());
 
     // GET queue by id
-    MvcResult getQueueResult =
-        mockMvc
-            .perform(get("/v1/queue/" + createQueueResponse.getQueueId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andReturn();
-
-    QueueDetailsResponse queueDetailsResponse =
-        objectMapper.readValue(
-            getQueueResult.getResponse().getContentAsString(), QueueDetailsResponse.class);
+    var queueDetailsResponse = getQueueById(createQueueResponse.getQueueId());
     Assertions.assertEquals(queueDetailsResponse.getQueueId(), createQueueResponse.getQueueId());
     Assertions.assertEquals(
         queueDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
@@ -125,10 +116,12 @@ class IntegrationTests {
     MyQueuesResponse myQueuesResponse =
         objectMapper.readValue(
             myQueuesResult.getResponse().getContentAsString(), MyQueuesResponse.class);
-    Assertions.assertEquals(myQueuesResponse.getQueues().size(), 1);
-    var queue = myQueuesResponse.getQueues().get(0);
+    var queue =
+        myQueuesResponse.getQueues().stream()
+            .filter(queue1 -> queue1.getQueueId().equals(createQueueResponse.getQueueId()))
+            .findFirst()
+            .get();
     Assertions.assertEquals(createQueueResponse.getQueueName(), queue.getQueueName());
-    Assertions.assertEquals(createQueueResponse.getQueueId(), queue.getQueueId());
 
     // GET myTokens
     mockMvc
@@ -161,7 +154,11 @@ class IntegrationTests {
     MyQueuesResponse myQueuesResponseDeleted =
         objectMapper.readValue(
             myQueuesResultDeleted.getResponse().getContentAsString(), MyQueuesResponse.class);
-    Assertions.assertEquals(0, myQueuesResponseDeleted.getQueues().size());
+    Assertions.assertEquals(
+        0,
+        myQueuesResponseDeleted.getQueues().stream()
+            .filter(queue1 -> queue1.getQueueId().equals(createQueueResponse.getQueueId()))
+            .count());
 
     // Initially device not linked
     MvcResult deviceStatus =
@@ -175,6 +172,19 @@ class IntegrationTests {
     MvcResult deviceStatus2 =
         mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
     Assertions.assertEquals("true", deviceStatus2.getResponse().getContentAsString());
+  }
+
+  @SneakyThrows
+  private QueueDetailsResponse getQueueById(String queueId) {
+    MvcResult getQueueResult =
+        mockMvc
+            .perform(get("/v1/queue/" + queueId))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+
+    return objectMapper.readValue(
+        getQueueResult.getResponse().getContentAsString(), QueueDetailsResponse.class);
   }
 
   @SneakyThrows
@@ -218,8 +228,21 @@ class IntegrationTests {
             patchResult.getResponse().getContentAsString(), PatchQueueResponse.class);
     Assertions.assertEquals(patchResponse.getMaxQueueCapacity(), 10);
 
+    var queueDetailAtStart = getQueueById(createQueueResponse.getQueueId());
+    Assertions.assertEquals(10, queueDetailAtStart.getMaxQueueCapacity());
+    Assertions.assertEquals(10, queueDetailAtStart.getSlotsLeft());
+
     // Successfully add ten tokens
-    IntStream.range(0, 10).forEach(i -> callCreateToken(createQueueResponse.getQueueId()));
+    IntStream.range(0, 10)
+        .forEach(
+            i -> {
+              callCreateToken(createQueueResponse.getQueueId());
+              System.out.println(i);
+            });
+
+    var queueDetailAtFull = getQueueById(createQueueResponse.getQueueId());
+    Assertions.assertEquals(10, queueDetailAtFull.getMaxQueueCapacity());
+    Assertions.assertEquals(0, queueDetailAtFull.getSlotsLeft());
 
     // Fail on 11th token
     makeCreateTokenCall(createQueueResponse.getQueueId()).andExpect(status().is4xxClientError());

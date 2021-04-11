@@ -35,7 +35,7 @@ public class Queue {
   private String queueId;
 
   @Column(updatable = true)
-  private int maxQueueCapacity;
+  private long maxQueueCapacity;
 
   private QueueStatus status;
 
@@ -63,6 +63,10 @@ public class Queue {
   }
 
   public boolean isFull() {
-    return getActiveTokensCount() > maxQueueCapacity;
+    return getSlotsLeft() <= 0;
+  }
+
+  public Long getSlotsLeft() {
+    return maxQueueCapacity - getActiveTokensCount();
   }
 }

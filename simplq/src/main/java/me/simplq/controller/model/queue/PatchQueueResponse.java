@@ -8,5 +8,5 @@ import lombok.Data;
 public class PatchQueueResponse {
   String queueId;
   String queueName;
-  int maxQueueCapacity;
+  Long maxQueueCapacity;
 }

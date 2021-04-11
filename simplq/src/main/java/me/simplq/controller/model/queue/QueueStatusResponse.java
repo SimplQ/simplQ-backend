@@ -10,9 +10,10 @@ public class QueueStatusResponse {
   final String queueId;
   final String queueName;
   final QueueStatus status;
-  final int maxQueueCapacity;
+  final Long maxQueueCapacity;
 
   final Long numberOfActiveTokens;
   final Long totalNumberOfTokens;
+  final Long slotsLeft;
   final Date queueCreationTimestamp;
 }
