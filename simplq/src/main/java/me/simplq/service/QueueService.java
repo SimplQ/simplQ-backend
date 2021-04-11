@@ -115,7 +115,8 @@ public class QueueService {
                       queueId,
                       queue.getQueueName(),
                       queue.getQueueCreationTimestamp(),
-                      queue.getStatus());
+                      queue.getStatus(),
+                      queue.getMaxQueueCapacity());
               queue.getTokens().stream()
                   .filter(token -> token.getStatus() != TokenStatus.REMOVED)
                   .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
@@ -135,6 +136,7 @@ public class QueueService {
                     queueId,
                     queue.getQueueName(),
                     queue.getStatus(),
+                    queue.getMaxQueueCapacity(),
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
@@ -169,6 +171,7 @@ public class QueueService {
                     queue.getQueueId(),
                     queue.getQueueName(),
                     queue.getStatus(),
+                    queue.getMaxQueueCapacity(),
                     queue.getTokens().stream()
                         .filter(user -> user.getStatus().equals(TokenStatus.WAITING))
                         .count(),
