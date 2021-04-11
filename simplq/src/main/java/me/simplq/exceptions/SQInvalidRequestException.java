@@ -12,7 +12,8 @@ public class SQInvalidRequestException extends SQException {
     TOKEN_DELETED,
     QUEUE_PAUSED,
     QUEUE_DELETED,
-    QUEUE_DELETE_NOT_ALLOWED
+    QUEUE_DELETE_NOT_ALLOWED,
+    QUEUE_IS_FULL;
   }
 
   // TODO Move to SQException and include internal server ones too.
@@ -25,7 +26,8 @@ public class SQInvalidRequestException extends SQException {
           ReasonCode.TOKEN_DELETED, "The token has been deleted from the queue",
           ReasonCode.QUEUE_PAUSED, "The queue has been paused",
           ReasonCode.QUEUE_DELETED, "The queue has been deleted",
-          ReasonCode.QUEUE_DELETE_NOT_ALLOWED, "Delete not allowed in pause request");
+          ReasonCode.QUEUE_DELETE_NOT_ALLOWED, "Delete not allowed in pause request",
+          ReasonCode.QUEUE_IS_FULL, "The queue is full, please try again after sometime");
 
   private final ReasonCode reasonCode;
 
@@ -63,6 +65,10 @@ public class SQInvalidRequestException extends SQException {
 
   public static SQInvalidRequestException queueDeletedNotAllowedException() {
     return new SQInvalidRequestException(ReasonCode.QUEUE_DELETE_NOT_ALLOWED);
+  }
+
+  public static SQInvalidRequestException queueIsFullException() {
+    return new SQInvalidRequestException(ReasonCode.QUEUE_IS_FULL);
   }
 
   public ReasonCode getReasonCode() {

@@ -25,6 +25,8 @@ public class QueueDetailsResponse {
   private final String queueName;
   final Date queueCreationTimestamp;
   private final QueueStatus status;
+  private final Long maxQueueCapacity;
+  private final Long slotsLeft;
   private final List<Token> tokens = new ArrayList<>();
 
   public void addToken(me.simplq.dao.Token token) {

@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.stream.IntStream;
+import lombok.SneakyThrows;
 import me.simplq.config.TestConfig;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
@@ -33,6 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -56,54 +59,18 @@ class IntegrationTests {
     Assertions.assertEquals("false", newDeviceStatus.getResponse().getContentAsString());
 
     // Create queue
-    String createQueueRequest = "{ \"queueName\": \"Queue2222\" }";
-
-    MvcResult createQueueResult =
-        mockMvc
-            .perform(
-                post("/v1/queue", 42L).contentType("application/json").content(createQueueRequest))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andReturn();
-
-    String response = createQueueResult.getResponse().getContentAsString();
-    CreateQueueResponse createQueueResponse =
-        objectMapper.readValue(response, CreateQueueResponse.class);
-    Assertions.assertEquals("Queue2222", createQueueResponse.getQueueName());
+    var createQueueResponse = createQueueCall("FirstQueue");
+    Assertions.assertEquals("FirstQueue", createQueueResponse.getQueueName());
 
     // GET queue by id
-    MvcResult getQueueResult =
-        mockMvc
-            .perform(get("/v1/queue/" + createQueueResponse.getQueueId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andReturn();
-
-    QueueDetailsResponse queueDetailsResponse =
-        objectMapper.readValue(
-            getQueueResult.getResponse().getContentAsString(), QueueDetailsResponse.class);
+    var queueDetailsResponse = getQueueById(createQueueResponse.getQueueId());
     Assertions.assertEquals(queueDetailsResponse.getQueueId(), createQueueResponse.getQueueId());
     Assertions.assertEquals(
         queueDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
 
     // POST token
-    String createTokenRequest =
-        "{ \"contactNumber\": \"999999999\","
-            + "\"name\": \"user name\","
-            + "\"queueId\": \""
-            + createQueueResponse.getQueueId()
-            + "\"}";
+    var createTokenResponse = callCreateToken(createQueueResponse.getQueueId());
 
-    MvcResult createTokenResult =
-        mockMvc
-            .perform(
-                post("/v1/token", 42L).contentType("application/json").content(createTokenRequest))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andReturn();
-    TokenDetailResponse createTokenResponse =
-        objectMapper.readValue(
-            createTokenResult.getResponse().getContentAsString(), TokenDetailResponse.class);
     Assertions.assertEquals(createTokenResponse.getQueueId(), createQueueResponse.getQueueId());
     Assertions.assertEquals(createTokenResponse.getQueueName(), createQueueResponse.getQueueName());
 
@@ -149,10 +116,12 @@ class IntegrationTests {
     MyQueuesResponse myQueuesResponse =
         objectMapper.readValue(
             myQueuesResult.getResponse().getContentAsString(), MyQueuesResponse.class);
-    Assertions.assertEquals(myQueuesResponse.getQueues().size(), 1);
-    var queue = myQueuesResponse.getQueues().get(0);
+    var queue =
+        myQueuesResponse.getQueues().stream()
+            .filter(queue1 -> queue1.getQueueId().equals(createQueueResponse.getQueueId()))
+            .findFirst()
+            .get();
     Assertions.assertEquals(createQueueResponse.getQueueName(), queue.getQueueName());
-    Assertions.assertEquals(createQueueResponse.getQueueId(), queue.getQueueId());
 
     // GET myTokens
     mockMvc
@@ -185,7 +154,11 @@ class IntegrationTests {
     MyQueuesResponse myQueuesResponseDeleted =
         objectMapper.readValue(
             myQueuesResultDeleted.getResponse().getContentAsString(), MyQueuesResponse.class);
-    Assertions.assertEquals(0, myQueuesResponseDeleted.getQueues().size());
+    Assertions.assertEquals(
+        0,
+        myQueuesResponseDeleted.getQueues().stream()
+            .filter(queue1 -> queue1.getQueueId().equals(createQueueResponse.getQueueId()))
+            .count());
 
     // Initially device not linked
     MvcResult deviceStatus =
@@ -199,6 +172,40 @@ class IntegrationTests {
     MvcResult deviceStatus2 =
         mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
     Assertions.assertEquals("true", deviceStatus2.getResponse().getContentAsString());
+  }
+
+  @SneakyThrows
+  private QueueDetailsResponse getQueueById(String queueId) {
+    MvcResult getQueueResult =
+        mockMvc
+            .perform(get("/v1/queue/" + queueId))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+
+    return objectMapper.readValue(
+        getQueueResult.getResponse().getContentAsString(), QueueDetailsResponse.class);
+  }
+
+  @SneakyThrows
+  private CreateQueueResponse createQueueCall(String queueName) {
+    String createQueueRequest = "{ \"queueName\": \"" + queueName + "\" }";
+
+    MvcResult createQueueResult =
+        mockMvc
+            .perform(
+                post("/v1/queue", 42L).contentType("application/json").content(createQueueRequest))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+
+    return objectMapper.readValue(
+        createQueueResult.getResponse().getContentAsString(), CreateQueueResponse.class);
+  }
+
+  @Test
+  void maxQueueCapacityScenarioTest() throws Exception {
+    var createQueueResponse = createQueueCall("MaxQueueCapacityTestQueue");
 
     // Patch queue with MAX_QUEUE_CAPACITY
     var patchQueueRequest = new PatchQueueRequest();
@@ -220,5 +227,51 @@ class IntegrationTests {
         objectMapper.readValue(
             patchResult.getResponse().getContentAsString(), PatchQueueResponse.class);
     Assertions.assertEquals(patchResponse.getMaxQueueCapacity(), 10);
+
+    var queueDetailAtStart = getQueueById(createQueueResponse.getQueueId());
+    Assertions.assertEquals(10, queueDetailAtStart.getMaxQueueCapacity());
+    Assertions.assertEquals(10, queueDetailAtStart.getSlotsLeft());
+
+    // Successfully add ten tokens
+    IntStream.range(0, 10)
+        .forEach(
+            i -> {
+              callCreateToken(createQueueResponse.getQueueId());
+              System.out.println(i);
+            });
+
+    var queueDetailAtFull = getQueueById(createQueueResponse.getQueueId());
+    Assertions.assertEquals(10, queueDetailAtFull.getMaxQueueCapacity());
+    Assertions.assertEquals(0, queueDetailAtFull.getSlotsLeft());
+
+    // Fail on 11th token
+    makeCreateTokenCall(createQueueResponse.getQueueId()).andExpect(status().is4xxClientError());
+  }
+
+  @SneakyThrows
+  private ResultActions makeCreateTokenCall(String queueId) {
+    return mockMvc.perform(
+        post("/v1/token", 42L)
+            .contentType("application/json")
+            .content(createTokenRequest(queueId)));
+  }
+
+  @SneakyThrows
+  private TokenDetailResponse callCreateToken(String queueId) {
+    var createTokenResult =
+        makeCreateTokenCall(queueId)
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+    return objectMapper.readValue(
+        createTokenResult.getResponse().getContentAsString(), TokenDetailResponse.class);
+  }
+
+  private String createTokenRequest(String queueId) {
+    return "{ \"contactNumber\": \"999999999\","
+        + "\"name\": \"user name\","
+        + "\"queueId\": \""
+        + queueId
+        + "\"}";
   }
 }

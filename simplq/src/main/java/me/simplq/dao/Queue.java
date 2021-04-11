@@ -2,11 +2,21 @@ package me.simplq.dao;
 
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.simplq.constants.QueueStatus;
+import me.simplq.constants.TokenStatus;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -25,7 +35,7 @@ public class Queue {
   private String queueId;
 
   @Column(updatable = true)
-  private int maxQueueCapacity;
+  private long maxQueueCapacity;
 
   private QueueStatus status;
 
@@ -43,5 +53,20 @@ public class Queue {
     this.owner = owner;
     this.queueCreationTimestamp = new Date();
     this.status = status;
+    this.maxQueueCapacity = 10000;
+  }
+
+  public long getActiveTokensCount() {
+    return tokens.stream()
+        .filter(token1 -> !token1.getStatus().equals(TokenStatus.REMOVED))
+        .count();
+  }
+
+  public boolean isFull() {
+    return getSlotsLeft() <= 0;
+  }
+
+  public Long getSlotsLeft() {
+    return maxQueueCapacity - getActiveTokensCount();
   }
 }
