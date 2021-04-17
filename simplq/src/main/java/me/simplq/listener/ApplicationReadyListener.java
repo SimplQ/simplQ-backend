@@ -41,8 +41,7 @@ public class ApplicationReadyListener implements ApplicationListener<Application
   private void runMigration() {
     Liquibase liquibase = null;
 
-    try {
-      Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+    try(Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
       Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
       liquibase = new Liquibase("db/changeset.log.xml", new ClassLoaderResourceAccessor(), database);
       liquibase.update(new Contexts(), new liquibase.LabelExpression());
