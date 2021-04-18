@@ -39,24 +39,18 @@ public class ApplicationReadyListener implements ApplicationListener<Application
   }
 
   private void runMigration() {
-    Liquibase liquibase = null;
-
+ 
     try(Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
+    	
       Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
-      liquibase = new Liquibase("db/changeset.log.xml", new ClassLoaderResourceAccessor(), database);
-      liquibase.update(new Contexts(), new liquibase.LabelExpression());
+      
+      try(Liquibase liquibase = new Liquibase("db/changeset.log.xml", new ClassLoaderResourceAccessor(), database)) {
+    	  liquibase.update(new Contexts(), new liquibase.LabelExpression());
+      }
 
     } catch (SQLException | LiquibaseException e) {
       log.error("Migration failed", e);
       
-    } finally {
-      if (liquibase != null) {
-        try {
-          liquibase.close();
-        } catch (LiquibaseException e) {
-          log.warn("Cannot close liquibase", e);
-        }
-      }
     }
   }
   
