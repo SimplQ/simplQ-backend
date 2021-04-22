@@ -78,7 +78,7 @@ public class QueueController {
     } else if (queueName != null) {
       return ResponseEntity.ok(queueService.getQueueStatusByName(queueName));
     } else {
-      return ResponseEntity.badRequest().build();
+      return ResponseEntity.badRequest().build(); // Todo Give reason
     }
   }
 }
