@@ -198,19 +198,21 @@ public class QueueService {
       PatchQueueRequest patchQueueRequest) {
 
     return queue -> {
+      var response = PatchQueueResponse.builder();
       if (patchQueueRequest.getMaxQueueCapacity() != null) {
         queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
+        response.maxQueueCapacity(patchQueueRequest.getMaxQueueCapacity().longValue());
       }
 
       if (patchQueueRequest.getIsSelfJoinAllowed() != null) {
         queue.setSelfJoinAllowed(patchQueueRequest.getIsSelfJoinAllowed());
+        response.isSelfJoinAllowed(patchQueueRequest.getIsSelfJoinAllowed());
       }
       var updatedQueue = queueRepository.save(queue);
 
-      return PatchQueueResponse.builder()
+      return response
           .queueName(updatedQueue.getQueueName())
           .queueId(updatedQueue.getQueueId())
-          .maxQueueCapacity(updatedQueue.getMaxQueueCapacity())
           .build();
     };
   }

@@ -99,7 +99,7 @@ public class TokenService {
                     throw SQInvalidRequestException.queueDeletedException();
                   } else if (queue.isFull()) {
                     throw SQInvalidRequestException.queueIsFullException();
-                  } else if (queue.isSelfJoinAllowed() || !loggedInUserInfo.getUserId()
+                  } else if (!queue.isSelfJoinAllowed() && !loggedInUserInfo.getUserId()
                       .equals(queue.getOwner().getId())) {
                     throw SQInvalidRequestException.onlyOwnerCanCreateTokens();
                   }
