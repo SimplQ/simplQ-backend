@@ -74,7 +74,8 @@
 
     <changeSet id="6" author="daltonfury42">
 		<addColumn tableName="queue">
-			<column name="is_self_join_allowed" type="boolean"/>
+			<column name="is_self_join_allowed" type="boolean" valueComputed="true"/>
+
 		</addColumn>
 	</changeSet>
 	
