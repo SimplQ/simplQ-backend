@@ -27,6 +27,7 @@ public class QueueDetailsResponse {
   private final QueueStatus status;
   private final Long maxQueueCapacity;
   private final Long slotsLeft;
+  private final boolean isSelfJoinAllowed;
   private final List<Token> tokens = new ArrayList<>();
 
   public void addToken(me.simplq.dao.Token token) {

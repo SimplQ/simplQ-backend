@@ -47,7 +47,7 @@ public class QueueServiceTest {
 
     var patchRequest = new PatchQueueRequest();
 
-    Executable execute = () -> queueService.updateMaxQueueCapacity("queueId", patchRequest);
+    Executable execute = () -> queueService.patchQueue("queueId", patchRequest);
 
     SQInvalidRequestException assertThrows = assertThrows(SQInvalidRequestException.class, execute);
 
@@ -65,7 +65,7 @@ public class QueueServiceTest {
     var patchRequest = new PatchQueueRequest();
     patchRequest.setMaxQueueCapacity(10);
 
-    queueService.updateMaxQueueCapacity("queueId", patchRequest);
+    queueService.patchQueue("queueId", patchRequest);
 
     verify(repository).save(eq(queue));
     assertThat(queue.getMaxQueueCapacity()).isEqualTo(10);

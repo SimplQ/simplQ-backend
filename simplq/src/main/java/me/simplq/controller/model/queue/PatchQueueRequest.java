@@ -4,5 +4,7 @@ import lombok.Data;
 
 @Data
 public class PatchQueueRequest {
-  private int maxQueueCapacity;
+
+  private Integer maxQueueCapacity;
+  private Boolean isSelfJoinAllowed;
 }

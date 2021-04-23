@@ -34,8 +34,7 @@ public class Queue {
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
   private String queueId;
 
-  @Column(updatable = true)
-  private long maxQueueCapacity;
+  @Column private long maxQueueCapacity;
 
   private QueueStatus status;
 
@@ -48,12 +47,15 @@ public class Queue {
   @Temporal(TemporalType.TIMESTAMP)
   Date queueCreationTimestamp;
 
+  @Column private boolean isSelfJoinAllowed;
+
   public Queue(String queueName, Owner owner, QueueStatus status) {
     this.queueName = queueName;
     this.owner = owner;
     this.queueCreationTimestamp = new Date();
     this.status = status;
     this.maxQueueCapacity = 10000;
+    this.isSelfJoinAllowed = false;
   }
 
   public long getActiveTokensCount() {
