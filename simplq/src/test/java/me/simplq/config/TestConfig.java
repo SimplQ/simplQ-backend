@@ -2,6 +2,7 @@ package me.simplq.config;
 
 import java.io.IOException;
 import javax.servlet.*;
+
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.service.OwnerService;
 import me.simplq.service.QueueService;

@@ -6,18 +6,26 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.OwnerService;
 
 @Slf4j
+@Service
+@Profile("prod")
 public class CompanionAppSmsService implements SmsService {
   private static final String SMS_NUMBER_KEY = "SMS_NUMBER_KEY";
   private static final String SMS_PAYLOAD_KEY = "SMS_PAYLOAD";
 
   private final OwnerService ownerService;
 
+  @Autowired
   public CompanionAppSmsService(OwnerService ownerService) {
     this.ownerService = ownerService;
     try {
