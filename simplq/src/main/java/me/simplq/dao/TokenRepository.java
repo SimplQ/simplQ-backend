@@ -1,5 +1,6 @@
 package me.simplq.dao;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 import me.simplq.constants.TokenStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,10 @@ public interface TokenRepository extends JpaRepository<Token, String> {
   Integer getLastTokenNumberForQueue(String queueId);
 
   Stream<Token> findByOwnerId(String ownerId);
+
+  @Query("select t from Token t where t.queue.queueId = :queueId and t.contactNumber = :contactNumber")
+  Optional<Token> findByQueueIdAndContactNumber(@Param("queueId") String queueId,
+      @Param("contactNumber") String contactNumber);
 
   @Query("select case when count(t)> 0 then true else false end from Token t where "
       + "t.queue.id = :queueId "

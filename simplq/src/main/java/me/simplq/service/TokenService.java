@@ -39,21 +39,19 @@ public class TokenService {
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
-    var token =
-        tokenRepository
-            .findById(tokenId)
-            .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
-    return new TokenDetailResponse(
-        tokenId,
-        token.getName(),
-        token.getContactNumber(),
-        token.getTokenNumber(),
-        token.getStatus(),
-        token.getQueue().getQueueName(),
-        token.getQueue().getQueueId(),
-        getAheadCount(token),
-        token.getNotifiable(),
-        token.getTokenCreationTimestamp());
+    return TokenDetailResponse.fromEntity(tokenRepository
+        .findById(tokenId)
+        .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
+  }
+
+  /**
+   * Get token by queueId and the contact number
+   */
+  @Transactional
+  public TokenDetailResponse getToken(String queueId, String contactNumber) {
+    return TokenDetailResponse.fromEntity(
+        tokenRepository.findByQueueIdAndContactNumber(queueId, contactNumber)
+            .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
   }
 
   @Transactional
@@ -128,17 +126,7 @@ public class TokenService {
             token.getQueue().getQueueName(),
             token.getTokenNumber(),
             token.getTokenUrl()));
-    return new TokenDetailResponse(
-        token.getTokenId(),
-        token.getName(),
-        token.getContactNumber(),
-        token.getTokenNumber(),
-        token.getStatus(),
-        token.getQueue().getQueueName(),
-        token.getQueue().getQueueId(),
-        getAheadCount(token),
-        token.getNotifiable(),
-        token.getTokenCreationTimestamp());
+    return TokenDetailResponse.fromEntity(token);
   }
 
   @Transactional
@@ -159,17 +147,5 @@ public class TokenService {
                         token.getTokenId(),
                         token.getTokenCreationTimestamp()))
             .collect(Collectors.toList()));
-  }
-
-  private Long getAheadCount(Token token) {
-    if (token.getStatus() == TokenStatus.REMOVED) {
-      return null;
-    }
-    return token.getQueue().getTokens().stream()
-        .filter(
-            fellowUser ->
-                fellowUser.getTokenCreationTimestamp().before(token.getTokenCreationTimestamp())
-                    && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
-        .count();
   }
 }
