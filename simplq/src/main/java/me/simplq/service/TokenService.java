@@ -88,6 +88,10 @@ public class TokenService {
 
   @Transactional
   public TokenDetailResponse createToken(CreateTokenRequest createTokenRequest) {
+    if (tokenRepository.existsAlreadyInQueue(createTokenRequest.getQueueId(),
+        createTokenRequest.getContactNumber())) {
+      throw SQInvalidRequestException.tokenAlreadyWaiting();
+    }
     var token =
         queueRepository
             .findById(createTokenRequest.getQueueId())
