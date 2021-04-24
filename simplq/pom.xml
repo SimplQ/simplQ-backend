@@ -101,7 +101,12 @@
 			<artifactId>firebase-admin</artifactId>
 			<version>7.1.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>4.3.1</version>
+		</dependency>
+		
 		<!-- Tests -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -130,6 +135,11 @@
 	</dependencies>
 
 	<build>
+		<testResources>
+			<testResource>
+				<directory>${project.basedir}/src/test/resources</directory>
+			</testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<groupId>org.liquibase</groupId>
