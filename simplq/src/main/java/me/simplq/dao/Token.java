@@ -1,7 +1,13 @@
 package me.simplq.dao;
 
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,5 +52,17 @@ public class Token {
 
   public String getTokenUrl() {
     return URL_PREFIX + tokenId;
+  }
+
+  public Long getAheadCount() {
+    if (this.getStatus() == TokenStatus.REMOVED) {
+      return null;
+    }
+    return this.getQueue().getTokens().stream()
+        .filter(
+            fellowUser ->
+                fellowUser.getTokenCreationTimestamp().before(this.getTokenCreationTimestamp())
+                    && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
+        .count();
   }
 }

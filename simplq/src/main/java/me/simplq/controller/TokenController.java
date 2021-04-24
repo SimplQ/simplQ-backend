@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,6 +39,13 @@ public class TokenController {
   @GetMapping(path = "/tokens")
   public ResponseEntity<MyTokensResponse> getMyTokens() {
     return ResponseEntity.ok(tokenService.getMyTokens());
+  }
+
+  @GetMapping(path = "/token")
+  public ResponseEntity<TokenDetailResponse> getMyTokenInQueue(
+      @RequestParam(value = "queueId") String queueId,
+      @RequestParam("contactNumber") String contactNumber) {
+    return ResponseEntity.ok(tokenService.getToken(queueId, contactNumber));
   }
 
   @DeleteMapping(path = "/token/{tokenId}")
