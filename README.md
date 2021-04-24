@@ -15,8 +15,13 @@ The project is written in Java, and deployed on AWS. These steps are to be follo
 ```
 mvn package
 ```
+4. Run a development DB server:
 
-4. Run the jar:
+```
+docker run --name simplq-db -e POSTGRES_PASSWORD=passowrd -e POSTGRES_USER=admin -e POSTGRES_DB=simplq -d postgres
+```
+
+5. Run the jar:
 
 ```
 java -jar simplq/target/simplq-0.0.1-SNAPSHOT.jar 
