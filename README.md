@@ -18,7 +18,7 @@ mvn package
 4. Run a development DB server:
 
 ```
-docker run --name simplq-db -e POSTGRES_PASSWORD=passowrd -e POSTGRES_USER=admin -e POSTGRES_DB=simplq -d postgres
+docker run --name simplq-db -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_USER=admin -e POSTGRES_DB=simplq -d postgres
 ```
 
 5. Run the jar:
