@@ -21,4 +21,11 @@ public interface TokenRepository extends JpaRepository<Token, String> {
   Integer getLastTokenNumberForQueue(String queueId);
 
   Stream<Token> findByOwnerId(String ownerId);
+
+  @Query("select case when count(t)> 0 then true else false end from Token t where "
+      + "t.queue.id = :queueId "
+      + "and t.contactNumber = :contactNumber "
+      + "and t.status =  me.simplq.constants.TokenStatus.WAITING")
+  boolean existsAlreadyInQueue(@Param("queueId") String queueId,
+      @Param("contactNumber") String contactNumber);
 }
