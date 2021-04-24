@@ -41,4 +41,18 @@ public class QueueDetailsResponse {
             token.getStatus(),
             token.getNotifiable()));
   }
+
+  public void addDeletedToken(me.simplq.dao.Token token) {                                    
+    this.deletedTokens.add(                                                                   
+    new Token(                                                                            
+    token.getName(),                                                                  
+    token.getContactNumber(),                                                         
+    token.getTokenId(),                                                               
+    token.getTokenNumber(),                                                           
+    token.getTokenCreationTimestamp(),                                                
+    token.getStatus(),                                                                
+    token.getNotifiable()));                                                          
+    
+  }                                                                                           
 }
+
