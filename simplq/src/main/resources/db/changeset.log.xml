@@ -71,6 +71,13 @@
         		<column name="max_queue_capacity" type="int"/>
     		</addColumn>   
 	</changeSet> 
+
+    <changeSet id="6" author="daltonfury42">
+		<addColumn tableName="queue">
+			<column name="is_self_join_allowed" type="boolean" valueComputed="true"/>
+
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>
   

@@ -117,7 +117,8 @@ public class QueueService {
                       queue.getQueueCreationTimestamp(),
                       queue.getStatus(),
                       queue.getMaxQueueCapacity(),
-                      queue.getSlotsLeft());
+                      queue.getSlotsLeft(),
+                      queue.isSelfJoinAllowed());
               queue.getTokens().stream()
                   .filter(token -> token.getStatus() != TokenStatus.REMOVED)
                   .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
@@ -143,7 +144,8 @@ public class QueueService {
                         .count(),
                     Long.valueOf(queue.getTokens().size()),
                     queue.getSlotsLeft(),
-                    queue.getQueueCreationTimestamp()))
+                    queue.getQueueCreationTimestamp(),
+                    queue.isSelfJoinAllowed()))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
@@ -179,29 +181,38 @@ public class QueueService {
                         .count(),
                     Long.valueOf(queue.getTokens().size()),
                     queue.getSlotsLeft(),
-                    queue.getQueueCreationTimestamp()))
+                    queue.getQueueCreationTimestamp(),
+                    queue.isSelfJoinAllowed()))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
   @Transactional
-  public PatchQueueResponse updateMaxQueueCapacity(String queueId, PatchQueueRequest patchRequest) {
+  public PatchQueueResponse patchQueue(String queueId, PatchQueueRequest patchRequest) {
     return queueRepository
         .findById(queueId)
-        .map(updateMaxQueueCapacity(patchRequest))
+        .map(patchQueue(patchRequest))
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
-  private Function<Queue, PatchQueueResponse> updateMaxQueueCapacity(
+  private Function<Queue, PatchQueueResponse> patchQueue(
       PatchQueueRequest patchQueueRequest) {
 
     return queue -> {
-      queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
+      var response = PatchQueueResponse.builder();
+      if (patchQueueRequest.getMaxQueueCapacity() != null) {
+        queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
+        response.maxQueueCapacity(patchQueueRequest.getMaxQueueCapacity().longValue());
+      }
+
+      if (patchQueueRequest.getIsSelfJoinAllowed() != null) {
+        queue.setSelfJoinAllowed(patchQueueRequest.getIsSelfJoinAllowed());
+        response.isSelfJoinAllowed(patchQueueRequest.getIsSelfJoinAllowed());
+      }
       var updatedQueue = queueRepository.save(queue);
 
-      return PatchQueueResponse.builder()
+      return response
           .queueName(updatedQueue.getQueueName())
           .queueId(updatedQueue.getQueueId())
-          .maxQueueCapacity(updatedQueue.getMaxQueueCapacity())
           .build();
     };
   }

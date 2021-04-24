@@ -213,8 +213,7 @@ class IntegrationTests {
     var createQueueResponse = createQueueCall("MaxQueueCapacityTestQueue");
 
     // Patch queue with MAX_QUEUE_CAPACITY
-    var patchQueueRequest = new PatchQueueRequest();
-    patchQueueRequest.setMaxQueueCapacity(10);
+    var patchQueueRequest = new PatchQueueRequest(10, null);
 
     var patchQueueRequestJson = objectMapper.writeValueAsBytes(patchQueueRequest);
 

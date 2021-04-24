@@ -16,4 +16,5 @@ public class QueueStatusResponse {
   final Long totalNumberOfTokens;
   final Long slotsLeft;
   final Date queueCreationTimestamp;
+  final boolean isSelfJoinAllowed;
 }

@@ -40,7 +40,7 @@ public class CompanionAppSmsService implements SmsService {
       // is active.
       //
       // https://firebase.google.com/docs/admin/setup?authuser=0#initialize-sdk
-      throw new SQInternalServerException("FCM Credentials not set");
+      throw new SQInternalServerException("FCM Credentials not set", e);
     }
   }
 

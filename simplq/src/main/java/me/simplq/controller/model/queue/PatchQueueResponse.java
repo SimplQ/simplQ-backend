@@ -9,4 +9,5 @@ public class PatchQueueResponse {
   String queueId;
   String queueName;
   Long maxQueueCapacity;
+  boolean isSelfJoinAllowed;
 }

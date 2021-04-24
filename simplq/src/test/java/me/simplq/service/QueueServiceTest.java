@@ -45,9 +45,9 @@ public class QueueServiceTest {
   void throwExceptionIfQueueDoesNotExists() {
     when(repository.findById(anyString())).thenReturn(Optional.empty());
 
-    var patchRequest = new PatchQueueRequest();
+    var patchRequest = new PatchQueueRequest(10, false);
 
-    Executable execute = () -> queueService.updateMaxQueueCapacity("queueId", patchRequest);
+    Executable execute = () -> queueService.patchQueue("queueId", patchRequest);
 
     SQInvalidRequestException assertThrows = assertThrows(SQInvalidRequestException.class, execute);
 
@@ -62,10 +62,9 @@ public class QueueServiceTest {
     when(repository.findById(anyString())).thenReturn(Optional.of(queue));
     when(repository.save(any(Queue.class))).thenReturn(queue);
 
-    var patchRequest = new PatchQueueRequest();
-    patchRequest.setMaxQueueCapacity(10);
+    var patchRequest = new PatchQueueRequest(10, null);
 
-    queueService.updateMaxQueueCapacity("queueId", patchRequest);
+    queueService.patchQueue("queueId", patchRequest);
 
     verify(repository).save(eq(queue));
     assertThat(queue.getMaxQueueCapacity()).isEqualTo(10);

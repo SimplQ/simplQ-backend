@@ -1,8 +1,10 @@
 package me.simplq.controller.model.queue;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class PatchQueueRequest {
-  private int maxQueueCapacity;
+
+  private Integer maxQueueCapacity;
+  private Boolean isSelfJoinAllowed;
 }
