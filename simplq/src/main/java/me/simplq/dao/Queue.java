@@ -64,6 +64,10 @@ public class Queue {
         .count();
   }
 
+  public long getTotalTokensCount() {
+    return tokens.size();
+  }
+
   public boolean isFull() {
     return getSlotsLeft() <= 0;
   }

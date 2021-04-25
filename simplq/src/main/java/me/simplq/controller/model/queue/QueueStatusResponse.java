@@ -3,6 +3,7 @@ package me.simplq.controller.model.queue;
 import java.util.Date;
 import lombok.Data;
 import me.simplq.constants.QueueStatus;
+import me.simplq.dao.Queue;
 
 @Data
 public class QueueStatusResponse {
@@ -17,4 +18,17 @@ public class QueueStatusResponse {
   final Long slotsLeft;
   final Date queueCreationTimestamp;
   final boolean isSelfJoinAllowed;
+
+  public static QueueStatusResponse fromEntity(Queue queue) {
+    return new QueueStatusResponse(
+        queue.getQueueId(),
+        queue.getQueueName(),
+        queue.getStatus(),
+        queue.getMaxQueueCapacity(),
+        queue.getActiveTokensCount(),
+        queue.getTotalTokensCount(),
+        queue.getSlotsLeft(),
+        queue.getQueueCreationTimestamp(),
+        queue.isSelfJoinAllowed());
+  }
 }
