@@ -68,15 +68,12 @@ public class QueueService {
   public UpdateQueueStatusResponse deleteQueue(String queueId) {
     return queueRepository
         .findById(queueId)
-        .map(
-            queue1 -> {
-              queueThrowingPredicate.isNotDeleted()
-                  .and(queueThrowingPredicate.currentUserOwnsQueue())
-                  .test(queue1);
-              queue1.setStatus(QueueStatus.DELETED);
-              return queueRepository.save(queue1);
-            })
-        .map(UpdateQueueStatusResponse::fromEntity)
+        .filter(queueThrowingPredicate.isNotDeleted()
+            .and(queueThrowingPredicate.currentUserOwnsQueue()))
+        .map(queue1 -> {
+          queue1.setStatus(QueueStatus.DELETED);
+          return UpdateQueueStatusResponse.fromEntity(queueRepository.save(queue1));
+        })
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
