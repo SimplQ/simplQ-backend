@@ -17,6 +17,7 @@ import me.simplq.dao.Token;
 import me.simplq.dao.TokenRepository;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.exceptions.SQInvalidRequestException;
+import me.simplq.service.message.MessagesManager;
 import me.simplq.service.smsService.SmsManager;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
@@ -25,17 +26,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TokenService {
 
-  private static final String TOKEN_CREATION_MESSAGE =
-      "Hi %s,\n"
-          + "You have been added to %s. Your token number is %d. You can know your status visiting"
-          + " %s\n"
-          + "Thanks for using simplq.me";
   private final TokenRepository tokenRepository;
   private final QueueRepository queueRepository;
   private final SmsManager smsManager;
   private final LoggedInUserInfo loggedInUserInfo;
-  private static final String TOKEN_NOTIFICATION_MESSAGE =
-      "Hi, your wait for %s is over! You can proceed";
+  private final MessagesManager messagesManager;
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
@@ -76,7 +71,7 @@ public class TokenService {
     if (user.getStatus() == TokenStatus.WAITING) {
       smsManager.notify(
           user.getContactNumber(),
-          String.format(TOKEN_NOTIFICATION_MESSAGE, user.getQueue().getQueueName()));
+          messagesManager.endWaiting(user.getQueue().getQueueName()).text());
     } else {
       throw SQInvalidRequestException.tokenNotNotifiableException();
     }
@@ -123,12 +118,13 @@ public class TokenService {
     token.setTokenNumber(nextTokenNumber);
     smsManager.notify(
         token.getContactNumber(),
-        String.format(
-            TOKEN_CREATION_MESSAGE,
-            token.getName(),
-            token.getQueue().getQueueName(),
-            token.getTokenNumber(),
-            token.getTokenUrl()));
+        messagesManager
+            .startWaiting(
+                token.getName(),
+                token.getQueue().getQueueName(),
+                token.getTokenNumber(),
+                token.getTokenId())
+            .text());
     return TokenDetailResponse.fromEntity(token);
   }
 

@@ -52,6 +52,7 @@ By default, the jar uses an in-memory H2 database. This is for development purpo
 export DB_USERNAME=<user-name>
 export DB_PASSWORD=<password>
 export DB_URL=jdbc:postgresql://<host>:<port>/<db>
+export TOKEN_URL=<base-token-url>
 java -Dspring.profiles.active=prod -jar simplq/target/simplq-0.0.1-SNAPSHOT.jar 
 ```
 
