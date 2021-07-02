@@ -78,6 +78,16 @@
 
 		</addColumn>
 	</changeSet>
-	
+
+    <changeSet id="7" author="farisshajahan">
+        <!-- Remove unique constraint from name column of token created earlier.
+        constraintName is not known and hence avoiding dropUniqueConstraint -->
+        <addColumn tableName="token">
+            <column name="new_name" type="varchar(255)" valueComputed="name"/>
+        </addColumn>
+        <dropColumn tableName="token" columnName="name"/>
+        <renameColumn tableName="token" oldColumnName="new_name" newColumnName="name"/>
+    </changeSet>
+
 </databaseChangeLog>
   
