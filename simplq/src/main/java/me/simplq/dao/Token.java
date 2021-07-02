@@ -39,6 +39,7 @@ public class Token {
   @Column(updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenCreationTimestamp;
+  Date tokenDeletionTimestamp;
 
   public Token(
       String name, String contactNumber, TokenStatus status, Boolean notifiable, String ownerId) {
@@ -53,6 +54,7 @@ public class Token {
   public String getTokenUrl() {
     return URL_PREFIX + tokenId;
   }
+
 
   public Long getAheadCount() {
     if (this.getStatus() == TokenStatus.REMOVED) {

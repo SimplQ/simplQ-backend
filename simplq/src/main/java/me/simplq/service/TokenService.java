@@ -2,6 +2,7 @@ package me.simplq.service;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.Date;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
@@ -57,6 +58,11 @@ public class TokenService {
   @Transactional
   public TokenDeleteResponse deleteToken(String tokenId) {
     tokenRepository.setTokenStatusById(TokenStatus.REMOVED, tokenId);
+    /*Set Token Deletion timestamp to now*/
+    Date nowTime = new Date();
+
+    tokenRepository.findById(tokenId).get().setTokenDelete( nowTime);
+
     return tokenRepository
         .findById(tokenId)
         .map(

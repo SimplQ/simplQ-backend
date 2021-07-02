@@ -123,6 +123,10 @@ public class QueueService {
                   .filter(token -> token.getStatus() != TokenStatus.REMOVED)
                   .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
                   .forEach(resp::addToken);
+              queue.getTokens().stream()
+                  .filter(token -> token.getStatus() == TokenStatus.REMOVED)
+                  .sorted(Comparator.comparing(Token::getTokenCreationTimestamp))
+                  .forEach(resp::addDeletedToken);
               return resp;
             })
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
