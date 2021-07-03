@@ -1,9 +1,8 @@
 package me.simplq.service.message;
 
+import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 @Component
 public class MessagesManager {
