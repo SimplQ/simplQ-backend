@@ -34,18 +34,18 @@ public class TokenService {
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
-    return TokenDetailResponse.fromEntity(tokenRepository
-        .findById(tokenId)
-        .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
+    return TokenDetailResponse.fromEntity(
+        tokenRepository
+            .findById(tokenId)
+            .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
   }
 
-  /**
-   * Get token by queueId and the contact number
-   */
+  /** Get token by queueId and the contact number */
   @Transactional
   public TokenDetailResponse getToken(String queueId, String contactNumber) {
     return TokenDetailResponse.fromEntity(
-        tokenRepository.findByQueueIdAndContactNumber(queueId, contactNumber)
+        tokenRepository
+            .findByQueueIdAndContactNumber(queueId, contactNumber)
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
   }
 
@@ -81,8 +81,8 @@ public class TokenService {
 
   @Transactional
   public TokenDetailResponse createToken(CreateTokenRequest createTokenRequest) {
-    if (tokenRepository.existsAlreadyInQueue(createTokenRequest.getQueueId(),
-        createTokenRequest.getContactNumber())) {
+    if (tokenRepository.existsAlreadyInQueue(
+        createTokenRequest.getQueueId(), createTokenRequest.getContactNumber())) {
       throw SQInvalidRequestException.tokenAlreadyWaiting();
     }
     var token =
@@ -96,8 +96,8 @@ public class TokenService {
                     throw SQInvalidRequestException.queueDeletedException();
                   } else if (queue.isFull()) {
                     throw SQInvalidRequestException.queueIsFullException();
-                  } else if (!queue.isSelfJoinAllowed() && !loggedInUserInfo.getUserId()
-                      .equals(queue.getOwner().getId())) {
+                  } else if (!queue.isSelfJoinAllowed()
+                      && !loggedInUserInfo.getUserId().equals(queue.getOwner().getId())) {
                     throw SQInvalidRequestException.onlyOwnerCanCreateTokens();
                   }
                   var newToken =

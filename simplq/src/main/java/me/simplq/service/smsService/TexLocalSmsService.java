@@ -6,12 +6,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
-
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.SecretsManager;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
 @Service
 @Profile("text-local")
