@@ -1,11 +1,13 @@
 package me.simplq.controller.model.queue;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import lombok.Data;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
+import me.simplq.dao.Queue;
 
 @Data
 public class QueueDetailsResponse {
@@ -40,5 +42,22 @@ public class QueueDetailsResponse {
             token.getTokenCreationTimestamp(),
             token.getStatus(),
             token.getNotifiable()));
+  }
+
+  public static QueueDetailsResponse fromEntity(Queue queue) {
+    var response =
+        new QueueDetailsResponse(
+            queue.getQueueId(),
+            queue.getQueueName(),
+            queue.getQueueCreationTimestamp(),
+            queue.getStatus(),
+            queue.getMaxQueueCapacity(),
+            queue.getSlotsLeft(),
+            queue.isSelfJoinAllowed());
+    queue.getTokens().stream()
+        .filter(token -> token.getStatus() != TokenStatus.REMOVED)
+        .sorted(Comparator.comparing(me.simplq.dao.Token::getTokenCreationTimestamp))
+        .forEach(response::addToken);
+    return response;
   }
 }

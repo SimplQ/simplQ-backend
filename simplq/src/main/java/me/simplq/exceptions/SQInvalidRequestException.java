@@ -32,11 +32,11 @@ public class SQInvalidRequestException extends SQException {
     message.put(ReasonCode.QUEUE_DELETED, "The queue has been deleted");
     message.put(ReasonCode.QUEUE_DELETE_NOT_ALLOWED, "Delete not allowed in pause request");
     message.put(ReasonCode.QUEUE_IS_FULL, "The queue is full, please try again after sometime");
-    message.put(ReasonCode.ONLY_OWNER_CAN_CREATE_TOKEN,
+    message.put(
+        ReasonCode.ONLY_OWNER_CAN_CREATE_TOKEN,
         "Only queue owner can create tokens for this queue");
     message.put(ReasonCode.TOKEN_ALREADY_WAITING, "Sorry, you are already present in the queue.");
   }
-
 
   private final ReasonCode reasonCode;
 
@@ -83,7 +83,7 @@ public class SQInvalidRequestException extends SQException {
   public static SQInvalidRequestException onlyOwnerCanCreateTokens() {
     return new SQInvalidRequestException(ReasonCode.ONLY_OWNER_CAN_CREATE_TOKEN);
   }
-  
+
   public static SQInvalidRequestException tokenAlreadyWaiting() {
     return new SQInvalidRequestException(ReasonCode.TOKEN_ALREADY_WAITING);
   }
