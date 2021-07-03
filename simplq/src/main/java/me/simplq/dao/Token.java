@@ -20,8 +20,6 @@ import org.hibernate.annotations.GenericGenerator;
 @NoArgsConstructor
 public class Token {
 
-  private static final String URL_PREFIX = "https://simplq.me/token/";
-
   @Id
   @GeneratedValue(generator = "uuid2")
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -48,10 +46,6 @@ public class Token {
     this.notifiable = notifiable;
     this.ownerId = ownerId;
     this.tokenCreationTimestamp = new Date();
-  }
-
-  public String getTokenUrl() {
-    return URL_PREFIX + tokenId;
   }
 
   public Long getAheadCount() {
