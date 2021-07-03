@@ -20,7 +20,9 @@ public class OwnerService {
   @Transactional
   public Owner getOwnerOrElseCreate() {
     var ownerId = loggedInUserInfo.getUserId();
-    return ownerRepository.findById(ownerId).orElseGet(() -> ownerRepository.save(new Owner(ownerId)));
+    return ownerRepository
+        .findById(ownerId)
+        .orElseGet(() -> ownerRepository.save(new Owner(ownerId)));
   }
 
   @Transactional

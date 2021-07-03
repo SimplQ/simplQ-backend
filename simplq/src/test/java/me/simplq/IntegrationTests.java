@@ -44,14 +44,11 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles({"test"})
 class IntegrationTests {
 
-  @Autowired
-  private QueueRepository queueRepository;
+  @Autowired private QueueRepository queueRepository;
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
   private Long initialPhoneNumber = 9400000000L;
 
@@ -272,7 +269,9 @@ class IntegrationTests {
   }
 
   private String createTokenRequest(String queueId) {
-    return "{ \"contactNumber\": \"" + getNewNumber() + "\","
+    return "{ \"contactNumber\": \""
+        + getNewNumber()
+        + "\","
         + "\"name\": \"user name\","
         + "\"queueId\": \""
         + queueId

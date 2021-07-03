@@ -13,7 +13,7 @@ public class MyQueuesResponse {
   public MyQueuesResponse() {
     this.queues = new ArrayList<>();
   }
-  
+
   @Data
   public static class Queue {
 
@@ -23,9 +23,7 @@ public class MyQueuesResponse {
 
     public static Queue fromEntity(me.simplq.dao.Queue queue) {
       return new MyQueuesResponse.Queue(
-          queue.getQueueId(),
-          queue.getQueueName(),
-          queue.getQueueCreationTimestamp());
+          queue.getQueueId(), queue.getQueueName(), queue.getQueueCreationTimestamp());
     }
   }
 

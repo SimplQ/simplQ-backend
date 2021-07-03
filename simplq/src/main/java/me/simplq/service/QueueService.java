@@ -51,7 +51,8 @@ public class QueueService {
         .findById(queueId)
         .map(
             queue1 -> {
-              queueThrowingPredicate.isNotDeleted()
+              queueThrowingPredicate
+                  .isNotDeleted()
                   .and(queueThrowingPredicate.currentUserOwnsQueue())
                   .test(queue1);
               if (pauseQueueRequest.getStatus().equals(QueueStatus.DELETED)) {
@@ -68,19 +69,23 @@ public class QueueService {
   public UpdateQueueStatusResponse deleteQueue(String queueId) {
     return queueRepository
         .findById(queueId)
-        .filter(queueThrowingPredicate.isNotDeleted()
-            .and(queueThrowingPredicate.currentUserOwnsQueue()))
-        .map(queue1 -> {
-          queue1.setStatus(QueueStatus.DELETED);
-          return UpdateQueueStatusResponse.fromEntity(queueRepository.save(queue1));
-        })
-        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+        .filter(
+            queueThrowingPredicate
+                .isNotDeleted()
+                .and(queueThrowingPredicate.currentUserOwnsQueue()))
+        .map(
+            queue1 -> {
+              queue1.setStatus(QueueStatus.DELETED);
+              return UpdateQueueStatusResponse.fromEntity(queueRepository.save(queue1));
+            })
+        .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
   }
 
   @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {
     return queueRepository
-        .findById(queueId).filter(queueThrowingPredicate.currentUserOwnsQueue())
+        .findById(queueId)
+        .filter(queueThrowingPredicate.currentUserOwnsQueue())
         .map(QueueDetailsResponse::fromEntity)
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
@@ -120,8 +125,7 @@ public class QueueService {
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 
-  private Function<Queue, PatchQueueResponse> patchQueue(
-      PatchQueueRequest patchQueueRequest) {
+  private Function<Queue, PatchQueueResponse> patchQueue(PatchQueueRequest patchQueueRequest) {
 
     return queue -> {
       var response = PatchQueueResponse.builder();

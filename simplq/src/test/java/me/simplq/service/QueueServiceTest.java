@@ -28,23 +28,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class QueueServiceTest {
 
-  @Mock
-  QueueRepository repository;
+  @Mock QueueRepository repository;
 
-  @Mock
-  OwnerService ownerService;
+  @Mock OwnerService ownerService;
 
-  @Mock
-  LoggedInUserInfo loggedInUserInfo;
+  @Mock LoggedInUserInfo loggedInUserInfo;
 
   QueueService queueService;
   QueueThrowingPredicate queueThrowingPredicate;
 
-
   @BeforeEach
   public void setUp() {
-    queueService = new QueueService(repository, ownerService, loggedInUserInfo,
-        queueThrowingPredicate);
+    queueService =
+        new QueueService(repository, ownerService, loggedInUserInfo, queueThrowingPredicate);
   }
 
   @DisplayName("Throw queue not found exception if queue does not exists")

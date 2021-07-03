@@ -45,14 +45,15 @@ public class QueueDetailsResponse {
   }
 
   public static QueueDetailsResponse fromEntity(Queue queue) {
-    var response = new QueueDetailsResponse(
-        queue.getQueueId(),
-        queue.getQueueName(),
-        queue.getQueueCreationTimestamp(),
-        queue.getStatus(),
-        queue.getMaxQueueCapacity(),
-        queue.getSlotsLeft(),
-        queue.isSelfJoinAllowed());
+    var response =
+        new QueueDetailsResponse(
+            queue.getQueueId(),
+            queue.getQueueName(),
+            queue.getQueueCreationTimestamp(),
+            queue.getStatus(),
+            queue.getMaxQueueCapacity(),
+            queue.getSlotsLeft(),
+            queue.isSelfJoinAllowed());
     queue.getTokens().stream()
         .filter(token -> token.getStatus() != TokenStatus.REMOVED)
         .sorted(Comparator.comparing(me.simplq.dao.Token::getTokenCreationTimestamp))

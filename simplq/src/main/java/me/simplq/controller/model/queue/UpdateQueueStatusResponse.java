@@ -12,7 +12,7 @@ public class UpdateQueueStatusResponse {
   public final QueueStatus status;
 
   public static UpdateQueueStatusResponse fromEntity(Queue queue) {
-    return new UpdateQueueStatusResponse(queue.getQueueId(), queue.getQueueName(),
-        queue.getStatus());
+    return new UpdateQueueStatusResponse(
+        queue.getQueueId(), queue.getQueueName(), queue.getStatus());
   }
 }
