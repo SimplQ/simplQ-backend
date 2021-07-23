@@ -51,13 +51,14 @@ public class TokenService {
 
   @Transactional
   public TokenDeleteResponse deleteToken(String tokenId) {
-    tokenRepository.setTokenStatusById(TokenStatus.REMOVED, tokenId);
     return tokenRepository
         .findById(tokenId)
         .map(
-            token ->
-                new TokenDeleteResponse(
-                    tokenId, token.getQueue().getQueueName(), token.getStatus()))
+            token -> {
+              token.delete();
+              return new TokenDeleteResponse(
+                  tokenId, token.getQueue().getQueueName(), token.getStatus());
+            })
         .orElseThrow(SQInternalServerException::new);
   }
 

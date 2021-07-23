@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.SneakyThrows;
 import me.simplq.config.TestConfig;
@@ -72,6 +74,7 @@ class IntegrationTests {
 
     // POST token
     var createTokenResponse = callCreateToken(createQueueResponse.getQueueId());
+    var anotherTokenResponse = callCreateToken(createQueueResponse.getQueueId());
 
     Assertions.assertEquals(createTokenResponse.getQueueId(), createQueueResponse.getQueueId());
     Assertions.assertEquals(createTokenResponse.getQueueName(), createQueueResponse.getQueueName());
@@ -132,6 +135,12 @@ class IntegrationTests {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andReturn();
 
+    var queueUpdated = getQueueById(createQueueResponse.getQueueId());
+    Assertions.assertEquals(queueUpdated.getTokens().size(), 1);
+    Assertions.assertEquals(queueUpdated.getRemovedTokens().size(), 1);
+    assertQueueContainsToken(queueUpdated.getTokens(), anotherTokenResponse.getTokenId());
+    assertQueueContainsToken(queueUpdated.getRemovedTokens(), createTokenResponse.getTokenId());
+
     MvcResult deleteQueueResult =
         mockMvc
             .perform(delete("/v1/queue/" + createQueueResponse.getQueueId()))
@@ -174,6 +183,14 @@ class IntegrationTests {
     MvcResult deviceStatus2 =
         mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
     Assertions.assertEquals("true", deviceStatus2.getResponse().getContentAsString());
+  }
+
+  private void assertQueueContainsToken(List<QueueDetailsResponse.Token> queue, String tokenId) {
+    Assertions.assertTrue(
+        queue.stream()
+            .map(QueueDetailsResponse.Token::getTokenId)
+            .collect(Collectors.toList())
+            .contains(tokenId));
   }
 
   @SneakyThrows

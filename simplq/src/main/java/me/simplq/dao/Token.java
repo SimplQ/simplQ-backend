@@ -38,6 +38,10 @@ public class Token {
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenCreationTimestamp;
 
+  @Column(updatable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  Date tokenDeletionTimestamp;
+
   public Token(
       String name, String contactNumber, TokenStatus status, Boolean notifiable, String ownerId) {
     this.name = name;
@@ -58,5 +62,10 @@ public class Token {
                 fellowUser.getTokenCreationTimestamp().before(this.getTokenCreationTimestamp())
                     && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
         .count();
+  }
+
+  public void delete() {
+    this.status = TokenStatus.REMOVED;
+    this.tokenDeletionTimestamp = new Date();
   }
 }
