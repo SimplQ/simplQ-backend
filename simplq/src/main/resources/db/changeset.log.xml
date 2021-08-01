@@ -72,22 +72,27 @@
     		</addColumn>   
 	</changeSet> 
 
-    <changeSet id="6" author="daltonfury42">
+    	<changeSet id="6" author="daltonfury42">
 		<addColumn tableName="queue">
 			<column name="is_self_join_allowed" type="boolean" valueComputed="true"/>
-
 		</addColumn>
 	</changeSet>
 
-    <changeSet id="7" author="farisshajahan">
-        <!-- Remove unique constraint from name column of token created earlier.
-        constraintName is not known and hence avoiding dropUniqueConstraint -->
-        <addColumn tableName="token">
-            <column name="new_name" type="varchar(255)" valueComputed="name"/>
-        </addColumn>
-        <dropColumn tableName="token" columnName="name"/>
-        <renameColumn tableName="token" oldColumnName="new_name" newColumnName="name"/>
-    </changeSet>
+    	<changeSet id="7" author="farisshajahan">
+		<!-- Remove unique constraint from name column of token created earlier.
+		constraintName is not known and hence avoiding dropUniqueConstraint -->
+		<addColumn tableName="token">
+	    		<column name="new_name" type="varchar(255)" valueComputed="name"/>
+		</addColumn>
+		<dropColumn tableName="token" columnName="name"/>
+		<renameColumn tableName="token" oldColumnName="new_name" newColumnName="name"/>
+    	</changeSet>
+
+    	<changeSet id="9" author="daltonfury42">
+		<addColumn tableName="token">
+			<column name="token_deletion_timestamp" type="timestamp without time zone" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
   
