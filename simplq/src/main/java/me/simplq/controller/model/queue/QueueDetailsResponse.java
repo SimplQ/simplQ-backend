@@ -31,9 +31,10 @@ public class QueueDetailsResponse {
   private final Long slotsLeft;
   private final boolean isSelfJoinAllowed;
   private final List<Token> tokens = new ArrayList<>();
+  private final List<Token> removedTokens = new ArrayList<>();
 
   public void addToken(me.simplq.dao.Token token) {
-    this.tokens.add(
+    Token newToken =
         new Token(
             token.getName(),
             token.getContactNumber(),
@@ -41,7 +42,13 @@ public class QueueDetailsResponse {
             token.getTokenNumber(),
             token.getTokenCreationTimestamp(),
             token.getStatus(),
-            token.getNotifiable()));
+            token.getNotifiable());
+
+    if (TokenStatus.REMOVED.equals(token.getStatus())) {
+      this.removedTokens.add(newToken);
+    } else {
+      this.tokens.add(newToken);
+    }
   }
 
   public static QueueDetailsResponse fromEntity(Queue queue) {
@@ -55,7 +62,6 @@ public class QueueDetailsResponse {
             queue.getSlotsLeft(),
             queue.isSelfJoinAllowed());
     queue.getTokens().stream()
-        .filter(token -> token.getStatus() != TokenStatus.REMOVED)
         .sorted(Comparator.comparing(me.simplq.dao.Token::getTokenCreationTimestamp))
         .forEach(response::addToken);
     return response;
