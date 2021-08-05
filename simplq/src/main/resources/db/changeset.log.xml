@@ -93,6 +93,14 @@
 			<column name="token_deletion_timestamp" type="timestamp without time zone" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="10" author="daltonfury42">
+		<addUniqueConstraint
+			columnNames="queue_name"
+			constraintName="unique_queue_name"
+			tableName="queue"
+			/>
+	</changeSet>
 
 </databaseChangeLog>
   
