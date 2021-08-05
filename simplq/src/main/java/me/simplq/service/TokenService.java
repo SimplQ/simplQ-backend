@@ -28,6 +28,7 @@ public class TokenService {
 
   private final TokenRepository tokenRepository;
   private final QueueRepository queueRepository;
+  private final OwnerService ownerService;
   private final SmsManager smsManager;
   private final LoggedInUserInfo loggedInUserInfo;
   private final MessagesManager messagesManager;
@@ -101,13 +102,14 @@ public class TokenService {
                       && !loggedInUserInfo.getUserId().equals(queue.getOwner().getId())) {
                     throw SQInvalidRequestException.onlyOwnerCanCreateTokens();
                   }
+
                   var newToken =
                       new Token(
                           createTokenRequest.getName(),
                           createTokenRequest.getContactNumber(),
                           TokenStatus.WAITING,
                           ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false),
-                          loggedInUserInfo.getUserId());
+                          ownerService.getOwnerOrElseCreate().getId());
                   newToken.setQueue(queue);
                   tokenRepository.save(newToken);
                   return newToken;
