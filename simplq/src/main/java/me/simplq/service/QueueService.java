@@ -85,11 +85,7 @@ public class QueueService {
 
   @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {
-    return queueRepository
-        .findById(queueId)
-        .filter(queueThrowingPredicate.currentUserOwnsQueue())
-        .map(QueueDetailsResponse::fromEntity)
-        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+    return getQueueDetailsResponseInternal(queueId);
   }
 
   @Transactional
@@ -128,7 +124,6 @@ public class QueueService {
   }
 
   private Function<Queue, PatchQueueResponse> patchQueue(PatchQueueRequest patchQueueRequest) {
-
     return queue -> {
       var response = PatchQueueResponse.builder();
       if (patchQueueRequest.getMaxQueueCapacity() != null) {
@@ -149,7 +144,16 @@ public class QueueService {
     };
   }
 
+  @Transactional
   public QueueEventsResponse getQueueEvents(String queueId) {
-    return queueEventsService.getQueueEvents(this.getQueueDetails(queueId));
+    return queueEventsService.getQueueEvents(this.getQueueDetailsResponseInternal(queueId));
+  }
+
+  private QueueDetailsResponse getQueueDetailsResponseInternal(String queueId) {
+    return queueRepository
+        .findById(queueId)
+        .filter(queueThrowingPredicate.currentUserOwnsQueue())
+        .map(QueueDetailsResponse::fromEntity)
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 }
