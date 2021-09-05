@@ -9,6 +9,7 @@ import me.simplq.controller.model.queue.PatchQueueRequest;
 import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueEventsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
 import me.simplq.service.QueueService;
@@ -78,5 +79,11 @@ public class QueueController {
     } else {
       return ResponseEntity.badRequest().build(); // Todo Give reason
     }
+  }
+
+  @GetMapping(path = "/queue/{queueId}/events")
+  public ResponseEntity<QueueEventsResponse> getQueueEvents(
+      @PathVariable("queueId") String queueId) {
+    return ResponseEntity.ok(queueService.getQueueEvents(queueId));
   }
 }

@@ -14,6 +14,7 @@ import me.simplq.controller.model.queue.PatchQueueRequest;
 import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueEventsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
 import me.simplq.dao.Queue;
@@ -31,6 +32,7 @@ public class QueueService {
   private final OwnerService ownerService;
   private final LoggedInUserInfo loggedInUserInfo;
   private final QueueThrowingPredicate queueThrowingPredicate;
+  private final QueueEventsService queueEventsService;
 
   @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
@@ -145,5 +147,9 @@ public class QueueService {
           .queueId(updatedQueue.getQueueId())
           .build();
     };
+  }
+
+  public QueueEventsResponse getQueueEvents(String queueId) {
+    return queueEventsService.getQueueEvents(this.getQueueDetails(queueId));
   }
 }

@@ -34,13 +34,16 @@ public class QueueServiceTest {
 
   @Mock LoggedInUserInfo loggedInUserInfo;
 
+  @Mock QueueEventsService queueEventsService;
+
   QueueService queueService;
   QueueThrowingPredicate queueThrowingPredicate;
 
   @BeforeEach
   public void setUp() {
     queueService =
-        new QueueService(repository, ownerService, loggedInUserInfo, queueThrowingPredicate);
+        new QueueService(
+            repository, ownerService, loggedInUserInfo, queueThrowingPredicate, queueEventsService);
   }
 
   @DisplayName("Throw queue not found exception if queue does not exists")
