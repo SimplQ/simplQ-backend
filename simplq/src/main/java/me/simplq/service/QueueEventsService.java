@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class QueueEventsService {
 
   public QueueEventsResponse getQueueEvents(QueueDetailsResponse queueDetails) {
-    // Make creation events for active tokens
+    // Make creation events for active tokens.
     var activeTokenEventStream =
         queueDetails.getTokens().stream()
             .map(
@@ -26,6 +26,7 @@ public class QueueEventsService {
                         .eventTimestamp(token.getTokenCreationTimestamp())
                         .build());
 
+    // Make creation and removal events for removed tokens.
     var removedTokenEventStream =
         queueDetails.getRemovedTokens().stream()
             .map(
