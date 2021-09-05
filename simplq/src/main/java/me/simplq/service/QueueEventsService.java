@@ -23,7 +23,7 @@ public class QueueEventsService {
                         .eventType(EventType.TOKEN_ADDED)
                         .tokenName(token.getName())
                         .tokenNumber(token.getTokenNumber())
-                        .eventTimestamp(token.getTokenDeletionTimestamp())
+                        .eventTimestamp(token.getTokenCreationTimestamp())
                         .build());
 
     var removedTokenEventStream =
@@ -48,7 +48,7 @@ public class QueueEventsService {
     return QueueEventsResponse.builder()
         .events(
             Stream.concat(activeTokenEventStream, removedTokenEventStream)
-                .sorted(Comparator.comparing(event -> event.getEventTimestamp()))
+                .sorted(Comparator.comparing(Event::getEventTimestamp).reversed())
                 .collect(Collectors.toList()))
         .build();
   }
