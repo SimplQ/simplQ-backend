@@ -57,6 +57,7 @@ public class TokenService {
         .map(
             token -> {
               token.delete();
+              tokenRepository.save(token);
               return new TokenDeleteResponse(
                   tokenId, token.getQueue().getQueueName(), token.getStatus());
             })

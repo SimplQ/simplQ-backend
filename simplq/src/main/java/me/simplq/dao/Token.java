@@ -38,7 +38,7 @@ public class Token {
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenCreationTimestamp;
 
-  @Column(updatable = false)
+  @Column(updatable = true)
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenDeletionTimestamp;
 
