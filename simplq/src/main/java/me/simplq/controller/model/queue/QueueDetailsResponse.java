@@ -19,6 +19,7 @@ public class QueueDetailsResponse {
     private final String tokenId;
     private final Integer tokenNumber;
     private final Date tokenCreationTimestamp;
+    private final Date tokenDeletionTimestamp;
     private final TokenStatus tokenStatus;
     private final Boolean notifiable;
   }
@@ -41,6 +42,7 @@ public class QueueDetailsResponse {
             token.getTokenId(),
             token.getTokenNumber(),
             token.getTokenCreationTimestamp(),
+            token.getTokenDeletionTimestamp(),
             token.getStatus(),
             token.getNotifiable());
 

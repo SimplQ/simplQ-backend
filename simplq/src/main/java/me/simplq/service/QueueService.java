@@ -14,6 +14,7 @@ import me.simplq.controller.model.queue.PatchQueueRequest;
 import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueEventsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
 import me.simplq.dao.Queue;
@@ -31,6 +32,7 @@ public class QueueService {
   private final OwnerService ownerService;
   private final LoggedInUserInfo loggedInUserInfo;
   private final QueueThrowingPredicate queueThrowingPredicate;
+  private final QueueEventsService queueEventsService;
 
   @Transactional
   public CreateQueueResponse createQueue(CreateQueueRequest createQueueRequest) {
@@ -83,11 +85,7 @@ public class QueueService {
 
   @Transactional
   public QueueDetailsResponse getQueueDetails(String queueId) {
-    return queueRepository
-        .findById(queueId)
-        .filter(queueThrowingPredicate.currentUserOwnsQueue())
-        .map(QueueDetailsResponse::fromEntity)
-        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+    return getQueueDetailsResponseInternal(queueId);
   }
 
   @Transactional
@@ -126,7 +124,6 @@ public class QueueService {
   }
 
   private Function<Queue, PatchQueueResponse> patchQueue(PatchQueueRequest patchQueueRequest) {
-
     return queue -> {
       var response = PatchQueueResponse.builder();
       if (patchQueueRequest.getMaxQueueCapacity() != null) {
@@ -145,5 +142,18 @@ public class QueueService {
           .queueId(updatedQueue.getQueueId())
           .build();
     };
+  }
+
+  @Transactional
+  public QueueEventsResponse getQueueEvents(String queueId) {
+    return queueEventsService.getQueueEvents(this.getQueueDetailsResponseInternal(queueId));
+  }
+
+  private QueueDetailsResponse getQueueDetailsResponseInternal(String queueId) {
+    return queueRepository
+        .findById(queueId)
+        .filter(queueThrowingPredicate.currentUserOwnsQueue())
+        .map(QueueDetailsResponse::fromEntity)
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
   }
 }
