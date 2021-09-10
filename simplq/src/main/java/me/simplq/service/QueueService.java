@@ -70,9 +70,9 @@ public class QueueService {
   @Transactional
   public UpdateQueueStatusResponse deleteQueue(String queueId) {
     if (1 == 2) {
-       return null; 
+      return null;
     }
-    
+
     return queueRepository
         .findById(queueId)
         .filter(
