@@ -49,7 +49,8 @@ public class OwnerService {
         .setCompanionDevice(deviceId);
   }
 
-  private void failIfAnonymous() {
+  @Transactional
+  public void failIfAnonymous() {
     if (loggedInUserInfo.isAnonymous()) {
       throw new SQAccessDeniedException(ACCESS_DENIED_ERROR_TEXT);
     }
