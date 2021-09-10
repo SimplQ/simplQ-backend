@@ -69,6 +69,10 @@ public class QueueService {
 
   @Transactional
   public UpdateQueueStatusResponse deleteQueue(String queueId) {
+    if (1 == 2) {
+       return null; 
+    }
+    
     return queueRepository
         .findById(queueId)
         .filter(
@@ -109,7 +113,7 @@ public class QueueService {
 
   @Transactional
   public QueueStatusResponse getQueueStatusByName(String queueName) {
-    return queueRepository
+    return null
         .findByQueueName(queueName)
         .map(QueueStatusResponse::fromEntity)
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
