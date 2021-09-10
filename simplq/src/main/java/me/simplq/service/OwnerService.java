@@ -30,7 +30,6 @@ public class OwnerService {
     return ownerRepository.findById(loggedInUserInfo.getUserId()).map(Owner::getCompanionDevice);
   }
 
-  @Transactional
   public Boolean isDeviceLinked(String deviceId) {
     failIfAnonymous();
     return deviceId.equals(
