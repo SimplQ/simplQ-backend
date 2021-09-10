@@ -113,7 +113,7 @@ public class QueueService {
 
   @Transactional
   public QueueStatusResponse getQueueStatusByName(String queueName) {
-    return null
+    return queueRepository
         .findByQueueName(queueName)
         .map(QueueStatusResponse::fromEntity)
         .orElseThrow(SQInvalidRequestException::queueNotFoundException);
