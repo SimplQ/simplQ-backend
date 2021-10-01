@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.SecretsManager;
 import org.springframework.context.annotation.Profile;
@@ -33,7 +34,7 @@ public class TexLocalSmsService implements SmsService {
       conn.setDoOutput(true);
       conn.setRequestMethod("POST");
       conn.setRequestProperty("Content-Length", Integer.toString(data.length()));
-      conn.getOutputStream().write(data.getBytes("UTF-8"));
+      conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8));
 
       final BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
       final StringBuffer stringBuffer = new StringBuffer();

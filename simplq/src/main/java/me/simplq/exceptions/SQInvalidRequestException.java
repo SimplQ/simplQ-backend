@@ -1,6 +1,6 @@
 package me.simplq.exceptions;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class SQInvalidRequestException extends SQException {
@@ -20,7 +20,7 @@ public class SQInvalidRequestException extends SQException {
   }
 
   // TODO Move to SQException and include internal server ones too.
-  private static final Map<ReasonCode, String> message = new HashMap<>();
+  private static final Map<ReasonCode, String> message = new EnumMap<>(ReasonCode.class);
 
   static {
     message.put(ReasonCode.QUEUE_NOT_FOUND, "The queue does not exist");
@@ -92,6 +92,7 @@ public class SQInvalidRequestException extends SQException {
     return reasonCode;
   }
 
+  @Override
   public String getMessage() {
     return message.get(reasonCode);
   }
