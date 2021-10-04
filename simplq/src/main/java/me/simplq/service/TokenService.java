@@ -138,11 +138,7 @@ public class TokenService {
         tokenRepository
             .findByOwnerId(loggedInUserInfo.getUserId())
             .sorted(
-                new Comparator<Token>() {
-                  public int compare(Token a, Token b) {
-                    return a.getTokenCreationTimestamp().compareTo(b.getTokenCreationTimestamp());
-                  }
-                })
+                Comparator.comparing(Token::getTokenCreationTimestamp))
             .map(
                 token ->
                     new MyTokensResponse.Token(
