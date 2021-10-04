@@ -1,5 +1,6 @@
 package me.simplq.dao;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -74,5 +75,13 @@ public class Queue {
 
   public Long getSlotsLeft() {
     return maxQueueCapacity - getActiveTokensCount();
+  }
+
+  public Integer getLastRemovedTokenNumber() {
+    return tokens.stream()
+        .filter(token1 -> token1.getStatus().equals(TokenStatus.REMOVED))
+        .max(Comparator.comparing(Token::getTokenDeletionTimestamp))
+        .map(Token::getTokenNumber)
+        .orElse(0);
   }
 }

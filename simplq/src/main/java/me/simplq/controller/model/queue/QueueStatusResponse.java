@@ -16,6 +16,7 @@ public class QueueStatusResponse {
   final Long numberOfActiveTokens;
   final Long totalNumberOfTokens;
   final Long slotsLeft;
+  final Integer lastRemovedTokenNumber;
   final Date queueCreationTimestamp;
   final boolean isSelfJoinAllowed;
 
@@ -28,6 +29,7 @@ public class QueueStatusResponse {
         queue.getActiveTokensCount(),
         queue.getTotalTokensCount(),
         queue.getSlotsLeft(),
+        queue.getLastRemovedTokenNumber(),
         queue.getQueueCreationTimestamp(),
         queue.isSelfJoinAllowed());
   }
