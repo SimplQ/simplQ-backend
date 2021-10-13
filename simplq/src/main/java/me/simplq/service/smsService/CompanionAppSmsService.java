@@ -28,7 +28,7 @@ public class CompanionAppSmsService implements SmsService {
     this.ownerService = ownerService;
     try {
       FirebaseApp.initializeApp(
-          new FirebaseOptions.Builder()
+          FirebaseOptions.builder()
               .setCredentials(GoogleCredentials.getApplicationDefault())
               .build());
     } catch (IOException e) {
