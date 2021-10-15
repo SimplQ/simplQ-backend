@@ -14,6 +14,7 @@ import me.simplq.controller.model.queue.PatchQueueRequest;
 import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueEventsCsvResponse;
 import me.simplq.controller.model.queue.QueueEventsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
@@ -22,6 +23,7 @@ import me.simplq.dao.QueueRepository;
 import me.simplq.exceptions.SQInvalidRequestException;
 import me.simplq.utils.predicates.QueueThrowingPredicate;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -147,6 +149,11 @@ public class QueueService {
   @Transactional
   public QueueEventsResponse getQueueEvents(String queueId) {
     return queueEventsService.getQueueEvents(this.getQueueDetailsResponseInternal(queueId));
+  }
+
+  @Transactional
+  public QueueEventsCsvResponse getQueueEventsInCsv(String queueId) {
+    return queueEventsService.getQueueEventsInCsv(this.getQueueDetailsResponseInternal(queueId));
   }
 
   private QueueDetailsResponse getQueueDetailsResponseInternal(String queueId) {

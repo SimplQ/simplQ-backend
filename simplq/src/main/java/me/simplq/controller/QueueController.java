@@ -1,6 +1,7 @@
 package me.simplq.controller;
 
 import javax.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import me.simplq.controller.model.queue.CreateQueueRequest;
 import me.simplq.controller.model.queue.CreateQueueResponse;
@@ -9,6 +10,7 @@ import me.simplq.controller.model.queue.PatchQueueRequest;
 import me.simplq.controller.model.queue.PatchQueueResponse;
 import me.simplq.controller.model.queue.PauseQueueRequest;
 import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueEventsCsvResponse;
 import me.simplq.controller.model.queue.QueueEventsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -86,4 +89,13 @@ public class QueueController {
       @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.getQueueEvents(queueId));
   }
+
+  @GetMapping(path = "/queue/{queueId}/history", produces = "text/csv")
+  @ResponseBody
+  public QueueEventsCsvResponse getQueueHistoryCSV(
+          @PathVariable("queueId") String queueId) {
+    return queueService.getQueueEventsInCsv(queueId);
+  }
+
+
 }
