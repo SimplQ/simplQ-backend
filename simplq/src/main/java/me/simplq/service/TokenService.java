@@ -109,7 +109,8 @@ public class TokenService {
                           createTokenRequest.getName(),
                           createTokenRequest.getContactNumber(),
                           TokenStatus.WAITING,
-                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false) || StringUtils.isNotBlank(createTokenRequest.getEmailId()),
+                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false)
+                              || StringUtils.isNotBlank(createTokenRequest.getEmailId()),
                           ownerService.getOwnerOrElseCreate().getId());
                   newToken.setQueue(queue);
                   newToken.setEmailId(createTokenRequest.getEmailId());

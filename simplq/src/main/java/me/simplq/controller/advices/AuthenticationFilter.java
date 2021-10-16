@@ -104,8 +104,8 @@ public class AuthenticationFilter implements Filter {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    if (!UNAUTHENTICATED_PATHS.contains(((HttpServletRequest)request).getRequestURI())) {
-//      authenticate(((HttpServletRequest) request).getHeader(AUTHORIZATION));
+    if (!UNAUTHENTICATED_PATHS.contains(((HttpServletRequest) request).getRequestURI())) {
+      //      authenticate(((HttpServletRequest) request).getHeader(AUTHORIZATION));
     }
 
     chain.doFilter(request, response);
