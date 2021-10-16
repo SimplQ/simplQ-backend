@@ -18,9 +18,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("dev")
 @Slf4j
-public class ApplicationReadyListener implements ApplicationListener<ApplicationReadyEvent> {
+public class DbMigrationOnStartup implements ApplicationListener<ApplicationReadyEvent> {
 
   @Value("${spring.datasource.url}")
   private String dbUrl;
