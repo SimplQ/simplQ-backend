@@ -78,7 +78,7 @@
 		</addColumn>
 	</changeSet>
 
-    	<changeSet id="7" author="farisshajahan">
+	<changeSet id="7" author="farisshajahan">
 		<!-- Remove unique constraint from name column of token created earlier.
 		constraintName is not known and hence avoiding dropUniqueConstraint -->
 		<addColumn tableName="token">
@@ -88,7 +88,7 @@
 		<renameColumn tableName="token" oldColumnName="new_name" newColumnName="name"/>
     	</changeSet>
 
-    	<changeSet id="9" author="daltonfury42">
+	<changeSet id="9" author="daltonfury42">
 		<addColumn tableName="token">
 			<column name="token_deletion_timestamp" type="timestamp without time zone" />
 		</addColumn>
@@ -100,6 +100,15 @@
 			constraintName="unique_queue_name"
 			tableName="queue"
 			/>
+	</changeSet>
+
+	<changeSet id="11" author="daltonfury42">
+		<addColumn tableName="queue">
+			<column name="notify_by_email" type="boolean" defaultValue="false"/>
+		</addColumn>
+		<addColumn tableName="token">
+			<column name="email_id" type="varchar(255)" />
+		</addColumn>
 	</changeSet>
 
 </databaseChangeLog>

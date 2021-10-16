@@ -48,7 +48,13 @@ public class Queue {
   @Temporal(TemporalType.TIMESTAMP)
   Date queueCreationTimestamp;
 
+  // Allow users to join the queue on their own using the queue link. If not enabled,
+  // only queue owner will be able to add people to the queue. Set to true by default.
   @Column private boolean isSelfJoinAllowed;
+
+  // Send email notifications to people in queue. Set to false by default. If enabled,
+  // email address of people in queue will be collected when creating token.
+  @Column private boolean notifyByEmail;
 
   public Queue(String queueName, Owner owner, QueueStatus status) {
     this.queueName = queueName;
@@ -56,7 +62,8 @@ public class Queue {
     this.queueCreationTimestamp = new Date();
     this.status = status;
     this.maxQueueCapacity = 10000;
-    this.isSelfJoinAllowed = false;
+    this.isSelfJoinAllowed = true;
+    this.notifyByEmail = false;
   }
 
   public long getActiveTokensCount() {
