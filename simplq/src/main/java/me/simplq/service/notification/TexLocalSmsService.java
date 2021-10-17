@@ -1,12 +1,11 @@
-package me.simplq.service.smsService;
-
-import static me.simplq.service.smsService.SmsConstants.SMS_MESSAGE;
+package me.simplq.service.notification;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import me.simplq.dao.Token;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.SecretsManager;
 import org.springframework.context.annotation.Profile;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Profile("text-local")
-public class TexLocalSmsService implements SmsService {
+public class TexLocalSmsService implements NotificationChannel {
   private final String API_KEY;
   private final String SENDER_NAME = "TXTLCL";
   private final String TEXT_LOCAL_API = "https://api.textlocal.in/send/?";
@@ -24,8 +23,8 @@ public class TexLocalSmsService implements SmsService {
   }
 
   @Override
-  public void sendSMS(String contactNumber, String queueName) {
-    postSmsRequest(constructData(contactNumber, queueName));
+  public void notify(Token token, String payload) {
+    postSmsRequest(constructData(token.getContactNumber(), payload));
   }
 
   private void postSmsRequest(String data) {
@@ -49,9 +48,9 @@ public class TexLocalSmsService implements SmsService {
     }
   }
 
-  private String constructData(String contactNumber, String queueName) {
+  private String constructData(String contactNumber, String payload) {
     String user = "apikey=" + API_KEY;
-    String message = "&message=" + String.format(SMS_MESSAGE, queueName);
+    String message = "&message=" + payload;
     String sender = "&sender=" + SENDER_NAME;
     String numbers = "&numbers=" + contactNumber;
     return user + numbers + message + sender;
