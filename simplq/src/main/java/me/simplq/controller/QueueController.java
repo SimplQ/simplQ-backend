@@ -1,6 +1,5 @@
 package me.simplq.controller;
 
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.simplq.controller.model.queue.CreateQueueRequest;
 import me.simplq.controller.model.queue.CreateQueueResponse;
@@ -13,6 +12,7 @@ import me.simplq.controller.model.queue.QueueEventsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.queue.UpdateQueueStatusResponse;
 import me.simplq.service.QueueService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1")
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class QueueController {
 
   @PostMapping(path = "/queue")
   public ResponseEntity<CreateQueueResponse> createQueue(
-      @Valid @RequestBody CreateQueueRequest createQueueRequest) {
+          @Valid @RequestBody CreateQueueRequest createQueueRequest) {
     return ResponseEntity.ok(queueService.createQueue(createQueueRequest));
   }
 
@@ -44,34 +46,34 @@ public class QueueController {
 
   @PatchMapping(path = "/queue/{queueId}")
   public ResponseEntity<PatchQueueResponse> patchQueue(
-      @Valid @RequestBody PatchQueueRequest patchRequest, @PathVariable("queueId") String queueId) {
+          @Valid @RequestBody PatchQueueRequest patchRequest, @PathVariable("queueId") String queueId) {
 
     return ResponseEntity.ok(queueService.patchQueue(queueId, patchRequest));
   }
 
   @GetMapping(path = "/queue/{queueId}")
   public ResponseEntity<QueueDetailsResponse> getQueueDetails(
-      @PathVariable("queueId") String queueId) {
+          @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.getQueueDetails(queueId));
   }
 
   @PostMapping(path = "/queue/{queueId}")
   public ResponseEntity<UpdateQueueStatusResponse> pauseQueueRequest(
-      @Valid @RequestBody PauseQueueRequest pauseQueueRequest,
-      @PathVariable("queueId") String queueId) {
+          @Valid @RequestBody PauseQueueRequest pauseQueueRequest,
+          @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.pauseQueue(pauseQueueRequest, queueId));
   }
 
   @DeleteMapping(path = "/queue/{queueId}")
   public ResponseEntity<UpdateQueueStatusResponse> deleteQueueRequest(
-      @PathVariable("queueId") String queueId) {
+          @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.deleteQueue(queueId));
   }
 
   @GetMapping(path = "/queue/status")
   public ResponseEntity<QueueStatusResponse> getQueueStatus(
-      @RequestParam(required = false) String queueId,
-      @RequestParam(required = false) String queueName) {
+          @RequestParam(required = false) String queueId,
+          @RequestParam(required = false) String queueName) {
     if (queueId != null) {
       return ResponseEntity.ok(queueService.getQueueStatus(queueId));
     } else if (queueName != null) {
@@ -81,9 +83,17 @@ public class QueueController {
     }
   }
 
-  @GetMapping(path = "/queue/{queueId}/events")
+  @GetMapping(path = "/queue/{queueId}/events", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<QueueEventsResponse> getQueueEvents(
-      @PathVariable("queueId") String queueId) {
+          @PathVariable("queueId") String queueId) {
     return ResponseEntity.ok(queueService.getQueueEvents(queueId));
   }
+
+  @GetMapping(path = "/queue/{queueId}/events", produces = "text/csv")
+  public ResponseEntity<QueueEventsResponse> getQueueEventsCsv(
+          @PathVariable("queueId") String queueId) {
+    return ResponseEntity.ok(queueService.getQueueEvents(queueId));
+  }
+
+
 }

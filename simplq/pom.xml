@@ -138,6 +138,11 @@
       <artifactId>mailapi</artifactId>
       <version>1.6.1</version>
     </dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.8</version>
+		</dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -173,9 +178,9 @@
         </configuration>
         <dependencies>
           <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.1-901.jdbc4</version>
+            <version>42.2.24</version>
           </dependency>
         </dependencies>
       </plugin>
