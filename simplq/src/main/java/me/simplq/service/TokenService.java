@@ -18,8 +18,9 @@ import me.simplq.dao.TokenRepository;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.exceptions.SQInvalidRequestException;
 import me.simplq.service.message.MessagesManager;
-import me.simplq.service.smsService.SmsManager;
+import me.simplq.service.notification.NotificationManager;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +30,7 @@ public class TokenService {
   private final TokenRepository tokenRepository;
   private final QueueRepository queueRepository;
   private final OwnerService ownerService;
-  private final SmsManager smsManager;
+  private final NotificationManager notificationManager;
   private final LoggedInUserInfo loggedInUserInfo;
   private final MessagesManager messagesManager;
 
@@ -67,14 +68,13 @@ public class TokenService {
   /** Notify user on User page. Send SMS notification */
   @Transactional
   public TokenNotifyResponse notifyToken(String tokenId) {
-    var user =
+    var token =
         tokenRepository
             .findById(tokenId)
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
-    if (user.getStatus() == TokenStatus.WAITING) {
-      smsManager.notify(
-          user.getContactNumber(),
-          messagesManager.endWaiting(user.getQueue().getQueueName()).text());
+    if (token.getStatus() == TokenStatus.WAITING) {
+      notificationManager.notify(
+          token, messagesManager.endWaiting(token.getQueue().getQueueName()).text());
     } else {
       throw SQInvalidRequestException.tokenNotNotifiableException();
     }
@@ -103,15 +103,16 @@ public class TokenService {
                       && !loggedInUserInfo.getUserId().equals(queue.getOwner().getId())) {
                     throw SQInvalidRequestException.onlyOwnerCanCreateTokens();
                   }
-
                   var newToken =
                       new Token(
                           createTokenRequest.getName(),
                           createTokenRequest.getContactNumber(),
                           TokenStatus.WAITING,
-                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false),
+                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false)
+                              || StringUtils.isNotBlank(createTokenRequest.getEmailId()),
                           ownerService.getOwnerOrElseCreate().getId());
                   newToken.setQueue(queue);
+                  newToken.setEmailId(createTokenRequest.getEmailId());
                   tokenRepository.save(newToken);
                   return newToken;
                 })
@@ -120,8 +121,8 @@ public class TokenService {
         tokenRepository.getLastTokenNumberForQueue(token.getQueue().getQueueId());
     var nextTokenNumber = currentMaxTokenNumber != null ? currentMaxTokenNumber + 1 : 1;
     token.setTokenNumber(nextTokenNumber);
-    smsManager.notify(
-        token.getContactNumber(),
+    notificationManager.notify(
+        token,
         messagesManager
             .startWaiting(
                 token.getName(),

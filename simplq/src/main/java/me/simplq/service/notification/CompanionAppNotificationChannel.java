@@ -1,4 +1,4 @@
-package me.simplq.service.smsService;
+package me.simplq.service.notification;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -8,23 +8,24 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import me.simplq.dao.Token;
 import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Service
-@Profile("prod")
-public class CompanionAppSmsService implements SmsService {
+@Component
+@Profile("companion-app")
+public class CompanionAppNotificationChannel implements NotificationChannel {
   private static final String SMS_NUMBER_KEY = "SMS_NUMBER_KEY";
   private static final String SMS_PAYLOAD_KEY = "SMS_PAYLOAD";
 
   private final OwnerService ownerService;
 
   @Autowired
-  public CompanionAppSmsService(OwnerService ownerService) {
+  public CompanionAppNotificationChannel(OwnerService ownerService) {
     this.ownerService = ownerService;
     try {
       FirebaseApp.initializeApp(
@@ -43,7 +44,7 @@ public class CompanionAppSmsService implements SmsService {
   }
 
   @Override
-  public void sendSMS(String contactNumber, String payload) {
+  public void notify(Token token, String payload) {
     ownerService
         .getDeviceToken()
         .ifPresent(
@@ -54,7 +55,7 @@ public class CompanionAppSmsService implements SmsService {
                     FirebaseMessaging.getInstance()
                         .send(
                             Message.builder()
-                                .putData(SMS_NUMBER_KEY, contactNumber)
+                                .putData(SMS_NUMBER_KEY, token.getContactNumber())
                                 .putData(SMS_PAYLOAD_KEY, payload)
                                 .setToken(deviceToken)
                                 .build()));

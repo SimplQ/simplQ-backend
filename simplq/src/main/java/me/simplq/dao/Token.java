@@ -31,6 +31,7 @@ public class Token {
   TokenStatus status;
   Boolean notifiable;
   String ownerId;
+  String emailId;
 
   @ManyToOne Queue queue;
 

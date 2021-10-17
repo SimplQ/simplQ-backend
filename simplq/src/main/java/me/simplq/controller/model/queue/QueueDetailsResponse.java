@@ -31,6 +31,7 @@ public class QueueDetailsResponse {
   private final Long maxQueueCapacity;
   private final Long slotsLeft;
   private final boolean isSelfJoinAllowed;
+  private final boolean notifyByEmail;
   private final List<Token> tokens = new ArrayList<>();
   private final List<Token> removedTokens = new ArrayList<>();
 
@@ -62,7 +63,8 @@ public class QueueDetailsResponse {
             queue.getStatus(),
             queue.getMaxQueueCapacity(),
             queue.getSlotsLeft(),
-            queue.isSelfJoinAllowed());
+            queue.isSelfJoinAllowed(),
+            queue.isNotifyByEmail());
     queue.getTokens().stream()
         .sorted(Comparator.comparing(me.simplq.dao.Token::getTokenCreationTimestamp))
         .forEach(response::addToken);

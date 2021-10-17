@@ -7,4 +7,5 @@ public class PatchQueueRequest {
 
   private Integer maxQueueCapacity;
   private Boolean isSelfJoinAllowed;
+  private Boolean notifyByEmail;
 }

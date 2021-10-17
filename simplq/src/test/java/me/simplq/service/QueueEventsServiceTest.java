@@ -69,7 +69,7 @@ class QueueEventsServiceTest {
   }
 
   private QueueDetailsResponse makeQueueDetailResponse(List<Token> tokenList) {
-    var response = new QueueDetailsResponse(null, null, null, null, null, null, false);
+    var response = new QueueDetailsResponse(null, null, null, null, null, null, false, false);
     tokenList.forEach(response::addToken);
     return response;
   }
