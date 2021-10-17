@@ -1,6 +1,5 @@
 package me.simplq.controller.converters;
 
-import me.simplq.controller.model.queue.QueueEventsCsvResponse;
 import me.simplq.controller.model.queue.QueueEventsResponse;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -18,30 +17,37 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 @Component
-public class QueueEventsCsvResponseConverter extends AbstractHttpMessageConverter<QueueEventsCsvResponse> {
+public class QueueEventsResponseConverter extends AbstractHttpMessageConverter<QueueEventsResponse> {
 
     private static final MediaType TEXT_CSV = new MediaType("text", "csv", StandardCharsets.UTF_8);
 
-    QueueEventsCsvResponseConverter() {
+    QueueEventsResponseConverter() {
         super(TEXT_CSV);
     }
 
     @Override
     protected boolean supports(Class<?> aClass) {
-        return QueueEventsCsvResponse.class.equals(aClass);
+        return QueueEventsResponse.class.equals(aClass);
     }
 
     @Override
-    protected QueueEventsCsvResponse readInternal(Class<? extends QueueEventsCsvResponse> aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
+    protected QueueEventsResponse readInternal(Class<? extends QueueEventsResponse> aClass, HttpInputMessage httpInputMessage) throws HttpMessageNotReadableException {
         throw new HttpMessageNotReadableException("Reading history from CSV not supported", httpInputMessage);
     }
 
     @Override
-    protected void writeInternal(QueueEventsCsvResponse response, HttpOutputMessage output) throws IOException, HttpMessageNotWritableException {
+    protected void writeInternal(QueueEventsResponse response, HttpOutputMessage output) throws IOException, HttpMessageNotWritableException {
         output.getHeaders().setContentType(TEXT_CSV);
-        output.getHeaders().setContentDisposition(ContentDisposition.builder("attachment").filename(response.getFileName()).build());
+        output.getHeaders().setContentDisposition(
+                ContentDisposition.builder("attachment")
+                        .filename(String.format("%s.history.csv", response.getQueueName()))
+                        .build());
+        printEventsToCsv(response, output);
+    }
+
+    private void printEventsToCsv(QueueEventsResponse response, HttpOutputMessage output) throws IOException {
         CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(output.getBody()), CSVFormat.DEFAULT);
-        for (QueueEventsResponse.Event event : response.getEventResponse().getEvents()) {
+        for (QueueEventsResponse.Event event : response.getEvents()) {
             printEvent(csvPrinter, event);
         }
         csvPrinter.flush();
