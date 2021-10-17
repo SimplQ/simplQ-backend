@@ -19,6 +19,7 @@ public class QueueStatusResponse {
   final Integer lastRemovedTokenNumber;
   final Date queueCreationTimestamp;
   final boolean isSelfJoinAllowed;
+  final boolean notifyByEmail;
 
   public static QueueStatusResponse fromEntity(Queue queue) {
     return new QueueStatusResponse(
@@ -31,6 +32,7 @@ public class QueueStatusResponse {
         queue.getSlotsLeft(),
         queue.getLastRemovedTokenNumber(),
         queue.getQueueCreationTimestamp(),
-        queue.isSelfJoinAllowed());
+        queue.isSelfJoinAllowed(),
+        queue.isNotifyByEmail());
   }
 }

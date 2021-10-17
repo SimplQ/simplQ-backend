@@ -1,6 +1,7 @@
 package me.simplq.service;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -126,15 +127,27 @@ public class QueueService {
   private Function<Queue, PatchQueueResponse> patchQueue(PatchQueueRequest patchQueueRequest) {
     return queue -> {
       var response = PatchQueueResponse.builder();
-      if (patchQueueRequest.getMaxQueueCapacity() != null) {
-        queue.setMaxQueueCapacity(patchQueueRequest.getMaxQueueCapacity());
-        response.maxQueueCapacity(patchQueueRequest.getMaxQueueCapacity().longValue());
-      }
+      Optional.ofNullable(patchQueueRequest.getMaxQueueCapacity())
+          .ifPresent(
+              maxQueueCapacity -> {
+                queue.setMaxQueueCapacity(maxQueueCapacity);
+                response.maxQueueCapacity(maxQueueCapacity.longValue());
+              });
 
-      if (patchQueueRequest.getIsSelfJoinAllowed() != null) {
-        queue.setSelfJoinAllowed(patchQueueRequest.getIsSelfJoinAllowed());
-        response.isSelfJoinAllowed(patchQueueRequest.getIsSelfJoinAllowed());
-      }
+      Optional.ofNullable(patchQueueRequest.getIsSelfJoinAllowed())
+          .ifPresent(
+              isSelfJoinAllowed -> {
+                queue.setSelfJoinAllowed(isSelfJoinAllowed);
+                response.isSelfJoinAllowed(isSelfJoinAllowed);
+              });
+
+      Optional.ofNullable(patchQueueRequest.getNotifyByEmail())
+          .ifPresent(
+              notifyByEmail -> {
+                queue.setNotifyByEmail(notifyByEmail);
+                response.notifyByEmail(notifyByEmail);
+              });
+
       var updatedQueue = queueRepository.save(queue);
 
       return response

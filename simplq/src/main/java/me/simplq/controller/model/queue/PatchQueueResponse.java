@@ -10,4 +10,5 @@ public class PatchQueueResponse {
   String queueName;
   Long maxQueueCapacity;
   boolean isSelfJoinAllowed;
+  boolean notifyByEmail;
 }

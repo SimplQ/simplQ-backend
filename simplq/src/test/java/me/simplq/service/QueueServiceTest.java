@@ -51,7 +51,7 @@ class QueueServiceTest {
   void throwExceptionIfQueueDoesNotExists() {
     when(repository.findById(anyString())).thenReturn(Optional.empty());
 
-    var patchRequest = new PatchQueueRequest(10, false);
+    var patchRequest = new PatchQueueRequest(10, false, null);
 
     Executable execute = () -> queueService.patchQueue("queueId", patchRequest);
 
@@ -68,11 +68,27 @@ class QueueServiceTest {
     when(repository.findById(anyString())).thenReturn(Optional.of(queue));
     when(repository.save(any(Queue.class))).thenReturn(queue);
 
-    var patchRequest = new PatchQueueRequest(10, null);
+    var patchRequest = new PatchQueueRequest(10, null, null);
 
     queueService.patchQueue("queueId", patchRequest);
 
     verify(repository).save(eq(queue));
     assertThat(queue.getMaxQueueCapacity()).isEqualTo(10);
+  }
+
+  @DisplayName("Allow user to set queue as notifiable by email when queue exists")
+  @Test
+  void setIsNotifiableByEmail() {
+    var queue = new Queue("queue", new Owner(), QueueStatus.ACTIVE);
+
+    when(repository.findById(anyString())).thenReturn(Optional.of(queue));
+    when(repository.save(any(Queue.class))).thenReturn(queue);
+
+    var patchRequest = new PatchQueueRequest(null, null, true);
+
+    queueService.patchQueue("queueId", patchRequest);
+
+    verify(repository).save(eq(queue));
+    assertThat(queue.isNotifyByEmail()).isEqualTo(true);
   }
 }

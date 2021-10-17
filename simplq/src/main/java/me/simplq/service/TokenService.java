@@ -20,6 +20,7 @@ import me.simplq.exceptions.SQInvalidRequestException;
 import me.simplq.service.message.MessagesManager;
 import me.simplq.service.smsService.SmsManager;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -103,15 +104,16 @@ public class TokenService {
                       && !loggedInUserInfo.getUserId().equals(queue.getOwner().getId())) {
                     throw SQInvalidRequestException.onlyOwnerCanCreateTokens();
                   }
-
                   var newToken =
                       new Token(
                           createTokenRequest.getName(),
                           createTokenRequest.getContactNumber(),
                           TokenStatus.WAITING,
-                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false),
+                          ObjectUtils.defaultIfNull(createTokenRequest.getNotifiable(), false)
+                              || StringUtils.isNotBlank(createTokenRequest.getEmailId()),
                           ownerService.getOwnerOrElseCreate().getId());
                   newToken.setQueue(queue);
+                  newToken.setEmailId(createTokenRequest.getEmailId());
                   tokenRepository.save(newToken);
                   return newToken;
                 })

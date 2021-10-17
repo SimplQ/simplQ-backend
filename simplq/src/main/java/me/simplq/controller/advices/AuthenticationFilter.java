@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -34,9 +35,11 @@ public class AuthenticationFilter implements Filter {
   private static final String UNAUTHORIZED = "Unauthorized";
   private static final String ANONYMOUS_HEADER_START_WITH = "Anonymous ";
   private static final String BEARER_HEADER_START_WITH = "Bearer ";
+  public static final String AUTHORIZATION = "Authorization";
   private final LoggedInUserInfo loggedInUserInfo;
   private final JwkProvider provider;
   private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
+  private static final List<String> UNAUTHENTICATED_PATHS = List.of("/v2/api-docs", "/swagger-ui");
 
   @Autowired
   AuthenticationFilter(LoggedInUserInfo loggedInUserInfo, @Value("${auth0.jkws.url}") String keyUrl)
@@ -101,7 +104,10 @@ public class AuthenticationFilter implements Filter {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    authenticate(((HttpServletRequest) request).getHeader("Authorization"));
+    if (!UNAUTHENTICATED_PATHS.contains(((HttpServletRequest) request).getRequestURI())) {
+      authenticate(((HttpServletRequest) request).getHeader(AUTHORIZATION));
+    }
+
     chain.doFilter(request, response);
   }
 }
