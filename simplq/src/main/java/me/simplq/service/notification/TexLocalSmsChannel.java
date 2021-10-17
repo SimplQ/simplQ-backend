@@ -7,19 +7,18 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import me.simplq.dao.Token;
 import me.simplq.exceptions.SQInternalServerException;
-import me.simplq.service.SecretsManager;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
 @Profile("text-local")
-public class TexLocalSmsService implements NotificationChannel {
+public class TexLocalSmsChannel implements NotificationChannel {
   private final String API_KEY;
   private final String SENDER_NAME = "TXTLCL";
   private final String TEXT_LOCAL_API = "https://api.textlocal.in/send/?";
 
-  public TexLocalSmsService(SecretsManager secretsManager) {
-    API_KEY = secretsManager.getSecret("TEXT_LOCAL_API_KEY");
+  public TexLocalSmsChannel() {
+    API_KEY = "TEXT_LOCAL_API_KEY";
   }
 
   @Override
