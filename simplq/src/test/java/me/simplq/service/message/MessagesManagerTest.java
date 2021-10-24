@@ -31,7 +31,7 @@ class MessagesManagerTest {
 
     assertThat(message).isInstanceOf(EndWaitingMessage.class);
     assertThat(message).isNotNull();
-    assertThat(message.text()).isEqualTo(END_MESSAGE_EXPECTED);
+    assertThat(message.body()).isEqualTo(END_MESSAGE_EXPECTED);
   }
 
   @Test
@@ -40,6 +40,6 @@ class MessagesManagerTest {
 
     assertThat(message).isInstanceOf(StartWaitingMessage.class);
     assertThat(message).isNotNull();
-    assertThat(message.text()).isEqualTo(START_MESSAGE_EXPECTED);
+    assertThat(message.body()).isEqualTo(START_MESSAGE_EXPECTED);
   }
 }

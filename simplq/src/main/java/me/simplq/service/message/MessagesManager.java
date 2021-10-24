@@ -13,8 +13,8 @@ public class MessagesManager {
     this.tokenUrlPrefix = tokenUrlPrefix;
   }
 
-  public Message endWaiting(String queue) {
-    return new EndWaitingMessage(queue);
+  public Message endWaiting(String queueName) {
+    return new EndWaitingMessage(queueName);
   }
 
   public Message startWaiting(String name, String queueName, Integer tokenNumber, String tokenId) {
