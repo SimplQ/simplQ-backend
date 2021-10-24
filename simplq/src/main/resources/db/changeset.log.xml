@@ -111,5 +111,9 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="12" author="daltonfury42">
+		<dropColumn tableName="token" columnName="notifiable" />
+	</changeSet>
+
 </databaseChangeLog>
   
