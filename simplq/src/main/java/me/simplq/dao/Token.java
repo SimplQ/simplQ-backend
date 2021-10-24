@@ -43,8 +43,7 @@ public class Token {
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenDeletionTimestamp;
 
-  public Token(
-      String name, String contactNumber, TokenStatus status, String ownerId) {
+  public Token(String name, String contactNumber, TokenStatus status, String ownerId) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;

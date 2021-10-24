@@ -19,8 +19,6 @@ import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.exceptions.SQInvalidRequestException;
 import me.simplq.service.message.MessagesManager;
 import me.simplq.service.notification.NotificationManager;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
