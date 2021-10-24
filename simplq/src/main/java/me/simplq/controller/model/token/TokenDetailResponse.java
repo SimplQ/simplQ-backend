@@ -29,7 +29,7 @@ public class TokenDetailResponse {
         token.getQueue().getQueueName(),
         token.getQueue().getQueueId(),
         token.getAheadCount(),
-        token.getNotifiable(),
+        token.isNotifiable(),
         token.getTokenCreationTimestamp());
   }
 }

@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.simplq.constants.TokenStatus;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -29,7 +30,6 @@ public class Token {
   String name;
   String contactNumber;
   TokenStatus status;
-  Boolean notifiable;
   String ownerId;
   String emailId;
 
@@ -43,12 +43,10 @@ public class Token {
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenDeletionTimestamp;
 
-  public Token(
-      String name, String contactNumber, TokenStatus status, Boolean notifiable, String ownerId) {
+  public Token(String name, String contactNumber, TokenStatus status, String ownerId) {
     this.name = name;
     this.contactNumber = contactNumber;
     this.status = status;
-    this.notifiable = notifiable;
     this.ownerId = ownerId;
     this.tokenCreationTimestamp = new Date();
   }
@@ -68,5 +66,9 @@ public class Token {
   public void delete() {
     this.status = TokenStatus.REMOVED;
     this.tokenDeletionTimestamp = new Date();
+  }
+
+  public boolean isNotifiable() {
+    return TokenStatus.REMOVED.equals(status) && StringUtils.isNotBlank(emailId);
   }
 }

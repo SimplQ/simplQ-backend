@@ -45,7 +45,7 @@ public class QueueDetailsResponse {
             token.getTokenCreationTimestamp(),
             token.getTokenDeletionTimestamp(),
             token.getStatus(),
-            token.getNotifiable());
+            token.isNotifiable());
 
     if (TokenStatus.REMOVED.equals(token.getStatus())) {
       this.removedTokens.add(newToken);
