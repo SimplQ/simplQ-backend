@@ -15,11 +15,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class MessagesManagerTest {
 
   private static final String START_MESSAGE_EXPECTED =
-      "Hi test-name,\n" +
-              "You have been added to test-queue. Your token number is 42.\n" +
-              "You can check your live status by visiting http://token-test-url/test-token-id\n" +
-              "\n" +
-              "Thanks for using simplq.me, a free and open source queue management software.";
+      "Hi test-name,\n"
+          + "You have been added to test-queue. Your token number is 42.\n"
+          + "You can check your live status by visiting http://token-test-url/test-token-id\n"
+          + "\n"
+          + "Thanks for using simplq.me, a free and open source queue management software.";
 
   private static final String END_MESSAGE_EXPECTED =
       "Hi, your wait for test-queue is over! You can proceed";
