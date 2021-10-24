@@ -74,7 +74,7 @@ public class TokenService {
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     if (token.getStatus() == TokenStatus.WAITING) {
       notificationManager.notify(
-          token, messagesManager.endWaiting(token.getQueue().getQueueName()).text());
+          token, messagesManager.endWaiting(token.getQueue().getQueueName()));
     } else {
       throw SQInvalidRequestException.tokenNotNotifiableException();
     }
@@ -123,13 +123,11 @@ public class TokenService {
     token.setTokenNumber(nextTokenNumber);
     notificationManager.notify(
         token,
-        messagesManager
-            .startWaiting(
-                token.getName(),
-                token.getQueue().getQueueName(),
-                token.getTokenNumber(),
-                token.getTokenId())
-            .text());
+        messagesManager.startWaiting(
+            token.getName(),
+            token.getQueue().getQueueName(),
+            token.getTokenNumber(),
+            token.getTokenId()));
     return TokenDetailResponse.fromEntity(token);
   }
 

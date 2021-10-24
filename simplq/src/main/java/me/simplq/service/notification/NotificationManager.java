@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import me.simplq.dao.Token;
+import me.simplq.service.message.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,7 @@ public class NotificationManager {
   }
 
   /** Pass notification to all enabled channels */
-  public void notify(Token token, String payload) {
-    notificationChannels.forEach(notificationChannel -> notificationChannel.notify(token, payload));
+  public void notify(Token token, Message message) {
+    notificationChannels.forEach(notificationChannel -> notificationChannel.notify(token, message));
   }
 }

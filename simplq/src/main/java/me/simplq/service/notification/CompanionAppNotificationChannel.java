@@ -44,7 +44,7 @@ public class CompanionAppNotificationChannel implements NotificationChannel {
   }
 
   @Override
-  public void notify(Token token, String payload) {
+  public void notify(Token token, me.simplq.service.message.Message message) {
     ownerService
         .getDeviceToken()
         .ifPresent(
@@ -56,7 +56,7 @@ public class CompanionAppNotificationChannel implements NotificationChannel {
                         .send(
                             Message.builder()
                                 .putData(SMS_NUMBER_KEY, token.getContactNumber())
-                                .putData(SMS_PAYLOAD_KEY, payload)
+                                .putData(SMS_PAYLOAD_KEY, message.body())
                                 .setToken(deviceToken)
                                 .build()));
               } catch (FirebaseMessagingException e) {

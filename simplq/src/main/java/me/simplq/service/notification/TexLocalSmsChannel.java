@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import me.simplq.dao.Token;
 import me.simplq.exceptions.SQInternalServerException;
+import me.simplq.service.message.Message;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,8 @@ public class TexLocalSmsChannel implements NotificationChannel {
   }
 
   @Override
-  public void notify(Token token, String payload) {
-    postSmsRequest(constructData(token.getContactNumber(), payload));
+  public void notify(Token token, Message message) {
+    postSmsRequest(constructData(token.getContactNumber(), message));
   }
 
   private void postSmsRequest(String data) {
@@ -47,9 +48,9 @@ public class TexLocalSmsChannel implements NotificationChannel {
     }
   }
 
-  private String constructData(String contactNumber, String payload) {
+  private String constructData(String contactNumber, Message m) {
     String user = "apikey=" + API_KEY;
-    String message = "&message=" + payload;
+    String message = "&message=" + m.body();
     String sender = "&sender=" + SENDER_NAME;
     String numbers = "&numbers=" + contactNumber;
     return user + numbers + message + sender;

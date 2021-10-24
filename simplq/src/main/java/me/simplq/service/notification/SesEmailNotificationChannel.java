@@ -25,25 +25,26 @@ import software.amazon.awssdk.services.ses.model.SesException;
 @Slf4j
 public class SesEmailNotificationChannel implements NotificationChannel {
   private final SesClient client = SesClient.builder().region(Region.US_WEST_2).build();
-  private final String FROM_EMAIL = "notifications@simplq.me";
+  private static final String FROM_EMAIL = "notifications@simplq.me";
 
   @Override
-  public void notify(Token token, String payload) {
+  public void notify(Token token, me.simplq.service.message.Message message) {
     log.info("Received request to send email notification for token {}", token.getTokenId());
     Optional.ofNullable(token.getEmailId())
-        .ifPresent(emailId -> sendEmail(emailId, payload, token.getQueue().getQueueName()));
+        .ifPresent(emailId -> sendEmail(emailId, message, token.getQueue().getQueueName()));
   }
 
-  private void sendEmail(String emailId, String payload, String subject) {
-    log.info("Sending email to {}: {}", emailId, payload);
+  private void sendEmail(
+      String emailId, me.simplq.service.message.Message message, String subject) {
+    log.info("Sending email to {}: {}", emailId, message.subject());
     try {
       Session session = Session.getDefaultInstance(new Properties());
-      MimeMessage message = new MimeMessage(session);
+      MimeMessage email = new MimeMessage(session);
 
       // Add subject, from and to lines
-      message.setSubject(subject + ", your wait is almost over.", "UTF-8");
-      message.setFrom(new InternetAddress(FROM_EMAIL));
-      message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailId));
+      email.setSubject(message.subject(), "UTF-8");
+      email.setFrom(new InternetAddress(FROM_EMAIL));
+      email.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailId));
 
       // Create a multipart/alternative child container
       MimeMultipart msgBody = new MimeMultipart("alternative");
@@ -53,7 +54,7 @@ public class SesEmailNotificationChannel implements NotificationChannel {
 
       // Define the text part
       MimeBodyPart textPart = new MimeBodyPart();
-      textPart.setContent(payload, "text/plain; charset=UTF-8");
+      textPart.setContent(message.body(), "text/plain; charset=UTF-8");
 
       // Add the text and HTML parts to the child container
       msgBody.addBodyPart(textPart);
@@ -65,7 +66,7 @@ public class SesEmailNotificationChannel implements NotificationChannel {
       MimeMultipart msg = new MimeMultipart("mixed");
 
       // Add the parent container to the message
-      message.setContent(msg);
+      email.setContent(msg);
 
       // Add the multipart/alternative part to the message
       msg.addBodyPart(wrap);
@@ -74,7 +75,7 @@ public class SesEmailNotificationChannel implements NotificationChannel {
           "Attempting to send an email through Amazon SES " + "using the AWS SDK for Java...");
 
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      message.writeTo(outputStream);
+      email.writeTo(outputStream);
       ByteBuffer buf = ByteBuffer.wrap(outputStream.toByteArray());
 
       byte[] arr = new byte[buf.remaining()];
