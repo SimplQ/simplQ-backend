@@ -5,8 +5,8 @@ class StartWaitingMessage implements Message {
   private static final String SUBJECT_FORMAT = "%s: You have been added to the queue.";
   private static final String BODY_FORMAT =
       "Hi %s,\n"
-          + "You have been added to %s. Your token number is %d." +
-              "\n You can check your live status by visiting %s\n\n"
+          + "You have been added to %s. Your token number is %d."
+          + "\n You can check your live status by visiting %s\n\n"
           + "Thanks for using simplq.me, a free and open source queue management software.";
 
   private final String name;

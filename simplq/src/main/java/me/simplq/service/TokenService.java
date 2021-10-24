@@ -123,12 +123,11 @@ public class TokenService {
     token.setTokenNumber(nextTokenNumber);
     notificationManager.notify(
         token,
-        messagesManager
-            .startWaiting(
-                token.getName(),
-                token.getQueue().getQueueName(),
-                token.getTokenNumber(),
-                token.getTokenId()));
+        messagesManager.startWaiting(
+            token.getName(),
+            token.getQueue().getQueueName(),
+            token.getTokenNumber(),
+            token.getTokenId()));
     return TokenDetailResponse.fromEntity(token);
   }
 

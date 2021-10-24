@@ -34,7 +34,8 @@ public class SesEmailNotificationChannel implements NotificationChannel {
         .ifPresent(emailId -> sendEmail(emailId, message, token.getQueue().getQueueName()));
   }
 
-  private void sendEmail(String emailId,  me.simplq.service.message.Message message, String subject) {
+  private void sendEmail(
+      String emailId, me.simplq.service.message.Message message, String subject) {
     log.info("Sending email to {}: {}", emailId, message.subject());
     try {
       Session session = Session.getDefaultInstance(new Properties());
