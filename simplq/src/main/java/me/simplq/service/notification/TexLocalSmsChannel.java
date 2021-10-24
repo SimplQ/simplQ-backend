@@ -48,9 +48,9 @@ public class TexLocalSmsChannel implements NotificationChannel {
     }
   }
 
-  private String constructData(String contactNumber, String payload) {
+  private String constructData(String contactNumber, Message m) {
     String user = "apikey=" + API_KEY;
-    String message = "&message=" + payload;
+    String message = "&message=" + m.body();
     String sender = "&sender=" + SENDER_NAME;
     String numbers = "&numbers=" + contactNumber;
     return user + numbers + message + sender;
