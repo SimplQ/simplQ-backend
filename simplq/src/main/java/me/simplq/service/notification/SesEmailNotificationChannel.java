@@ -58,7 +58,7 @@ public class SesEmailNotificationChannel implements NotificationChannel {
 
       // Define the HTML part.
       MimeBodyPart htmlPart = new MimeBodyPart();
-      htmlPart.setContent(message.body(), "text/html; charset=UTF-8");
+      htmlPart.setContent(message.bodyHtml(), "text/html; charset=UTF-8");
 
       // Add the text and HTML parts to the child container
       msgBody.addBodyPart(textPart);

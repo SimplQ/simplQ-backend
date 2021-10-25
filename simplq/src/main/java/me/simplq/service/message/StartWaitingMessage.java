@@ -1,14 +1,16 @@
 package me.simplq.service.message;
 
+import static me.simplq.service.message.StripHtml.stripHtml;
+
 class StartWaitingMessage implements Message {
 
   private static final String SUBJECT_FORMAT = "%s: You have been added to the queue.";
   private static final String BODY_FORMAT =
-      "Hi %s,\n\n"
-          + "You have been added to queue %s. Your token number is %s.\n\n"
-          + "You can check your live status by visiting %s\n\n"
-          + "<b>Please wait to be notified before you visit the location. Stay away from crowds and"
-          + " have a delightful experience.</b>\n\n"
+      "<p>Hi %s,</p>"
+          + "<p>You have been added to queue %s. Your token number is %s.</p>"
+          + "<p>You can check your live status by visiting %s</p>"
+          + "<p><b>Please wait to be notified before you visit the location. Stay away from crowds and"
+          + " have a delightful experience.</b></p>"
           + FOOTER;
 
   private final String tokenName;
@@ -31,6 +33,11 @@ class StartWaitingMessage implements Message {
 
   @Override
   public String body() {
+    return stripHtml(bodyHtml());
+  }
+
+  @Override
+  public String bodyHtml() {
     return String.format(BODY_FORMAT, tokenName, queueName, tokenNumber, tokenUrl);
   }
 }
