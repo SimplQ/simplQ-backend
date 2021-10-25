@@ -13,12 +13,13 @@ public class MessagesManager {
     this.tokenUrlPrefix = tokenUrlPrefix;
   }
 
-  public Message endWaiting(String queueName) {
-    return new EndWaitingMessage(queueName);
+  public Message endWaiting(String queueName, String tokenName) {
+    return new EndWaitingMessage(queueName, tokenName);
   }
 
-  public Message startWaiting(String name, String queueName, Integer tokenNumber, String tokenId) {
-    return new StartWaitingMessage(name, queueName, tokenNumber, tokenUrl(tokenId));
+  public Message startWaiting(
+      String tokenName, String queueName, Integer tokenNumber, String tokenId) {
+    return new StartWaitingMessage(tokenName, queueName, tokenNumber, tokenUrl(tokenId));
   }
 
   private String tokenUrl(String tokenId) {
