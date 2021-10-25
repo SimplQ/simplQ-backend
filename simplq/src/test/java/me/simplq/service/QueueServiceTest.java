@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import me.simplq.constants.QueueStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.controller.model.queue.PatchQueueRequest;
 import me.simplq.dao.Owner;

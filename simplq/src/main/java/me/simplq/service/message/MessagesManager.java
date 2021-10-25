@@ -17,7 +17,8 @@ public class MessagesManager {
     return new EndWaitingMessage(queueName, tokenName);
   }
 
-  public Message startWaiting(String tokenName, String queueName, Integer tokenNumber, String tokenId) {
+  public Message startWaiting(
+      String tokenName, String queueName, Integer tokenNumber, String tokenId) {
     return new StartWaitingMessage(tokenName, queueName, tokenNumber, tokenUrl(tokenId));
   }
 

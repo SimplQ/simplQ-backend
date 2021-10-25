@@ -3,9 +3,11 @@ package me.simplq.service.message;
 class EndWaitingMessage implements Message {
 
   private static final String SUBJECT_FORMAT = "%s: Hooray! your wait is finally over.";
-  private static final String BODY_FORMAT = "Hi %s,\n\n" +
-          "You have been notified by the queue admin. Your turn will be up soon.\n\n" +
-          "Please proceed to the location now.\n\n" + FOOTER;
+  private static final String BODY_FORMAT =
+      "Hi %s,\n\n"
+          + "You have been notified by the queue admin. Your turn will be up soon.\n\n"
+          + "Please proceed to the location now.\n\n"
+          + FOOTER;
 
   private final String queueName;
   private final String tokenName;
