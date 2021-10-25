@@ -7,8 +7,8 @@ class StartWaitingMessage implements Message {
       "Hi %s,\n\n"
           + "You have been added to queue %s. Your token number is %s.\n\n"
           + "You can check your live status by visiting %s\n\n"
-          + "Please wait to be notified before you visit the location. Stay away from crowds and"
-          + " have a delightful experience.\n\n"
+          + "<b>Please wait to be notified before you visit the location. Stay away from crowds and"
+          + " have a delightful experience.</b>\n\n"
           + FOOTER;
 
   private final String tokenName;

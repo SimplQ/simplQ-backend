@@ -6,7 +6,7 @@ class EndWaitingMessage implements Message {
   private static final String BODY_FORMAT =
       "Hi %s,\n\n"
           + "You have been notified by the queue admin. Your turn will be up soon.\n\n"
-          + "Please proceed to the location now.\n\n"
+          + "<b>Please proceed to the location now.</b>\n\n"
           + FOOTER;
 
   private final String queueName;
@@ -24,6 +24,6 @@ class EndWaitingMessage implements Message {
 
   @Override
   public String body() {
-    return String.format(BODY_FORMAT, queueName);
+    return String.format(BODY_FORMAT, tokenName);
   }
 }
