@@ -4,18 +4,21 @@ class StartWaitingMessage implements Message {
 
   private static final String SUBJECT_FORMAT = "%s: You have been added to the queue.";
   private static final String BODY_FORMAT =
-      "Hi %s,\n"
-          + "You have been added to %s. Your token number is %d.\n"
+      "Hi %s,\n\n"
+          + "You have been added to queue %s. Your token number is %s.\n\n"
           + "You can check your live status by visiting %s\n\n"
-          + "Thanks for using simplq.me, a free and open source queue management software.";
+          + "Please wait to be notified before you visit the location. Stay away from crowds and"
+          + " have a delightful experience.\n\n"
+          + FOOTER;
 
-  private final String name;
+  private final String tokenName;
   private final String queueName;
   private final Integer tokenNumber;
   private final String tokenUrl;
 
-  public StartWaitingMessage(String name, String queueName, Integer tokenNumber, String tokenUrl) {
-    this.name = name;
+  public StartWaitingMessage(
+      String tokenName, String queueName, Integer tokenNumber, String tokenUrl) {
+    this.tokenName = tokenName;
     this.queueName = queueName;
     this.tokenNumber = tokenNumber;
     this.tokenUrl = tokenUrl;
@@ -28,6 +31,6 @@ class StartWaitingMessage implements Message {
 
   @Override
   public String body() {
-    return String.format(BODY_FORMAT, name, queueName, tokenNumber, tokenUrl);
+    return String.format(BODY_FORMAT, tokenName, queueName, tokenNumber, tokenUrl);
   }
 }
