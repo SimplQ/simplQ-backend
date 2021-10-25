@@ -1,12 +1,14 @@
 package me.simplq.service.message;
 
+import static me.simplq.service.message.StripHtml.stripHtml;
+
 class EndWaitingMessage implements Message {
 
   private static final String SUBJECT_FORMAT = "%s: Hooray! your wait is finally over.";
   private static final String BODY_FORMAT =
-      "Hi %s,\n\n"
-          + "You have been notified by the queue admin. Your turn will be up soon.\n\n"
-          + "<b>Please proceed to the location now.</b>\n\n"
+      "<p>Hi %s,</p>"
+          + "<p>You have been notified by the queue admin. Your turn will be up soon.</p>"
+          + "<p><b>Please proceed to the location now.</b></p>"
           + FOOTER;
 
   private final String queueName;
@@ -24,6 +26,11 @@ class EndWaitingMessage implements Message {
 
   @Override
   public String body() {
+    return stripHtml(bodyHtml());
+  }
+
+  @Override
+  public String bodyHtml() {
     return String.format(BODY_FORMAT, tokenName);
   }
 }

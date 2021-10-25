@@ -17,35 +17,25 @@ class MessagesManagerTest {
   private static final String START_MESSAGE_SUBJECT_EXPECTED =
       "test-queue: You have been added to the queue.";
   private static final String START_MESSAGE_BODY_EXPECTED =
-      "Hi test-name,\n"
-          + "\n"
-          + "You have been added to queue test-queue. Your token number is 42.\n"
-          + "\n"
-          + "You can check your live status by visiting http://token-test-url/test-token-id\n"
-          + "\n"
-          + "<b>Please wait to be notified before you visit the location. Stay away from crowds and"
-          + " have a delightful experience.</b>\n"
-          + "\n"
-          + "Thanks for using simplq.me, a free and open source queue management software.\n"
-          + "\n"
-          + "Regards,\n"
-          + "Team SimplQ\n"
-          + "https://www.simplq.me/";
+      "<p>Hi test-name,</p>" +
+              "<p>You have been added to queue test-queue. Your token number is 42.</p>" +
+              "<p>You can check your live status by visiting http://token-test-url/test-token-id</p>" +
+              "<p><b>Please wait to be notified before you visit the location. Stay away from crowds and have a delightful experience.</b></p>" +
+              "<p>Thanks for using simplq.me, a free and open source queue management software.</p>" +
+              "<p>Regards,</p>" +
+              "<p>Team SimplQ</p>" +
+              "<p>https://www.simplq.me/</p>";
 
   private static final String END_MESSAGE_SUBJECT_EXPECTED =
       "test-queue: Hooray! your wait is finally over.";
   private static final String END_MESSAGE_BODY_EXPECTED =
-      "Hi test-user-name,\n"
-          + "\n"
-          + "You have been notified by the queue admin. Your turn will be up soon.\n"
-          + "\n"
-          + "<b>Please proceed to the location now.</b>\n"
-          + "\n"
-          + "Thanks for using simplq.me, a free and open source queue management software.\n"
-          + "\n"
-          + "Regards,\n"
-          + "Team SimplQ\n"
-          + "https://www.simplq.me/";
+      "<p>Hi test-user-name,</p>" +
+              "<p>You have been notified by the queue admin. Your turn will be up soon.</p>" +
+              "<p><b>Please proceed to the location now.</b></p>" +
+              "<p>Thanks for using simplq.me, a free and open source queue management software.</p>" +
+              "<p>Regards,</p>" +
+              "<p>Team SimplQ</p>" +
+              "<p>https://www.simplq.me/</p>";
 
   @Autowired private MessagesManager manager;
 
@@ -56,7 +46,7 @@ class MessagesManagerTest {
     assertThat(message).isInstanceOf(EndWaitingMessage.class);
     assertThat(message).isNotNull();
     assertThat(message.subject()).isEqualTo(END_MESSAGE_SUBJECT_EXPECTED);
-    assertThat(message.body()).isEqualTo(END_MESSAGE_BODY_EXPECTED);
+    assertThat(message.bodyHtml()).isEqualTo(END_MESSAGE_BODY_EXPECTED);
   }
 
   @Test
@@ -66,6 +56,6 @@ class MessagesManagerTest {
     assertThat(message).isInstanceOf(StartWaitingMessage.class);
     assertThat(message).isNotNull();
     assertThat(message.subject()).isEqualTo(START_MESSAGE_SUBJECT_EXPECTED);
-    assertThat(message.body()).isEqualTo(START_MESSAGE_BODY_EXPECTED);
+    assertThat(message.bodyHtml()).isEqualTo(START_MESSAGE_BODY_EXPECTED);
   }
 }
