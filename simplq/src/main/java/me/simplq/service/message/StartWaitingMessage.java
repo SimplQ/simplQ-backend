@@ -6,11 +6,9 @@ class StartWaitingMessage implements Message {
 
   private static final String SUBJECT_FORMAT = "%s: You have been added to the queue.";
   private static final String BODY_FORMAT =
-      "<p>Hi %s,</p>"
-          + "<p>You have been added to queue %s. Your token number is %s.</p>"
-          + "<p>You can check your live status by visiting %s</p>"
-          + "<p><b>Please wait to be notified before you visit the location. Stay away from crowds and"
-          + " have a delightful experience.</b></p>"
+      "<p>Hi %s,</p><p>You have been added to queue %s. Your token number is %s.</p><p>You can"
+          + " check your live status by visiting %s</p><p><b>Please wait to be notified before you"
+          + " visit the location. Stay away from crowds and have a delightful experience.</b></p>"
           + FOOTER;
 
   private final String tokenName;

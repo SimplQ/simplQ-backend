@@ -65,5 +65,3 @@ mvn liquibase:update -Ddb.username=<username> -Ddb.password=<password> -Ddb.url=
 
 Feel free to fork and improve, and do send a pull request. We will be delighed to work with you. 
 
-There are a ton of features being planned. So if you are considering contributing to this repository, please first discuss the change you wish to make via the issue tracker. Let's work together.
-
