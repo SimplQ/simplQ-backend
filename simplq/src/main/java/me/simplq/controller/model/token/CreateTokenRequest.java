@@ -8,6 +8,5 @@ public class CreateTokenRequest {
   private String name;
   private String contactNumber;
   private String queueId;
-  private Boolean notifiable;
   private String emailId;
 }
