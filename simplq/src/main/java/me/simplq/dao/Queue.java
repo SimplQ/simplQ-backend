@@ -56,14 +56,14 @@ public class Queue {
   // email address of people in queue will be collected when creating token.
   @Column private boolean notifyByEmail;
 
-  public Queue(String queueName, Owner owner, QueueStatus status) {
+  public Queue(String queueName, Owner owner) {
     this.queueName = queueName;
     this.owner = owner;
     this.queueCreationTimestamp = new Date();
-    this.status = status;
+    this.status = QueueStatus.ACTIVE;
     this.maxQueueCapacity = 10000;
     this.isSelfJoinAllowed = true;
-    this.notifyByEmail = false;
+    this.notifyByEmail = true;
   }
 
   public long getActiveTokensCount() {

@@ -41,7 +41,7 @@ public class QueueService {
     try {
       var queue =
           queueRepository.saveAndFlush(
-              new Queue(createQueueRequest.getQueueName(), owner, QueueStatus.ACTIVE));
+              new Queue(createQueueRequest.getQueueName(), owner));
       return new CreateQueueResponse(queue.getQueueName(), queue.getQueueId());
     } catch (DataIntegrityViolationException de) {
       throw SQInvalidRequestException.queueNameNotUniqueException();

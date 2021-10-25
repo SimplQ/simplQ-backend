@@ -63,7 +63,7 @@ class QueueServiceTest {
   @DisplayName("Allow user to change queue max capacity when queue exists")
   @Test
   void addQueueMaxCapacity() {
-    var queue = new Queue("queue", new Owner(), QueueStatus.ACTIVE);
+    var queue = new Queue("queue", new Owner());
 
     when(repository.findById(anyString())).thenReturn(Optional.of(queue));
     when(repository.save(any(Queue.class))).thenReturn(queue);
@@ -79,7 +79,7 @@ class QueueServiceTest {
   @DisplayName("Allow user to set queue as notifiable by email when queue exists")
   @Test
   void setIsNotifiableByEmail() {
-    var queue = new Queue("queue", new Owner(), QueueStatus.ACTIVE);
+    var queue = new Queue("queue", new Owner());
 
     when(repository.findById(anyString())).thenReturn(Optional.of(queue));
     when(repository.save(any(Queue.class))).thenReturn(queue);

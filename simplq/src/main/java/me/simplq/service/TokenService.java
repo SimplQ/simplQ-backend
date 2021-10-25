@@ -72,7 +72,7 @@ public class TokenService {
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException);
     if (token.getStatus() == TokenStatus.WAITING) {
       notificationManager.notify(
-          token, messagesManager.endWaiting(token.getQueue().getQueueName()));
+          token, messagesManager.endWaiting(token.getQueue().getQueueName(), token.getName()));
     } else {
       throw SQInvalidRequestException.tokenNotNotifiableException();
     }
