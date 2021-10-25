@@ -23,8 +23,8 @@ class MessagesManagerTest {
           + "\n"
           + "You can check your live status by visiting http://token-test-url/test-token-id\n"
           + "\n"
-          + "Please wait to be notified before you visit the location. Stay away from crowds and"
-          + " have a delightful experience.\n"
+          + "<b>Please wait to be notified before you visit the location. Stay away from crowds and"
+          + " have a delightful experience.</b>\n"
           + "\n"
           + "Thanks for using simplq.me, a free and open source queue management software.\n"
           + "\n"
@@ -35,11 +35,11 @@ class MessagesManagerTest {
   private static final String END_MESSAGE_SUBJECT_EXPECTED =
       "test-queue: Hooray! your wait is finally over.";
   private static final String END_MESSAGE_BODY_EXPECTED =
-      "Hi test-queue,\n"
+      "Hi test-user-name,\n"
           + "\n"
           + "You have been notified by the queue admin. Your turn will be up soon.\n"
           + "\n"
-          + "Please proceed to the location now.\n"
+          + "<b>Please proceed to the location now.</b>\n"
           + "\n"
           + "Thanks for using simplq.me, a free and open source queue management software.\n"
           + "\n"
