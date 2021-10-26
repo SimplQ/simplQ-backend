@@ -62,6 +62,11 @@ public class AppNotificationChannel implements NotificationChannel {
       return;
     }
 
+    // Notify users only of important messages
+    if (!message.isPriority()) {
+      return;
+    }
+
     ownerService
             .getDevices(token.getOwnerId())
             .map(Device::getId)
@@ -73,12 +78,12 @@ public class AppNotificationChannel implements NotificationChannel {
                                 FirebaseMessaging.getInstance()
                                         .send(
                                                 Message.builder()
-                                                        .putData(TITLE_KEY, token.getContactNumber())
-                                                        .putData(BODY_KEY, message.body())
+                                                        .putData(TITLE_KEY, message.subject())
+                                                        .putData(BODY_KEY, message.shortBody())
                                                         .setToken(deviceToken)
                                                         .build()));
                       } catch (FirebaseMessagingException e) {
-                        throw new SQInternalServerException("Failed to send SMS", e);
+                        throw new SQInternalServerException("Failed to send app notification", e);
                       }
                     });
   }
