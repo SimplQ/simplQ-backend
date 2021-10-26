@@ -4,5 +4,5 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class UnlinkDeviceResponse {
-    final String deviceId;
+  final String deviceId;
 }
