@@ -33,7 +33,7 @@ public class OwnerService {
   @Transactional
   public void linkDevice(String deviceId) {
     var owner = getOwnerOrElseCreateInternal();
-    deviceRepository.findById(deviceId).orElseGet(() -> deviceRepository.save(new Device(deviceId, owner)));
+    deviceRepository.findById(deviceId).ifPresentOrElse(device -> device.setOwner(owner), () -> deviceRepository.save(new Device(deviceId, owner)));
   }
 
   @Transactional

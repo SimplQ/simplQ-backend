@@ -22,8 +22,8 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class AppNotificationChannel implements NotificationChannel {
-  private static final String TITLE_KEY = "SMS_NUMBER_KEY";
-  private static final String BODY_KEY = "SMS_PAYLOAD";
+  private static final String TITLE_KEY = "TITLE";
+  private static final String BODY_KEY = "BODY";
 
   private final OwnerService ownerService;
 
