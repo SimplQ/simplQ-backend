@@ -39,7 +39,8 @@ public class OwnerService {
   @Transactional
   public void unlinkDevice(String deviceId) {
     var owner = getOwnerOrElseCreateInternal();
-    deviceRepository.findById(deviceId)
+    deviceRepository
+            .findById(deviceId)
             .filter(device -> device.getOwner().getId().equals(owner.getId()))
             .ifPresent(deviceRepository::delete);
   }
