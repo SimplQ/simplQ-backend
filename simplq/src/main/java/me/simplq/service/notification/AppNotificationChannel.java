@@ -68,23 +68,23 @@ public class AppNotificationChannel implements NotificationChannel {
     }
 
     ownerService
-            .getDevices(token.getOwnerId())
-            .map(Device::getId)
-            .forEach(
-                    deviceToken -> {
-                      try {
-                        log.info(
-                                "Successfully sent message: {}",
-                                FirebaseMessaging.getInstance()
-                                        .send(
-                                                Message.builder()
-                                                        .putData(TITLE_KEY, message.subject())
-                                                        .putData(BODY_KEY, message.shortBody())
-                                                        .setToken(deviceToken)
-                                                        .build()));
-                      } catch (FirebaseMessagingException e) {
-                        throw new SQInternalServerException("Failed to send app notification", e);
-                      }
-                    });
+        .getDevices(token.getOwnerId())
+        .map(Device::getId)
+        .forEach(
+            deviceToken -> {
+              try {
+                log.info(
+                    "Successfully sent message: {}",
+                    FirebaseMessaging.getInstance()
+                        .send(
+                            Message.builder()
+                                .putData(TITLE_KEY, message.subject())
+                                .putData(BODY_KEY, message.shortBody())
+                                .setToken(deviceToken)
+                                .build()));
+              } catch (FirebaseMessagingException e) {
+                throw new SQInternalServerException("Failed to send app notification", e);
+              }
+            });
   }
 }
