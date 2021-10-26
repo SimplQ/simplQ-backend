@@ -5,19 +5,18 @@ import me.simplq.service.OwnerService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/owner")
 @RequiredArgsConstructor
 public class OwnerController {
   private final OwnerService ownerService;
 
-  @GetMapping(path = "/me/status")
-  @ResponseBody
-  public Boolean isDeviceLinked(@RequestParam() String deviceId) {
-    return ownerService.isDeviceLinked(deviceId);
-  }
-
-  @PutMapping(path = "/me/link")
+  @PutMapping(path = "/link")
   public void linkDevice(@RequestParam() String deviceId) {
     ownerService.linkDevice(deviceId);
+  }
+
+  @PostMapping(path = "/unlink")
+  public void unlinkDevice(@RequestParam() String deviceId) {
+    ownerService.unlinkDevice(deviceId);
   }
 }

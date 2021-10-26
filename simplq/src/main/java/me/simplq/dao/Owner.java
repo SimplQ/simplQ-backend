@@ -17,7 +17,8 @@ import lombok.Setter;
 public class Owner {
   @Id String id;
   @OneToMany List<Queue> queues;
-  String companionDevice;
+
+  @OneToMany List<Device> devices;
 
   public Owner(String id) {
     this.id = id;
