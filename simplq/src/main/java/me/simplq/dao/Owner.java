@@ -1,14 +1,13 @@
 package me.simplq.dao;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "owner")
@@ -16,16 +15,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class Owner {
-  @Id
-  String id;
-  @OneToMany
-  List<Queue> queues;
+  @Id String id;
+  @OneToMany List<Queue> queues;
 
-  @OneToMany
-  List<Device> devices;
+  @OneToMany List<Device> devices;
 
   public Owner(String id) {
     this.id = id;
   }
-
 }

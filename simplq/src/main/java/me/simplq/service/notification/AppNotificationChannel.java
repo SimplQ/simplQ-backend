@@ -6,6 +6,8 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import java.io.IOException;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.simplq.dao.Device;
@@ -14,9 +16,6 @@ import me.simplq.exceptions.SQInternalServerException;
 import me.simplq.service.OwnerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 
 @Slf4j
 @Component
@@ -38,9 +37,9 @@ public class AppNotificationChannel implements NotificationChannel {
 
     try {
       FirebaseApp.initializeApp(
-              FirebaseOptions.builder()
-                      .setCredentials(GoogleCredentials.getApplicationDefault())
-                      .build());
+          FirebaseOptions.builder()
+              .setCredentials(GoogleCredentials.getApplicationDefault())
+              .build());
     } catch (IOException e) {
       // Env variable GOOGLE_APPLICATION_CREDENTIALS needs to be set.
       // If this exception occured while running a test, make sure that only 'test' spring profile
@@ -58,23 +57,23 @@ public class AppNotificationChannel implements NotificationChannel {
     }
 
     ownerService
-            .getDevices(token.getOwnerId())
-            .map(Device::getId)
-            .forEach(
-                    deviceToken -> {
-                      try {
-                        log.info(
-                                "Successfully sent message: {}",
-                                FirebaseMessaging.getInstance()
-                                        .send(
-                                                Message.builder()
-                                                        .putData(TITLE_KEY, token.getContactNumber())
-                                                        .putData(BODY_KEY, message.body())
-                                                        .setToken(deviceToken)
-                                                        .build()));
-                      } catch (FirebaseMessagingException e) {
-                        throw new SQInternalServerException("Failed to send SMS", e);
-                      }
-                    });
+        .getDevices(token.getOwnerId())
+        .map(Device::getId)
+        .forEach(
+            deviceToken -> {
+              try {
+                log.info(
+                    "Successfully sent message: {}",
+                    FirebaseMessaging.getInstance()
+                        .send(
+                            Message.builder()
+                                .putData(TITLE_KEY, token.getContactNumber())
+                                .putData(BODY_KEY, message.body())
+                                .setToken(deviceToken)
+                                .build()));
+              } catch (FirebaseMessagingException e) {
+                throw new SQInternalServerException("Failed to send SMS", e);
+              }
+            });
   }
 }
