@@ -15,7 +15,7 @@ public class OwnerController {
     ownerService.linkDevice(deviceId);
   }
 
-  @PostMapping(path = "/unlink")
+  @PatchMapping(path = "/unlink")
   public void unlinkDevice(@RequestParam() String deviceId) {
     ownerService.unlinkDevice(deviceId);
   }
