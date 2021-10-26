@@ -1,5 +1,7 @@
 package me.simplq.service;
 
+import java.util.stream.Stream;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.dao.Device;
@@ -7,9 +9,6 @@ import me.simplq.dao.DeviceRepository;
 import me.simplq.dao.Owner;
 import me.simplq.dao.OwnerRepository;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -33,22 +32,26 @@ public class OwnerService {
   @Transactional
   public void linkDevice(String deviceId) {
     var owner = getOwnerOrElseCreateInternal();
-    deviceRepository.findById(deviceId).ifPresentOrElse(device -> device.setOwner(owner), () -> deviceRepository.save(new Device(deviceId, owner)));
+    deviceRepository
+        .findById(deviceId)
+        .ifPresentOrElse(
+            device -> device.setOwner(owner),
+            () -> deviceRepository.save(new Device(deviceId, owner)));
   }
 
   @Transactional
   public void unlinkDevice(String deviceId) {
     var owner = getOwnerOrElseCreateInternal();
     deviceRepository
-            .findById(deviceId)
-            .filter(device -> device.getOwner().getId().equals(owner.getId()))
-            .ifPresent(deviceRepository::delete);
+        .findById(deviceId)
+        .filter(device -> device.getOwner().getId().equals(owner.getId()))
+        .ifPresent(deviceRepository::delete);
   }
 
   private Owner getOwnerOrElseCreateInternal() {
     var ownerId = loggedInUserInfo.getUserId();
     return ownerRepository
-            .findById(ownerId)
-            .orElseGet(() -> ownerRepository.save(new Owner(ownerId)));
+        .findById(ownerId)
+        .orElseGet(() -> ownerRepository.save(new Owner(ownerId)));
   }
 }
