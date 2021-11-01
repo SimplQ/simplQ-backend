@@ -122,21 +122,11 @@
 			<column name="id" type="varchar(255)">
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
-			<column name="companion_device" type="varchar(255)"/>
-		</createTable>
-
-		<createTable tableName="owner_devices">
 			<column name="owner_id" type="varchar(255)">
 				<constraints nullable="false"
 							 referencedTableName="owner"
 							 referencedColumnNames="id"
 							 foreignKeyName="devices_owner_fk"/>
-			</column>
-			<column name="devices_id" type="varchar(255)">
-				<constraints nullable="false"
-							 referencedTableName="device"
-							 referencedColumnNames="id"
-							 foreignKeyName="devices_device_fk"/>
 			</column>
 		</createTable>
 	</changeSet>
