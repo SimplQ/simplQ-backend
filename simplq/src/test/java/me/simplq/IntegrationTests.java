@@ -1,7 +1,11 @@
 package me.simplq;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,7 +17,12 @@ import lombok.SneakyThrows;
 import me.simplq.config.TestConfig;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
-import me.simplq.controller.model.queue.*;
+import me.simplq.controller.model.queue.CreateQueueResponse;
+import me.simplq.controller.model.queue.MyQueuesResponse;
+import me.simplq.controller.model.queue.PatchQueueRequest;
+import me.simplq.controller.model.queue.PatchQueueResponse;
+import me.simplq.controller.model.queue.QueueDetailsResponse;
+import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.token.TokenDeleteResponse;
 import me.simplq.controller.model.token.TokenDetailResponse;
 import me.simplq.dao.DeviceRepository;
@@ -37,11 +46,15 @@ import org.springframework.test.web.servlet.ResultActions;
 @ContextConfiguration(classes = {TestConfig.class})
 @ActiveProfiles({"test"})
 class IntegrationTests {
-  @Autowired private DeviceRepository deviceRepository;
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private DeviceRepository deviceRepository;
 
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired
+  private MockMvc mockMvc;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   private Long initialPhoneNumber = 9400000000L;
 

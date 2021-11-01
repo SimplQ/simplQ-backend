@@ -4,7 +4,12 @@ import lombok.RequiredArgsConstructor;
 import me.simplq.controller.model.owner.LinkDeviceResponse;
 import me.simplq.controller.model.owner.UnlinkDeviceResponse;
 import me.simplq.service.OwnerService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/owner")
@@ -13,14 +18,14 @@ public class OwnerController {
   private final OwnerService ownerService;
 
   @PutMapping(path = "/link")
-  public LinkDeviceResponse linkDevice(@RequestParam() String deviceId) {
+  public ResponseEntity<LinkDeviceResponse> linkDevice(@RequestParam String deviceId) {
     ownerService.linkDevice(deviceId);
-    return new LinkDeviceResponse(deviceId);
+    return ResponseEntity.ok(new LinkDeviceResponse(deviceId));
   }
 
   @PatchMapping(path = "/unlink")
-  public UnlinkDeviceResponse unlinkDevice(@RequestParam() String deviceId) {
+  public ResponseEntity<UnlinkDeviceResponse> unlinkDevice(@RequestParam String deviceId) {
     ownerService.unlinkDevice(deviceId);
-    return new UnlinkDeviceResponse(deviceId);
+    return ResponseEntity.ok(new UnlinkDeviceResponse(deviceId));
   }
 }
