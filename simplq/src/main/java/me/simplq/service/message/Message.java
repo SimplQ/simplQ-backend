@@ -6,11 +6,14 @@ public interface Message {
           + "<p>Regards,</p>"
           + "<p>Team SimplQ</p>"
           + "<p>https://www.simplq.me/</p>";
-  ;
 
   String subject();
 
   String body();
 
   String bodyHtml();
+
+  String shortBody();
+
+  Boolean isPriority();
 }

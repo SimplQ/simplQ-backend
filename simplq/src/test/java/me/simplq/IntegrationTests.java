@@ -1,5 +1,6 @@
 package me.simplq;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -24,7 +25,7 @@ import me.simplq.controller.model.queue.QueueDetailsResponse;
 import me.simplq.controller.model.queue.QueueStatusResponse;
 import me.simplq.controller.model.token.TokenDeleteResponse;
 import me.simplq.controller.model.token.TokenDetailResponse;
-import me.simplq.dao.QueueRepository;
+import me.simplq.dao.DeviceRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +47,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles({"test"})
 class IntegrationTests {
 
-  @Autowired private QueueRepository queueRepository;
+  @Autowired private DeviceRepository deviceRepository;
 
   @Autowired private MockMvc mockMvc;
 
@@ -57,27 +58,21 @@ class IntegrationTests {
   @Test
   void endToEndScenarioTest() throws Exception {
 
-    // Device not linked for new user
-    MvcResult newDeviceStatus =
-        mockMvc.perform(get("/v1/me/status?deviceId=12345")).andExpect(status().isOk()).andReturn();
-    Assertions.assertEquals("false", newDeviceStatus.getResponse().getContentAsString());
-
     // Create queue
     var createQueueResponse = createQueueCall("FirstQueue");
-    Assertions.assertEquals("FirstQueue", createQueueResponse.getQueueName());
+    assertEquals("FirstQueue", createQueueResponse.getQueueName());
 
     // GET queue by id
     var queueDetailsResponse = getQueueById(createQueueResponse.getQueueId());
-    Assertions.assertEquals(queueDetailsResponse.getQueueId(), createQueueResponse.getQueueId());
-    Assertions.assertEquals(
-        queueDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
+    assertEquals(queueDetailsResponse.getQueueId(), createQueueResponse.getQueueId());
+    assertEquals(queueDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
 
     // POST token
     var createTokenResponse = callCreateToken(createQueueResponse.getQueueId());
     var anotherTokenResponse = callCreateToken(createQueueResponse.getQueueId());
 
-    Assertions.assertEquals(createTokenResponse.getQueueId(), createQueueResponse.getQueueId());
-    Assertions.assertEquals(createTokenResponse.getQueueName(), createQueueResponse.getQueueName());
+    assertEquals(createTokenResponse.getQueueId(), createQueueResponse.getQueueId());
+    assertEquals(createTokenResponse.getQueueName(), createQueueResponse.getQueueName());
 
     // GET token by id
     MvcResult getTokenResult =
@@ -90,9 +85,8 @@ class IntegrationTests {
     TokenDetailResponse tokenDetailsResponse =
         objectMapper.readValue(
             getTokenResult.getResponse().getContentAsString(), TokenDetailResponse.class);
-    Assertions.assertEquals(tokenDetailsResponse.getQueueId(), createQueueResponse.getQueueId());
-    Assertions.assertEquals(
-        tokenDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
+    assertEquals(tokenDetailsResponse.getQueueId(), createQueueResponse.getQueueId());
+    assertEquals(tokenDetailsResponse.getQueueName(), createQueueResponse.getQueueName());
 
     // DELETE Token
     MvcResult deleteTokenResult =
@@ -105,10 +99,9 @@ class IntegrationTests {
     TokenDeleteResponse tokenDeleteResponse =
         objectMapper.readValue(
             deleteTokenResult.getResponse().getContentAsString(), TokenDeleteResponse.class);
-    Assertions.assertEquals(tokenDetailsResponse.getTokenId(), tokenDeleteResponse.getTokenId());
-    Assertions.assertEquals(TokenStatus.REMOVED, tokenDeleteResponse.getTokenStatus());
-    Assertions.assertEquals(
-        tokenDetailsResponse.getQueueName(), tokenDeleteResponse.getQueueName());
+    assertEquals(tokenDetailsResponse.getTokenId(), tokenDeleteResponse.getTokenId());
+    assertEquals(TokenStatus.REMOVED, tokenDeleteResponse.getTokenStatus());
+    assertEquals(tokenDetailsResponse.getQueueName(), tokenDeleteResponse.getQueueName());
 
     // GET myQueues
     MvcResult myQueuesResult =
@@ -126,7 +119,7 @@ class IntegrationTests {
             .filter(queue1 -> queue1.getQueueId().equals(createQueueResponse.getQueueId()))
             .findFirst()
             .get();
-    Assertions.assertEquals(createQueueResponse.getQueueName(), queue.getQueueName());
+    assertEquals(createQueueResponse.getQueueName(), queue.getQueueName());
 
     // GET myTokens
     mockMvc
@@ -136,8 +129,8 @@ class IntegrationTests {
         .andReturn();
 
     var queueUpdated = getQueueById(createQueueResponse.getQueueId());
-    Assertions.assertEquals(queueUpdated.getTokens().size(), 1);
-    Assertions.assertEquals(queueUpdated.getRemovedTokens().size(), 1);
+    assertEquals(queueUpdated.getTokens().size(), 1);
+    assertEquals(queueUpdated.getRemovedTokens().size(), 1);
     assertQueueContainsToken(queueUpdated.getTokens(), anotherTokenResponse.getTokenId());
     assertQueueContainsToken(queueUpdated.getRemovedTokens(), createTokenResponse.getTokenId());
 
@@ -150,9 +143,8 @@ class IntegrationTests {
     QueueStatusResponse queueStatusResponseDeleted =
         objectMapper.readValue(
             deleteQueueResult.getResponse().getContentAsString(), QueueStatusResponse.class);
-    Assertions.assertEquals(
-        createQueueResponse.getQueueId(), queueStatusResponseDeleted.getQueueId());
-    Assertions.assertEquals(QueueStatus.DELETED, queueStatusResponseDeleted.getStatus());
+    assertEquals(createQueueResponse.getQueueId(), queueStatusResponseDeleted.getQueueId());
+    assertEquals(QueueStatus.DELETED, queueStatusResponseDeleted.getStatus());
 
     // GET myQueues
     MvcResult myQueuesResultDeleted =
@@ -165,24 +157,38 @@ class IntegrationTests {
     MyQueuesResponse myQueuesResponseDeleted =
         objectMapper.readValue(
             myQueuesResultDeleted.getResponse().getContentAsString(), MyQueuesResponse.class);
-    Assertions.assertEquals(
+    assertEquals(
         0,
         myQueuesResponseDeleted.getQueues().stream()
             .filter(queue1 -> queue1.getQueueId().equals(createQueueResponse.getQueueId()))
             .count());
+  }
 
-    // Initially device not linked
-    MvcResult deviceStatus =
-        mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
-    Assertions.assertEquals("false", deviceStatus.getResponse().getContentAsString());
+  @Test
+  void deviceRegistrationScenarioTest() throws Exception {
+    // Initially device not present
 
     // Link user to companion device
-    mockMvc.perform(put("/v1/me/link?deviceId=1234")).andExpect(status().isOk()).andReturn();
+    mockMvc.perform(put("/v1/owner/link?deviceId=1234")).andExpect(status().isOk()).andReturn();
 
-    // Now device is linked
-    MvcResult deviceStatus2 =
-        mockMvc.perform(get("/v1/me/status?deviceId=1234")).andExpect(status().isOk()).andReturn();
-    Assertions.assertEquals("true", deviceStatus2.getResponse().getContentAsString());
+    // Duplicate linking is handled gracefully
+    mockMvc.perform(put("/v1/owner/link?deviceId=1234")).andExpect(status().isOk()).andReturn();
+
+    // Device is now present
+    var device = deviceRepository.findById("1234").get();
+    assertEquals("test-user-id", device.getOwner().getId());
+
+    // Second device is added
+    mockMvc.perform(put("/v1/owner/link?deviceId=5678")).andExpect(status().isOk()).andReturn();
+
+    // Now two devices are present
+    assertEquals(2, deviceRepository.count());
+
+    // Remove first device
+    mockMvc.perform(patch("/v1/owner/unlink?deviceId=1234")).andExpect(status().isOk()).andReturn();
+
+    // Now only one device is present.
+    assertEquals(1, deviceRepository.count());
   }
 
   private void assertQueueContainsToken(List<QueueDetailsResponse.Token> queue, String tokenId) {
@@ -244,11 +250,11 @@ class IntegrationTests {
     var patchResponse =
         objectMapper.readValue(
             patchResult.getResponse().getContentAsString(), PatchQueueResponse.class);
-    Assertions.assertEquals(patchResponse.getMaxQueueCapacity(), 10);
+    assertEquals(patchResponse.getMaxQueueCapacity(), 10);
 
     var queueDetailAtStart = getQueueById(createQueueResponse.getQueueId());
-    Assertions.assertEquals(10, queueDetailAtStart.getMaxQueueCapacity());
-    Assertions.assertEquals(10, queueDetailAtStart.getSlotsLeft());
+    assertEquals(10, queueDetailAtStart.getMaxQueueCapacity());
+    assertEquals(10, queueDetailAtStart.getSlotsLeft());
 
     // Successfully add ten tokens
     IntStream.range(0, 10)
@@ -259,8 +265,8 @@ class IntegrationTests {
             });
 
     var queueDetailAtFull = getQueueById(createQueueResponse.getQueueId());
-    Assertions.assertEquals(10, queueDetailAtFull.getMaxQueueCapacity());
-    Assertions.assertEquals(0, queueDetailAtFull.getSlotsLeft());
+    assertEquals(10, queueDetailAtFull.getMaxQueueCapacity());
+    assertEquals(0, queueDetailAtFull.getSlotsLeft());
 
     // Fail on 11th token
     makeCreateTokenCall(createQueueResponse.getQueueId()).andExpect(status().is4xxClientError());

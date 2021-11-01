@@ -1,26 +1,22 @@
 package me.simplq.dao;
 
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "owner")
+@Table(name = "device")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Owner {
+@AllArgsConstructor
+public class Device {
   @Id String id;
-  @OneToMany List<Queue> queues;
 
-  @OneToMany List<Device> devices;
-
-  public Owner(String id) {
-    this.id = id;
-  }
+  @ManyToOne private Owner owner;
 }
