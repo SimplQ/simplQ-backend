@@ -47,14 +47,11 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles({"test"})
 class IntegrationTests {
 
-  @Autowired
-  private DeviceRepository deviceRepository;
+  @Autowired private DeviceRepository deviceRepository;
 
-  @Autowired
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
   private Long initialPhoneNumber = 9400000000L;
 
