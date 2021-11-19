@@ -33,8 +33,7 @@ public class Token {
   String ownerId;
   String emailId;
 
-  @ManyToOne
-  Queue queue;
+  @ManyToOne Queue queue;
 
   @Column(updatable = false)
   @Temporal(TemporalType.TIMESTAMP)
