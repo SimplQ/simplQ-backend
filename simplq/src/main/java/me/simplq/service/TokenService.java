@@ -41,9 +41,7 @@ public class TokenService {
             .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
   }
 
-  /**
-   * Get token by queueId and the contact number
-   */
+  /** Get token by queueId and the contact number */
   @Transactional
   public TokenDetailResponse getToken(String queueId, String contactNumber) {
     return TokenDetailResponse.fromEntity(
@@ -66,9 +64,7 @@ public class TokenService {
         .orElseThrow(SQInternalServerException::new);
   }
 
-  /**
-   * Notify user on User page. Send SMS notification
-   */
+  /** Notify user on User page. Send SMS notification */
   @Transactional
   public TokenNotifyResponse notifyToken(String tokenId) {
     var token =
