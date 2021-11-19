@@ -69,6 +69,6 @@ public class Token {
   }
 
   public boolean isNotifiable() {
-    return TokenStatus.WAITING.equals(status) && StringUtils.isNotBlank(emailId);
+    return StringUtils.isNotBlank(emailId);
   }
 }
