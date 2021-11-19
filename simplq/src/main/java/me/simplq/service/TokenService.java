@@ -2,7 +2,6 @@ package me.simplq.service;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
 import me.simplq.constants.TokenStatus;
@@ -20,6 +19,8 @@ import me.simplq.exceptions.SQInvalidRequestException;
 import me.simplq.service.message.MessagesManager;
 import me.simplq.service.notification.NotificationManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +81,7 @@ public class TokenService {
     return new TokenNotifyResponse(tokenId, TokenStatus.NOTIFIED);
   }
 
-  @Transactional
+  @Transactional(isolation = Isolation.SERIALIZABLE)
   public TokenDetailResponse createToken(CreateTokenRequest createTokenRequest) {
     if (tokenRepository.existsAlreadyInQueue(
         createTokenRequest.getQueueId(), createTokenRequest.getContactNumber())) {
