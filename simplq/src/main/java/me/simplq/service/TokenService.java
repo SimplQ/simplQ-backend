@@ -1,6 +1,7 @@
 package me.simplq.service;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import me.simplq.constants.QueueStatus;
@@ -8,6 +9,7 @@ import me.simplq.constants.TokenStatus;
 import me.simplq.controller.advices.LoggedInUserInfo;
 import me.simplq.controller.model.token.CreateTokenRequest;
 import me.simplq.controller.model.token.MyTokensResponse;
+import me.simplq.controller.model.token.PatchTokenRequest;
 import me.simplq.controller.model.token.TokenDeleteResponse;
 import me.simplq.controller.model.token.TokenDetailResponse;
 import me.simplq.controller.model.token.TokenNotifyResponse;
@@ -35,10 +37,7 @@ public class TokenService {
 
   @Transactional
   public TokenDetailResponse getToken(String tokenId) {
-    return TokenDetailResponse.fromEntity(
-        tokenRepository
-            .findById(tokenId)
-            .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
+    return getTokenDetailInternal(tokenId);
   }
 
   /** Get token by queueId and the contact number */
@@ -141,5 +140,36 @@ public class TokenService {
                         token.getTokenId(),
                         token.getTokenCreationTimestamp()))
             .collect(Collectors.toList()));
+  }
+
+  @Transactional
+  public TokenDetailResponse patchToken(String tokenId, PatchTokenRequest patchTokenRequest) {
+    Optional.ofNullable(patchTokenRequest.getQueueId())
+        .ifPresent(newQueueId -> addTokenToQueue(tokenId, newQueueId));
+    return getTokenDetailInternal(tokenId);
+  }
+
+  private void addTokenToQueue(String tokenId, String newQueueId) {
+    queueRepository
+        .findById(newQueueId)
+        .map(
+            newQueue ->
+                tokenRepository
+                    .findById(tokenId)
+                    .map(
+                        token -> {
+                          token.setQueue(newQueue);
+                          tokenRepository.save(token);
+                          return token;
+                        })
+                    .orElseThrow(SQInvalidRequestException::tokenNotFoundException))
+        .orElseThrow(SQInvalidRequestException::queueNotFoundException);
+  }
+
+  private TokenDetailResponse getTokenDetailInternal(String tokenId) {
+    return TokenDetailResponse.fromEntity(
+        tokenRepository
+            .findById(tokenId)
+            .orElseThrow(SQInvalidRequestException::tokenNotFoundException));
   }
 }
