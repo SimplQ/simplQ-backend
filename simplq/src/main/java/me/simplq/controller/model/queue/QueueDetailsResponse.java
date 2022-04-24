@@ -66,7 +66,7 @@ public class QueueDetailsResponse {
             queue.isSelfJoinAllowed(),
             queue.isNotifyByEmail());
     queue.getTokens().stream()
-        .sorted(Comparator.comparing(me.simplq.dao.Token::getTokenCreationTimestamp))
+        .sorted(Comparator.comparing(me.simplq.dao.Token::getQueueJoiningTimestamp))
         .forEach(response::addToken);
     return response;
   }
