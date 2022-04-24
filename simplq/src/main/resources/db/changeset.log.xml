@@ -131,5 +131,10 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="14" author="daltonfury42">
+		<addColumn tableName="token">
+			<column name="queue_joining_timestamp" type="timestamp without time zone"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
   

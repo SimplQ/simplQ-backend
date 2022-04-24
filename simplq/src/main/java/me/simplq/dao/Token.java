@@ -39,7 +39,11 @@ public class Token {
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenCreationTimestamp;
 
-  @Column(updatable = true)
+  @Column()
+  @Temporal(TemporalType.TIMESTAMP)
+  Date queueJoiningTimestamp;
+
+  @Column()
   @Temporal(TemporalType.TIMESTAMP)
   Date tokenDeletionTimestamp;
 
@@ -58,9 +62,14 @@ public class Token {
     return this.getQueue().getTokens().stream()
         .filter(
             fellowUser ->
-                fellowUser.getTokenCreationTimestamp().before(this.getTokenCreationTimestamp())
+                fellowUser.getQueueJoiningTimestamp().before(this.getQueueJoiningTimestamp())
                     && !fellowUser.getStatus().equals(TokenStatus.REMOVED))
         .count();
+  }
+
+  public void setQueue(Queue queue) {
+    this.queue = queue;
+    this.queueJoiningTimestamp = new Date();
   }
 
   public void delete() {
