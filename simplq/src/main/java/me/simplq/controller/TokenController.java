@@ -61,7 +61,8 @@ public class TokenController {
   }
 
   @PatchMapping(path = "/token/{tokenId}")
-  public ResponseEntity<TokenDetailResponse> patchToken(@PathVariable("tokenId") String tokenId, @RequestBody PatchTokenRequest patchTokenRequest) {
+  public ResponseEntity<TokenDetailResponse> patchToken(
+      @PathVariable("tokenId") String tokenId, @RequestBody PatchTokenRequest patchTokenRequest) {
     return ResponseEntity.ok(tokenService.patchToken(tokenId, patchTokenRequest));
   }
 }
